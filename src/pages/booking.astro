@@ -1,0 +1,204 @@
+---
+import Page from '../layouts/Page.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import BookCta from '../components/BookCta.astro';
+import Icon from '../components/Icon.astro';
+import { BOOKING, SITE, HOURS } from '../config/site';
+
+/**
+ * Booking — and the one page where §8 could not be built as written.
+ *
+ * §8 asks for "embedded scheduler, restyled to the palette". Square does not
+ * offer that: their embed code hands off to Square's hosted booking site and
+ * they block framing, so there is no inline flow for our CSS to reach. See the
+ * note in src/config/site.ts for what CAN be brought onto the palette from
+ * inside the Square dashboard, and for the providers that do support a real
+ * inline embed if that matters more than staying on Square.
+ *
+ * So this page does the work an embed would have done: it sets expectations,
+ * answers the questions that stop people booking, and then hands off cleanly.
+ */
+const live = BOOKING.configured && !BOOKING.url.startsWith('[');
+
+const STEPS = [
+  // DRAFT COPY
+  'Pick a treatment and a time on the booking page.',
+  'You get a confirmation by email, and a reminder the day before.',
+  'Arrive fifteen minutes early on your first visit so there is time to change and talk.',
+];
+---
+
+<Page
+  title="Book a visit — Sunnyside Spa"
+  description="Book a treatment at Sunnyside Spa in [NEIGHBOURHOOD], Utah."
+  eyebrow="Booking"
+  heading="Book a visit"
+  lede="Appointments only, one at a time, so the room is yours for the whole of it."
+>
+  <section class="bk">
+    <div class="shell bk__grid">
+      <div class="bk__main reveal">
+        {
+          live ? (
+            <>
+              <h2 class="t-h2">Pick a time</h2>
+              <p class="t-body bk__lede">
+                Booking runs on Square. It opens in a new tab and takes about a minute.
+              </p>
+              <BookCta label="Open the booking page" />
+            </>
+          ) : (
+            <div class="bk__pending">
+              <p class="t-eyebrow">Not connected yet</p>
+              <h2 class="t-h2">Booking goes here</h2>
+              <p class="t-body">
+                Square Appointments hands off to its own hosted booking page rather
+                than embedding inside this one, so this is where that handoff will
+                sit. Drop the booking URL into <code>src/config/site.ts</code> and
+                set <code>configured: true</code>, and this panel becomes the button.
+              </p>
+              <p class="t-body bk__hint">
+                Square dashboard → Appointments → Online Booking → Booking Site.
+                While you are there, set the accent colour to <code>#7E5555</code> and
+                upload the stacked logo, so the hosted page lands as close to this
+                palette as Square allows.
+              </p>
+            </div>
+          )
+        }
+
+        <div class="bk__steps">
+          <h3 class="t-h3">How it goes</h3>
+          {/* DRAFT COPY */}
+          <ol class="bk__list">
+            {STEPS.map((s) => (
+              <li class="bk__step"><span class="t-body">{s}</span></li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <aside class="bk__aside reveal" aria-labelledby="bk-aside-title">
+        <h2 class="t-h3" id="bk-aside-title">Rather not book online?</h2>
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          Call or text and I will find you something. If a time you wanted has
+          just gone, say what you were after and I will tell you what is close.
+        </p>
+
+        <p class="bk__contact">
+          <a class="link" href={`tel:${SITE.phone}`}>{SITE.phone}</a><br />
+          <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
+
+        <h3 class="t-eyebrow bk__hours-title">Hours</h3>
+        <dl class="bk__hours">
+          {
+            HOURS.map((h) => (
+              <div class="bk__hours-row">
+                <dt class="t-meta">{h.days}</dt>
+                <dd class="t-meta">{h.hours}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <p class="bk__icon" aria-hidden="true"><Icon name="you-time" size={28} /></p>
+      </aside>
+    </div>
+
+    <div class="shell"><WaveDivider /></div>
+
+    <div class="shell bk__foot reveal">
+      <p class="t-quote">Two hours that are only yours</p>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .bk { padding-block: var(--space-2xl); }
+
+  .bk__grid { display: grid; gap: var(--space-2xl); align-items: start; }
+
+  .bk__main { display: flex; flex-direction: column; gap: var(--space-xl); align-items: flex-start; }
+
+  .bk__lede { max-width: var(--measure); }
+
+  /* Deliberately unmistakable while the URL is missing — this is a to-do. */
+  .bk__pending {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    border-inline-start: 2px solid var(--dusty-rose);
+    background-color: var(--surface-tint);
+    border-radius: 0 var(--r-card) var(--r-card) 0;
+    max-width: var(--measure);
+  }
+
+  .bk__hint { color: var(--ink-soft); font-size: 0.9375rem; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+  }
+
+  .bk__list {
+    counter-reset: s;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-block-start: var(--space-md);
+    max-width: var(--measure);
+  }
+
+  .bk__step {
+    counter-increment: s;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: var(--space-sm);
+    align-items: baseline;
+  }
+
+  .bk__step::before {
+    content: counter(s, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--rose-deep);
+  }
+
+  .bk__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background-color: var(--surface-aqua);
+    border-radius: var(--r-card);
+  }
+
+  .bk__contact { line-height: 2; }
+
+  .bk__hours-title { margin-block-start: var(--space-sm); }
+
+  .bk__hours { margin: 0; }
+
+  .bk__hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-2xs);
+    border-block-end: 1px solid var(--line-hair);
+  }
+
+  .bk__hours-row dd { margin: 0; }
+
+  .bk__icon { margin: 0; color: var(--rose-deep); }
+
+  .bk__foot { padding-block: var(--space-2xl); }
+  .bk__foot { --quote-color: var(--rose-deep); }
+
+  @media (min-width: 860px) {
+    .bk__grid { grid-template-columns: 1.4fr 0.6fr; gap: clamp(var(--space-xl), 5vw, var(--space-3xl)); }
+  }
+</style>

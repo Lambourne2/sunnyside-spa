@@ -1,4 +1,5 @@
 ---
+import BookCta from './BookCta.astro';
 import Figure from './Figure.astro';
 
 /**
@@ -49,7 +50,7 @@ const ROWS = [
           <p class="t-body">{row.body}</p>
           <p class="t-meta">From {row.price} · {row.duration}</p>
           <p>
-            <a class="btn btn--primary" href="/booking/">Book a visit</a>
+            <BookCta />
           </p>
         </div>
       </div>

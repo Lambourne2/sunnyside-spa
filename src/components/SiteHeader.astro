@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import BookCta from './BookCta.astro';
 
 /**
  * Ribbon + nav (§8). The nav is transparent over the hero and condenses to
@@ -7,6 +8,12 @@ import Logo from './Logo.astro';
  *
  * The neighbourhood is a placeholder — real value to be supplied.
  */
+interface Props {
+  /** Interior pages have no hero to sit over, so the nav starts on shell. */
+  solid?: boolean;
+}
+const { solid = false } = Astro.props;
+
 const NAV = [
   { href: '/treatments/', label: 'Treatments' },
   { href: '/our-story/', label: 'About' },
@@ -19,7 +26,7 @@ const NAV = [
   <span class="t-eyebrow ribbon__text">Now booking · [NEIGHBOURHOOD], UT</span>
 </p>
 
-<header class="nav" data-nav>
+<header class:list={['nav', solid && 'is-condensed']} data-nav data-nav-solid={solid ? '' : undefined}>
   <div class="shell nav__inner">
     <a class="nav__home" href="/">
       <Logo variant="horizontal" width={168} label="Sunnyside Spa, home" />
@@ -33,7 +40,7 @@ const NAV = [
           </li>
         ))}
       </ul>
-      <a class="btn btn--primary nav__cta" href="/booking/">Book</a>
+      <BookCta label="Book" />
     </nav>
   </div>
 </header>
@@ -99,7 +106,7 @@ const NAV = [
 
   .nav__link:hover { border-block-end-color: var(--dusty-rose); }
 
-  .nav__cta { padding: 10px 20px; }
+  .nav__links :global(.btn) { padding: 10px 20px; }
 
   /* Under 640px the links move to the booking bar and the footer; keeping five
      tracked-caps targets in a 360px bar would make each one too small to hit. */

@@ -23,6 +23,14 @@ export interface Treatment {
   /** SAMPLE photography — see public/img/samples/SOURCES.json. To be replaced. */
   image: string;
   alt: string;
+  /** Detail page. All DRAFT until the real menu exists. */
+  detail: {
+    lede: string;
+    /** "What to expect" — three or four plain steps, §11 voice. */
+    expect: string[];
+    /** Add-ons. Names bracketed until priced. */
+    addOns: { name: string; price: string }[];
+  };
 }
 
 export const TREATMENTS: Treatment[] = [
@@ -37,17 +45,46 @@ export const TREATMENTS: Treatment[] = [
     feature: true,
     image: '/img/samples/massage.webp',
     alt: "Two hands tipping warm oil from a small dish onto someone's bare back.",
+    detail: {
+      lede:
+        'One room, one therapist, and the time set aside for it. You say where it hurts and I work from there.',
+      expect: [
+        'You arrive fifteen minutes early, change into a robe, and fill in a short intake form.',
+        'We talk for a few minutes about what hurts, what you do all day, and anywhere you would rather I left alone.',
+        'You stay covered apart from the area being worked on. Say so at any point if the pressure is wrong.',
+        'Afterwards there is water and a chair, and no rush to be anywhere.',
+      ],
+      addOns: [
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+      ],
+    },
   },
   {
     slug: 'skincare',
     icon: 'skincare',
     name: 'Skincare',
-    line: 'We look at your skin in daylight, ask what you already use, and work with it.',
+    line: 'I look at your skin in daylight, ask what you already use, and work with it.',
     draft: true,
     price: '[PRICE]',
     duration: '[DURATION]',
     image: '/img/samples/skincare.webp',
     alt: 'A woman with her eyes closed, turned to the sun, the shadow of a plant falling across her face.',
+    detail: {
+      lede:
+        'I look at your skin in daylight, ask what you already use, and work with it rather than starting over.',
+      expect: [
+        'I start by looking at your skin in daylight, without a lamp in your face.',
+        'You tell us what you already use and what your skin does in winter.',
+        'Cleanse, treat, and finish. Nothing that needs a week of hiding afterwards.',
+        'You leave with a note of what I used, so you can decide what is worth buying.',
+      ],
+      addOns: [
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+      ],
+    },
   },
   {
     slug: 'body',
@@ -59,6 +96,20 @@ export const TREATMENTS: Treatment[] = [
     duration: '[DURATION]',
     image: '/img/samples/body.webp',
     alt: 'A bare shoulder in low gold light, cut by a hard bar of window shadow.',
+    detail: {
+      lede:
+        'A scrub, a wrap, and a warm shower to finish. You leave softer than you came.',
+      expect: [
+        'You shower first, then the scrub, working from the feet up.',
+        'The wrap goes on warm and stays on for about twenty minutes while you lie still.',
+        'A second shower to finish, then oil while your skin is still damp.',
+        'Bring a hair tie. You will want one.',
+      ],
+      addOns: [
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+      ],
+    },
   },
   {
     slug: 'wellness',
@@ -70,6 +121,19 @@ export const TREATMENTS: Treatment[] = [
     duration: '[DURATION]',
     image: '/img/samples/wellness.webp',
     alt: 'Someone sitting and stretching on a wooden sill in warm slatted light.',
+    detail: {
+      lede:
+        'Breathwork, stretching, and quiet. Bring socks.',
+      expect: [
+        'We start sitting, with a few minutes of breathing before anything else.',
+        'Assisted stretching, slow, with your feet on the floor for most of it.',
+        'The last ten minutes are quiet. You do not have to fill them.',
+        'Wear something you can move in. Socks help.',
+      ],
+      addOns: [
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+      ],
+    },
   },
   {
     slug: 'you-time',
@@ -81,5 +145,19 @@ export const TREATMENTS: Treatment[] = [
     duration: '[DURATION]',
     image: '/img/samples/you-time.webp',
     alt: 'Someone resting in rumpled linen, one hand open on the bed.',
+    detail: {
+      lede:
+        'Book the room for the afternoon and decide what happens once you are in it.',
+      expect: [
+        'The room is yours for the block you book.',
+        'We agree roughly what you want when you arrive, and adjust as we go.',
+        'You can talk the whole time or not at all. Both are normal.',
+        'Tea, water, and the door stays shut.',
+      ],
+      addOns: [
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+        { name: '[ADD-ON NAME]', price: '[PRICE]' },
+      ],
+    },
   },
 ];

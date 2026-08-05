@@ -1,0 +1,195 @@
+---
+import Page from '../../layouts/Page.astro';
+import Icon from '../../components/Icon.astro';
+import Figure from '../../components/Figure.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
+import BookCta from '../../components/BookCta.astro';
+import { TREATMENTS } from '../../data/treatments';
+
+/** Treatment detail — §8: arched hero, what to expect, duration/price, add-ons, book. */
+export function getStaticPaths() {
+  return TREATMENTS.map((t) => ({ params: { slug: t.slug }, props: { t } }));
+}
+
+const { t } = Astro.props;
+const others = TREATMENTS.filter((x) => x.slug !== t.slug);
+---
+
+<Page
+  title={`${t.name} — Sunnyside Spa`}
+  description={t.line}
+  eyebrow="Treatment"
+  heading={t.name}
+  lede={t.detail.lede}
+>
+  <section class="td">
+    <div class="shell td__top">
+      <Figure class="td__hero reveal" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} loading="eager" />
+
+      <div class="td__facts reveal">
+        <Icon name={t.icon} size={40} />
+
+        <dl class="td__meta">
+          <div>
+            <dt class="t-eyebrow">From</dt>
+            <dd class="t-h3">{t.price}</dd>
+          </div>
+          <div>
+            <dt class="t-eyebrow">Takes</dt>
+            <dd class="t-h3">{t.duration}</dd>
+          </div>
+        </dl>
+
+        <BookCta />
+
+        <p class="t-body td__note">
+          Appointments only. Arrive fifteen minutes before your first visit.
+        </p>
+      </div>
+    </div>
+
+    <div class="shell"><WaveDivider /></div>
+
+    <div class="shell td__cols">
+      <div class="reveal">
+        <h2 class="t-h2">What to expect</h2>
+        {/* DRAFT COPY */}
+        <ol class="td__steps">
+          {t.detail.expect.map((step) => (
+            <li class="td__step">
+              <span class="t-body">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="reveal">
+        <h2 class="t-h2">Add-ons</h2>
+        <ul class="td__addons" role="list">
+          {t.detail.addOns.map((a) => (
+            <li class="td__addon">
+              <span class="t-body">{a.name}</span>
+              <span class="t-meta">{a.price}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="t-body td__note">Ask when you arrive. Nothing is added without telling you the price first.</p>
+      </div>
+    </div>
+
+    <div class="shell"><WaveDivider /></div>
+
+    <div class="shell td__more">
+      <h2 class="t-h2">Also here</h2>
+      <ul class="td__others" role="list">
+        {
+          others.map((o) => (
+            <li class="reveal">
+              <a class="td__other" href={`/treatments/${o.slug}/`}>
+                <Icon name={o.icon} size={26} />
+                <span class="t-h3">{o.name}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .td { padding-block: var(--space-2xl); }
+
+  .td__top {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .td__facts { display: flex; flex-direction: column; gap: var(--space-lg); align-items: flex-start; }
+
+  .td__meta {
+    display: flex;
+    gap: var(--space-2xl);
+    margin: 0;
+  }
+
+  .td__meta dt { margin-block-end: var(--space-2xs); }
+  .td__meta dd { margin: 0; }
+
+  .td__note { color: var(--ink-soft); max-width: 40ch; font-size: 0.9375rem; }
+
+  .td__cols {
+    display: grid;
+    gap: var(--space-2xl);
+    padding-block: var(--space-2xl);
+  }
+
+  .td__steps {
+    counter-reset: step;
+    margin-block-start: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: var(--measure);
+  }
+
+  .td__step {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: var(--space-sm);
+    align-items: baseline;
+  }
+
+  /* Numbered in tracked caps rather than a bullet — no boxes, no containers. */
+  .td__step::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--rose-deep);
+  }
+
+  .td__addons {
+    margin-block-start: var(--space-lg);
+    max-width: 30rem;
+  }
+
+  .td__addon {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+    border-block-end: 1px solid var(--line-hair);
+  }
+
+  .td__more { padding-block-end: var(--space-2xl); }
+
+  .td__others {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-block-start: var(--space-lg);
+  }
+
+  .td__other {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px 20px;
+    border: 1px solid var(--line-hair);
+    border-radius: var(--r-tag);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color var(--dur-nav) var(--ease-reveal);
+  }
+
+  .td__other:hover { background-color: var(--lemon-chiffon); }
+
+  @media (min-width: 768px) {
+    .td__top { grid-template-columns: 0.9fr 1.1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
+    .td__cols { grid-template-columns: 1.2fr 0.8fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
+  }
+</style>

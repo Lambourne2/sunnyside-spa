@@ -16,12 +16,12 @@ import Figure from './Figure.astro';
       </p>
       <!-- DRAFT COPY -->
       <p class="t-body">
-        One room, one therapist, and the time set aside for it. You tell us what
-        hurts and what you would rather we left alone, and we work from there.
+        One room, one therapist, and the time set aside for it. You tell me what
+        hurts and what you would rather I left alone, and I work from there.
       </p>
       <!-- DRAFT COPY -->
       <p class="t-body">
-        We are on [STREET] in [NEIGHBOURHOOD], open [DAYS]. Parking is [PARKING].
+        I am on [STREET] in [NEIGHBOURHOOD], open [DAYS]. Parking is [PARKING].
       </p>
     </div>
 
@@ -46,7 +46,8 @@ import Figure from './Figure.astro';
 
   .welcome__copy { display: flex; flex-direction: column; gap: var(--space-md); }
 
-  .welcome__copy .t-quote { color: var(--rose-deep); }
+  /* Retargets the inherited quote colour instead of out-specifying .t-quote. */
+  .welcome__copy { --quote-color: var(--rose-deep); }
 
   /* Off-centre, per §8 — the copy column is wider and sits left, the arch
      hangs right and slightly high. Not a symmetrical two-up. */

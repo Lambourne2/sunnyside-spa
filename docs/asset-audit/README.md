@@ -1,5 +1,10 @@
 # Asset audit — 2026-08-05
 
+> **Booking is Square, and §8's "embedded scheduler" is not buildable on it.**
+> Square's embed hands off to their hosted booking site and they block framing,
+> so no CSS of ours can reach the flow. `/booking` is a branded handoff instead.
+> What can still be brought onto the palette lives in `src/config/site.ts`.
+>
 > **Sample photography is in place.** Twelve slots that were waiting on real
 > photography now hold Pexels samples, graded to one warm palette, listed with
 > their source URLs in `public/img/samples/SOURCES.json`. They are placeholders:

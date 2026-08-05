@@ -1,4 +1,6 @@
 ---
+import BookCta from './BookCta.astro';
+
 /**
  * §8 — "Mobile keeps a persistent bottom booking bar (shell background, rose
  * pill button, hairline top rule)."
@@ -11,7 +13,7 @@
 <div class="bookbar">
   <div class="bookbar__inner">
     <span class="t-meta bookbar__note">Appointments only</span>
-    <a class="btn btn--primary bookbar__cta" href="/booking/">Book a visit</a>
+    <BookCta />
   </div>
 </div>
 
@@ -36,7 +38,7 @@
 
   .bookbar__note { color: var(--ink-soft); }
 
-  .bookbar__cta { padding: 12px 22px; }
+  .bookbar__inner :global(.btn) { padding: 12px 22px; }
 
   @media (min-width: 640px) {
     .bookbar { display: none; }

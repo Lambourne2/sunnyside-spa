@@ -1,0 +1,35 @@
+---
+import { BOOKING } from '../config/site';
+
+/**
+ * The single conversion action, in one component so the Square handoff is
+ * described in exactly one place.
+ *
+ * Until BOOKING.configured is true this points at /booking/, which explains
+ * what is coming. Once the Square URL is in, it goes straight there.
+ *
+ * Square's booking site is a different origin, so it opens in a new tab and
+ * says so — sending someone off-site mid-flow without warning is how you lose
+ * them. `rel="noopener"` because the destination gets a window handle otherwise.
+ */
+interface Props {
+  label?: string;
+  /** `secondary` where a filled pill would be the second on screen; `on-dark` on the deep-sea band. */
+  variant?: 'primary' | 'secondary' | 'on-dark';
+  class?: string;
+}
+const { label = 'Book a visit', variant = 'primary', class: className = '' } = Astro.props;
+
+const live = BOOKING.configured && !BOOKING.url.startsWith('[');
+const href = live ? BOOKING.url : '/booking/';
+---
+
+<a
+  class:list={['btn', `btn--${variant}`, className]}
+  href={href}
+  target={live ? '_blank' : undefined}
+  rel={live ? 'noopener' : undefined}
+>
+  {label}
+  {live && <span class="visually-hidden">(opens Square booking in a new tab)</span>}
+</a>

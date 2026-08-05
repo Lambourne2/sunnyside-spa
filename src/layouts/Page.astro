@@ -1,0 +1,30 @@
+---
+import Base from './Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BookingBar from '../components/BookingBar.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+/** Shell for every page except the homepage, which has the full-bleed hero. */
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow: string;
+  heading: string;
+  lede?: string;
+}
+const { title, description, eyebrow, heading, lede } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  {/* No hero to sit over, so the nav starts condensed rather than transparent. */}
+  <SiteHeader solid />
+
+  <main id="main" tabindex="-1">
+    <PageHeader eyebrow={eyebrow} title={heading} lede={lede} />
+    <slot />
+  </main>
+
+  <SiteFooter />
+  <BookingBar />
+</Base>

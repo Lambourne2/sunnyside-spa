@@ -1,0 +1,154 @@
+---
+import Page from '../../layouts/Page.astro';
+import Icon from '../../components/Icon.astro';
+import Figure from '../../components/Figure.astro';
+import { TREATMENTS } from '../../data/treatments';
+
+/**
+ * Treatments index — §8 "filter by the five icons".
+ *
+ * The filter is progressive: without JS every treatment is shown and the
+ * controls are plain buttons that do nothing visible. With JS they toggle a
+ * data attribute on the list.
+ */
+---
+
+<Page
+  title="Treatments — Sunnyside Spa"
+  description="Massage, skincare, body, wellness and you time. Book a treatment in [NEIGHBOURHOOD], Utah."
+  eyebrow="Treatments"
+  heading="What we do"
+  lede="Five things, done properly, in one room. Pick the one that sounds like the week you have had."
+>
+  <section class="tx">
+    <div class="shell">
+      <div class="tx__filter" role="group" aria-label="Filter treatments">
+        <button class="tx__chip is-active" type="button" data-filter="all" aria-pressed="true">
+          <span class="t-eyebrow">All</span>
+        </button>
+        {
+          TREATMENTS.map((t) => (
+            <button class="tx__chip" type="button" data-filter={t.slug} aria-pressed="false">
+              <Icon name={t.icon} size={20} />
+              <span class="t-eyebrow">{t.name}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <ul class="tx__list" role="list" data-tx-list>
+        {
+          TREATMENTS.map((t) => (
+            <li class="tx__item reveal" data-slug={t.slug}>
+              <a class="tx__link" href={`/treatments/${t.slug}/`}>
+                <Figure class="tx__media" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} />
+                <span class="tx__body">
+                  <Icon name={t.icon} size={28} />
+                  <span class="t-h3">{t.name}</span>
+                  {/* DRAFT COPY except massage, which is §11 verbatim */}
+                  <span class="t-body tx__line">{t.line}</span>
+                  <span class="t-meta">From {t.price} · {t.duration}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="tx__empty t-body" data-tx-empty hidden>
+        Nothing under that one yet.
+      </p>
+    </div>
+  </section>
+</Page>
+
+<script is:inline>
+  (() => {
+    const list = document.querySelector('[data-tx-list]');
+    if (!list) return;
+    const chips = [...document.querySelectorAll('[data-filter]')];
+    const items = [...list.querySelectorAll('[data-slug]')];
+    const empty = document.querySelector('[data-tx-empty]');
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        const want = chip.dataset.filter;
+        chips.forEach((c) => {
+          const on = c === chip;
+          c.classList.toggle('is-active', on);
+          c.setAttribute('aria-pressed', String(on));
+        });
+        let shown = 0;
+        items.forEach((li) => {
+          const match = want === 'all' || li.dataset.slug === want;
+          li.hidden = !match;
+          if (match) shown++;
+        });
+        empty.hidden = shown > 0;
+      })
+    );
+  })();
+</script>
+
+<style>
+  .tx { padding-block: var(--space-2xl); }
+
+  .tx__filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-block-end: var(--space-2xl);
+  }
+
+  /* Hang tag pills (§5) — the same shape as buttons and badges. */
+  .tx__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 18px;
+    border: 1px solid var(--dusty-rose);
+    border-radius: var(--r-tag);
+    background: transparent;
+    color: var(--rose-deep);
+    cursor: pointer;
+    transition: background-color var(--dur-nav) var(--ease-reveal),
+                color var(--dur-nav) var(--ease-reveal);
+  }
+
+  /* currentColor in the `color` property resolves to the inherited value, so
+     the label follows the chip through its active state. */
+  .tx__chip { --eyebrow-color: currentColor; }
+
+  .tx__chip:hover { background-color: var(--lemon-chiffon); }
+
+  .tx__chip.is-active {
+    background-color: var(--rose-deep);
+    border-color: var(--rose-deep);
+    color: var(--shell);          /* 5.97:1 */
+  }
+
+  .tx__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .tx__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .tx__body { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .tx__line { max-width: 40ch; }
+
+  .tx__empty { margin-block-start: var(--space-xl); color: var(--ink-soft); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tx__link :global(.fig img) { transition: scale var(--dur-card) var(--ease-reveal); }
+    .tx__link:hover :global(.fig img) { scale: 1.03; }
+  }
+</style>

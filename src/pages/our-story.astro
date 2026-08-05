@@ -1,0 +1,152 @@
+---
+import Page from '../layouts/Page.astro';
+import Figure from '../components/Figure.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import BookCta from '../components/BookCta.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../config/site';
+
+/**
+ * Our story — §8: "founder photo, Caveat-heavy".
+ *
+ * Written in first person because Sunnyside is one person. That is also what
+ * makes it work: §1 asks for "a friend who happens to have excellent taste, not
+ * a clinic", and a solo practitioner saying "I" gets there in a way a corporate
+ * "we" never does.
+ *
+ * Every string below is DRAFT — the real story has to come from Peyton. The
+ * shape is right: what they did before, why they opened, what the room is like,
+ * and one thing that is true and slightly awkward, because that is what makes a
+ * founder page believable. The portrait is a sample; the alt text describes the
+ * stand-in photo, not the founder.
+ */
+const PORTRAIT = '/img/samples/founder.webp';
+---
+
+<Page
+  title="Our story — Sunnyside Spa"
+  description="Sunnyside Spa is one room and one therapist in [NEIGHBOURHOOD], Utah."
+  eyebrow="Our story"
+  heading="One room, one pair of hands"
+  lede="Sunnyside is not a chain and it is not a clinic. It is one treatment room, and me in it."
+>
+  <section class="st">
+    <div class="shell st__intro">
+      <Figure
+        class="st__portrait reveal"
+        shape="arch"
+        ratio="4 / 5"
+        src={PORTRAIT}
+        alt="A woman standing in a bare, sunlit room, hard shadow from a blind falling in stripes across her and the wall behind."
+        loading="eager"
+      />
+
+      <div class="st__copy reveal">
+        {/* DRAFT COPY */}
+        <p class="t-quote t-quote--tilt st__pull">I wanted somewhere that felt like a friend's house.</p>
+
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          I am [NAME]. I trained at [SCHOOL] and spent [YEARS] years working in
+          other people's rooms — a resort, a chiropractor's office, a place with
+          a water feature in reception that nobody ever looked at.
+        </p>
+
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          All of them were fine. None of them were quiet. You would come in
+          carrying whatever your week had been, and somebody would hand you a
+          laminated menu and ask if you wanted to add hot stones.
+        </p>
+
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          So Sunnyside is one room in [NEIGHBOURHOOD], booked one person at a
+          time. No upsell at the end. No music you have to pretend to like. If
+          you tell me your left shoulder is the problem, that is where the hour
+          goes.
+        </p>
+      </div>
+    </div>
+
+    <div class="shell"><WaveDivider size="full" /></div>
+
+    <div class="shell st__cols">
+      <div class="reveal">
+        <h2 class="t-h2">What I actually do</h2>
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          [CERTIFICATIONS AND MODALITIES]. I keep licences current with [BOARD]
+          and I will tell you plainly when something is outside what I do —
+          there is a physio two doors down who is better at [THING] than I am.
+        </p>
+      </div>
+
+      <div class="reveal">
+        <h2 class="t-h2">The room</h2>
+        {/* DRAFT COPY */}
+        <p class="t-body">
+          South-facing, so it gets the afternoon. Plaster walls, one plant that
+          has survived longer than expected, and a table that is heated in
+          winter because Utah in February is not a joke.
+        </p>
+      </div>
+    </div>
+
+    <div class="shell"><WaveDivider /></div>
+
+    <div class="shell st__close reveal">
+      <p class="st__mark" aria-hidden="true"><Icon name="you-time" size={36} /></p>
+      {/* DRAFT COPY */}
+      <p class="t-quote st__pull">Come as you are, leave more you.</p>
+      <p class="t-body st__note">
+        Sunnyside Spa · [STREET ADDRESS], {SITE.city}, UT
+      </p>
+      <BookCta />
+    </div>
+  </section>
+</Page>
+
+<style>
+  .st { padding-block: var(--space-2xl); }
+
+  .st__intro {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .st__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+
+  /* Caveat-heavy (§8), but still only a few moments per page (§4). */
+  .st__pull { --quote-color: var(--rose-deep); }
+
+  .st__cols {
+    display: grid;
+    gap: var(--space-2xl);
+    padding-block: var(--space-2xl);
+  }
+
+  .st__cols h2 { margin-block-end: var(--space-md); }
+
+  .st__close {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding-block: var(--space-2xl);
+  }
+
+  .st__mark { margin: 0; color: var(--dusty-rose); }
+
+  .st__note { color: var(--ink-soft); }
+
+  @media (min-width: 768px) {
+    .st__intro {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    }
+    .st__copy { padding-block-start: var(--space-lg); }
+    .st__cols { grid-template-columns: 1fr 1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
+  }
+</style>

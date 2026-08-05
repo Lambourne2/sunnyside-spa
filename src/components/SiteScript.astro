@@ -44,7 +44,8 @@
     const onScroll = () => {
       const y = window.scrollY;
 
-      if (nav) {
+      // Interior pages start condensed and stay that way.
+      if (nav && !nav.hasAttribute('data-nav-solid')) {
         // Condense once the hero has passed under the nav.
         const clearAt = hero ? hero.offsetHeight - nav.offsetHeight : 24;
         nav.classList.toggle('is-condensed', y > clearAt);

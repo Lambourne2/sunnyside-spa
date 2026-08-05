@@ -1,0 +1,67 @@
+---
+import WaveDivider from './WaveDivider.astro';
+
+/**
+ * Interior page header (§7).
+ *
+ * §7 wants a leaf-shadow PNG drifting across these on a 45s loop, so every page
+ * reads as lit by the same sun as the hero. That asset was not in the handoff.
+ * The overlay element and its keyframes are here and inert — drop the PNG in at
+ * --leaf-shadow and it starts moving. See docs/asset-audit.
+ */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+}
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<header class="phead grain">
+  <div class="phead__light" aria-hidden="true"></div>
+  <div class="shell phead__inner">
+    <p class="t-eyebrow">{eyebrow}</p>
+    <h1 class="t-display phead__title">{title}</h1>
+    {lede && <p class="t-body phead__lede">{lede}</p>}
+  </div>
+  <div class="shell"><WaveDivider /></div>
+</header>
+
+<style>
+  .phead {
+    position: relative;
+    padding-block: clamp(var(--space-xl), 6vw, var(--space-3xl)) var(--space-lg);
+    background-color: var(--lemon-chiffon);
+    overflow: hidden;
+  }
+
+  .phead__inner { position: relative; z-index: 2; }
+
+  .phead__title { margin-block: var(--space-2xs) var(--space-md); }
+
+  .phead__lede { max-width: 52ch; }
+
+  /* Inert until a leaf-shadow PNG exists. With --leaf-shadow set it becomes the
+     §7 signature: 45s drift, translate plus a 2% scale, multiply at ~0.18. */
+  .phead__light {
+    position: absolute;
+    inset: -10%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: multiply;
+    background-image: var(--leaf-shadow, none);
+    background-size: cover;
+    background-position: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .phead__light { animation: leaf-drift var(--dur-drift) linear infinite; }
+  }
+
+  @keyframes leaf-drift {
+    0%   { transform: translate3d(-2%, 0, 0) scale(1); }
+    50%  { transform: translate3d(2%, 1%, 0) scale(1.02); }
+    100% { transform: translate3d(-2%, 0, 0) scale(1); }
+  }
+</style>

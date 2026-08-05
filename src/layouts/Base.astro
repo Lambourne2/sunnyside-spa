@@ -37,6 +37,9 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <IconSprite />
+    {/* First tab stop on every page — the ribbon, wordmark, three nav links and
+        Book button otherwise sit in front of the content every single time. */}
+    <a class="skip-link" href="#main">Skip to content</a>
     <slot />
     {/* §10 — the whole page reads as one long afternoon. */}
     <div class="sun-wash" aria-hidden="true"></div>

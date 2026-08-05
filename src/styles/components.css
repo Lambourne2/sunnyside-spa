@@ -49,6 +49,18 @@
   background-color: color-mix(in srgb, var(--rose-deep) 86%, var(--ink));
 }
 
+/* On the deep-sea band the rose pill loses its footing — rose-deep against
+   deep-sea is only 1.7:1, so the button stops reading as a button. Chiffon on
+   deep-sea is 6.39:1 for the edge and ink on chiffon 13.28:1 for the label.
+   Global rather than scoped to the band, because a scoped rule cannot reach
+   into the BookCta component. */
+.btn--on-dark {
+  background-color: var(--lemon-chiffon);
+  color: var(--ink);
+}
+
+.btn--on-dark:hover { background-color: var(--royal-gold); }
+
 /* Secondary — 1px rose border, transparent fill, fills with chiffon (§9) */
 .btn--secondary {
   background-color: transparent;

@@ -1,0 +1,182 @@
+---
+import Page from '../layouts/Page.astro';
+import Figure from '../components/Figure.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import BookCta from '../components/BookCta.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, HOURS } from '../config/site';
+
+/** Visit — §8: hours, map, parking, what to expect on arrival. */
+const ARRIVAL = [
+  // DRAFT COPY
+  { title: 'Arrive fifteen minutes early', body: 'On a first visit that time is for changing, a short intake form, and a few minutes to say what you want out of the hour.' },
+  { title: 'The door', body: '[ENTRANCE DETAIL]. If it is locked I am mid-treatment — text and I will come down.' },
+  { title: 'What to bring', body: 'Nothing. There is a robe, slippers, and somewhere to lock your things. Bring socks for wellness sessions.' },
+  { title: 'Afterwards', body: 'There is water and a chair, and no rush. Nobody is waiting for the room.' },
+];
+---
+
+<Page
+  title="Visit — Sunnyside Spa"
+  description="Hours, parking and what to expect when you arrive at Sunnyside Spa in [NEIGHBOURHOOD], Utah."
+  eyebrow="Visit"
+  heading="Finding us"
+  lede="One room in [NEIGHBOURHOOD]. Here is where it is, when it is open, and what happens when you walk in."
+>
+  <section class="vs">
+    <div class="shell vs__top">
+      <div class="vs__facts reveal">
+        <div class="vs__block">
+          <h2 class="t-eyebrow">Where</h2>
+          <address class="t-body vs__address">
+            {SITE.street}<br />
+            {SITE.city}, {SITE.state} {SITE.zip}
+          </address>
+          <p class="vs__links">
+            <a class="link" href={`tel:${SITE.phone}`}>{SITE.phone}</a><br />
+            <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </p>
+        </div>
+
+        <div class="vs__block">
+          <h2 class="t-eyebrow">When</h2>
+          <dl class="vs__hours">
+            {
+              HOURS.map((h) => (
+                <div class="vs__hours-row">
+                  <dt class="t-body">{h.days}</dt>
+                  <dd class="t-body">{h.hours}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="t-body vs__note">Appointments only — the door is not staffed between them.</p>
+        </div>
+
+        <div class="vs__block">
+          <h2 class="t-eyebrow">Parking</h2>
+          {/* DRAFT COPY */}
+          <p class="t-body">[PARKING DETAIL]. [OVERFLOW PARKING DETAIL].</p>
+        </div>
+
+        <BookCta />
+      </div>
+
+      {/*
+        Map is a placeholder on purpose. Embedding Google Maps drops a
+        third-party iframe with its own cookies onto the page, which is a
+        privacy and performance decision rather than a layout one — worth
+        making deliberately once the real address exists. A static map image
+        with a link out is the lighter option and keeps §12's budget intact.
+      */}
+      <div class="vs__map reveal">
+        <div class="vs__map-plate grain">
+          <Icon name="wellness" size={40} />
+          <p class="t-eyebrow">Map goes here</p>
+          <p class="t-body vs__map-note">
+            Needs the real address. A static map image linking out to directions
+            keeps the page light; an embedded map adds a third-party frame and
+            its cookies.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell"><WaveDivider size="full" /></div>
+
+    <div class="shell vs__arrival">
+      <h2 class="t-h2">When you get here</h2>
+      <ol class="vs__steps">
+        {
+          ARRIVAL.map((a) => (
+            <li class="vs__step reveal">
+              <h3 class="t-h3">{a.title}</h3>
+              {/* DRAFT COPY */}
+              <p class="t-body">{a.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="shell">
+      <div class="vs__gallery reveal">
+        <Figure
+          shape="arch"
+          ratio="4 / 3"
+          src="/img/samples/room-wide.webp"
+          alt="A plaster wall and a shallow arch, cut across by the hard shadow of a window frame."
+        />
+      </div>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .vs { padding-block: var(--space-2xl); }
+
+  .vs__top { display: grid; gap: var(--space-2xl); align-items: start; }
+
+  .vs__facts { display: flex; flex-direction: column; gap: var(--space-xl); align-items: flex-start; }
+
+  .vs__block { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .vs__address { font-style: normal; }
+
+  .vs__links { line-height: 2; }
+
+  .vs__hours { margin: 0; }
+
+  .vs__hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-block: var(--space-2xs);
+    border-block-end: 1px solid var(--line-hair);
+    max-width: 22rem;
+  }
+
+  .vs__hours-row dd { margin: 0; }
+
+  .vs__note { color: var(--ink-soft); font-size: 0.9375rem; }
+
+  .vs__map-plate {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 22rem;
+    padding: var(--space-xl);
+    border-radius: var(--r-card);
+    border: 1px solid var(--line-hair);
+    background-color: var(--surface-tint);
+    color: var(--rose-deep);
+    --eyebrow-color: var(--rose-deep);
+  }
+
+  
+  .vs__map-note { color: var(--ink-soft); max-width: 38ch; font-size: 0.9375rem; }
+
+  .vs__arrival { padding-block: var(--space-2xl); }
+
+  .vs__steps {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block-start: var(--space-xl);
+  }
+
+  .vs__step { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  /* Held to a feature width — full bleed turned the arch into a dome that
+     swallowed the page. */
+  /* Nested inside .shell rather than sharing the element, so this sets its own
+     width instead of out-specifying the utility. Left-aligned like the rest of
+     the page — §13 rules out a centred-everything layout. */
+  .vs__gallery { padding-block-end: var(--space-2xl); max-width: 46rem; }
+
+  @media (min-width: 768px) {
+    .vs__top { grid-template-columns: 1fr 1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
+    .vs__steps { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
