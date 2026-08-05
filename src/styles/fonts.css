@@ -1,0 +1,28 @@
+/* Self-hosted, latin-subset only.
+   Jost and Caveat ship as variable fonts — Google Fonts serves one byte-identical
+   file for both requested weights of each, so we declare a weight range rather than
+   shipping duplicates. Total: 114 KB for three families. */
+
+@font-face {
+  font-family: 'Jost';
+  src: url('/fonts/jost.woff2') format('woff2');
+  font-weight: 300 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('/fonts/karla.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/caveat.woff2') format('woff2');
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}

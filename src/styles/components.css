@@ -1,0 +1,231 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Components — §9. Buttons, form fields, arch frame, cards, accordion.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── Buttons (§9) ───────────────────────────────────────────────────────────
+
+   SETTLED 2026-08-05 — see the amendment in docs/design.md §9.
+
+   §9 originally specified the primary button as "dusty rose fill, shell text".
+   Measured, that is 3.56:1, which fails the 4.5:1 floor in §12 for a small
+   tracked-caps label. §3 already prescribes the fix for exactly this case:
+   "If a panel needs body copy on it, darken the panel itself to --rose-deep
+   and set the text in shell." Applied here that is 5.97:1 and passes, so the
+   resting fill is --rose-deep. Confirmed by Peyton.
+
+   Consequence: §9's "hover darkens to --rose-deep" has nowhere left to go, so
+   hover mixes rose-deep toward ink. That mix is DERIVED from two existing
+   tokens rather than a new hex, but it is still a colour the doc does not name
+   — the one outstanding deviation in the button. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 14px 28px;              /* §9 */
+  border: 1px solid transparent;
+  border-radius: var(--r-tag);     /* §9 — full pill, the hang tag */
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 400;
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur-nav) var(--ease-reveal),
+              border-color     var(--dur-nav) var(--ease-reveal),
+              color            var(--dur-nav) var(--ease-reveal);
+}
+
+/* Primary — no lift, no shadow (§9) */
+.btn--primary {
+  background-color: var(--rose-deep);
+  color: var(--shell);
+}
+
+.btn--primary:hover {
+  background-color: color-mix(in srgb, var(--rose-deep) 86%, var(--ink));
+}
+
+/* Secondary — 1px rose border, transparent fill, fills with chiffon (§9) */
+.btn--secondary {
+  background-color: transparent;
+  border-color: var(--dusty-rose);
+  color: var(--rose-deep);
+}
+
+.btn--secondary:hover {
+  background-color: var(--lemon-chiffon);
+}
+
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Form fields (§9: underline only, no boxes, no fills) ───────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.field__label {           /* §9 — label sits above in eyebrow style */
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 400;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field__input {
+  padding: var(--space-xs) 0;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--dusty-rose);
+  border-radius: 0;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  transition: border-color var(--dur-nav) var(--ease-reveal),
+              border-width var(--dur-nav) var(--ease-reveal);
+}
+
+.field__input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+
+/* §9 — focus thickens to 2px and shifts to deep-sea, plus the visible ring.
+   Padding compensates for the extra border so nothing shifts by 1px. */
+.field__input:focus {
+  border-bottom-width: 2px;
+  border-bottom-color: var(--deep-sea);
+  padding-bottom: calc(var(--space-xs) - 1px);
+  outline: none;
+}
+
+.field__input:focus-visible {
+  outline: 2px solid var(--deep-sea);
+  outline-offset: 3px;
+}
+
+.field__error {
+  font-family: var(--font-body);
+  font-size: var(--fs-meta);
+  color: var(--rose-deep);
+}
+
+.field__input[aria-invalid='true'] { border-bottom-color: var(--rose-deep); }
+
+/* ── Arched image frame (§5, §9) ────────────────────────────────────────── */
+
+.arch {
+  overflow: hidden;
+  border-radius: var(--r-arch);
+  border: 1px solid var(--line-hair);   /* §9 — 1px rose at 30%, no shadow */
+  background-color: var(--surface-tint);
+}
+
+.arch > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hang tag — the other of the two image shapes (§5). Small / portrait only. */
+.hangtag {
+  overflow: hidden;
+  border-radius: var(--r-tag);
+  border: 1px solid var(--line-hair);
+  background-color: var(--surface-tint);
+}
+
+.hangtag > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Treatment card (§9) ────────────────────────────────────────────────── */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  border-radius: var(--r-card);
+}
+
+.card__media {
+  overflow: hidden;
+  border-radius: var(--r-arch);
+  border: 1px solid var(--line-hair);
+  background-color: var(--surface-tint);
+  aspect-ratio: 3 / 4;
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card__media img {
+    transition: scale var(--dur-card) var(--ease-reveal);
+  }
+  .card:hover .card__media img { scale: 1.03; }   /* §9 */
+}
+
+/* ── Accordion (§9: hairline rose rules, no containers) ─────────────────── */
+
+.accordion__item { border-block-end: 1px solid var(--line-hair); }
+
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-md) 0;
+  background: none;
+  border: 0;
+  text-align: start;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 400;
+  letter-spacing: var(--ls-h3);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.accordion__panel { padding-block-end: var(--space-md); }
+
+/* ── Tag / badge (§5 hang tag, §3 pearl aqua) ───────────────────────────── */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--r-tag);
+  background-color: var(--pearl-aqua);
+  color: var(--ink);                    /* 8.17:1 — verified */
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 400;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* ── Dark band (§8 — the only dark moment, the only place gold appears) ─── */
+
+/* Retargets the inherited type colours rather than out-specifying .t-* rules. */
+.band-dark {
+  background-color: var(--deep-sea);
+  color: var(--shell);                       /* 7.15:1 — verified */
+  --eyebrow-color: var(--lemon-chiffon);     /* 6.39:1 */
+  --meta-color: var(--lemon-chiffon);        /* 6.39:1 */
+  --quote-color: var(--royal-gold);          /* 5.76:1 */
+}

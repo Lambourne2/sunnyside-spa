@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+
+// Placeholder. The homepage is phase 3 — §8 defines its section order.
+---
+
+<Base title="Sunnyside Spa" description="A day spa in Utah. Book a treatment.">
+  <main class="stub grain">
+    <div class="shell">
+      <p class="t-eyebrow">Phase 1</p>
+      <h1 class="t-display">Sunnyside Spa</h1>
+      <WaveDivider />
+      <p class="t-body">
+        The design system is built. The homepage lands in phase 3, in the section
+        order given in <code>docs/design.md</code> §8.
+      </p>
+      <p><a class="link" href="/styleguide/">See the styleguide</a></p>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .stub { padding-block: var(--space-3xl); }
+  .stub .t-display { margin-block: var(--space-xs) var(--space-lg); }
+  .stub .t-body { margin-block: var(--space-lg); }
+</style>

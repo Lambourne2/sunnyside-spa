@@ -1,0 +1,654 @@
+---
+import Base from '../layouts/Base.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
+import { PALETTE, ratio, level } from '../lib/contrast';
+
+const brand = ['lemon-chiffon', 'royal-gold', 'dusty-rose', 'ocean-blue', 'pearl-aqua'] as const;
+const derived = ['shell', 'ink', 'ink-soft', 'rose-deep', 'deep-sea'] as const;
+
+/** fg, bg, note, restricted-to-large-text-by-§3 */
+const pairs: [keyof typeof PALETTE, keyof typeof PALETTE, string, boolean][] = [
+  ['ink', 'shell', 'Body copy on the page ground', false],
+  ['ink', 'lemon-chiffon', 'Body copy on chiffon sections', false],
+  ['ink-soft', 'shell', 'Captions and meta', false],
+  ['ink-soft', 'lemon-chiffon', 'Captions on chiffon', false],
+  ['rose-deep', 'shell', 'Rose text and links', false],
+  ['rose-deep', 'lemon-chiffon', 'Rose text on chiffon', false],
+  ['shell', 'deep-sea', 'Light text on the dark band', false],
+  ['lemon-chiffon', 'deep-sea', 'Chiffon text on the dark band', false],
+  ['royal-gold', 'deep-sea', 'Gold headings on the dark band', false],
+  ['ink', 'pearl-aqua', 'Text on aqua tags', false],
+  ['dusty-rose', 'shell', 'Rose line art on shell', true],
+  ['dusty-rose', 'lemon-chiffon', 'Rose on chiffon', true],
+  ['ocean-blue', 'shell', 'Ocean blue on shell', true],
+];
+
+const typeScale = [
+  ['display', 'clamp(2.5rem, 6vw, 4.5rem)', 'Jost 300 · 0.10em · uppercase'],
+  ['h2', 'clamp(1.5rem, 2.6vw, 2.25rem)', 'Jost 300 · 0.16em · uppercase'],
+  ['h3', '1.125rem', 'Jost 400 · 0.20em · uppercase'],
+  ['eyebrow', '0.6875rem', 'Jost 400 · 0.28em · uppercase'],
+  ['quote', 'clamp(1.75rem, 4vw, 3rem)', 'Caveat 600 · sentence case'],
+  ['body', '1.0625rem / 1.75', 'Karla 400 · max 62ch'],
+  ['meta', '0.8125rem', 'Jost 400 · 0.14em'],
+];
+
+const icons = [
+  ['massage', 'Massage'],
+  ['skincare', 'Skincare'],
+  ['body', 'Body'],
+  ['wellness', 'Wellness'],
+  ['you-time', 'You time'],
+] as const;
+
+const btnSpecced = ratio(PALETTE.shell, PALETTE['dusty-rose']);
+const btnFixed = ratio(PALETTE.shell, PALETTE['rose-deep']);
+const btnInkOnRose = ratio(PALETTE.ink, PALETTE['dusty-rose']);
+---
+
+<Base title="Styleguide — Sunnyside Spa" description="The Sunnyside Spa design system: tokens, type, shape, motion.">
+  <header class="sg-head grain">
+    <div class="shell">
+      <p class="t-eyebrow">Sunnyside Spa</p>
+      <h1 class="t-display">Styleguide</h1>
+      <p class="t-body sg-lede">
+        Every value on this page comes from <code>docs/design.md</code> §3–§10.
+        Contrast ratios are measured at build time, not transcribed.
+      </p>
+    </div>
+  </header>
+
+  <div class="shell"><WaveDivider size="full" /></div>
+
+  <!-- ── Colour ───────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-colour">
+    <p class="t-eyebrow">§3</p>
+    <h2 class="t-h2" id="sg-colour">Colour</h2>
+
+    <h3 class="t-h3 sg-sub">Brand palette (locked)</h3>
+    <ul class="sg-swatches">
+      {brand.map((name) => (
+        <li class="sg-swatch">
+          <span class="sg-swatch__chip grain" style={`background:${PALETTE[name]}`}></span>
+          <span class="t-meta">{name}</span>
+          <code class="sg-hex">{PALETTE[name]}</code>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="t-h3 sg-sub">Required extensions</h3>
+    <p class="t-body">The brand palette has no legible text colour. These carry it.</p>
+    <ul class="sg-swatches">
+      {derived.map((name) => (
+        <li class="sg-swatch">
+          <span class="sg-swatch__chip grain" style={`background:${PALETTE[name]}`}></span>
+          <span class="t-meta">{name}</span>
+          <code class="sg-hex">{PALETTE[name]}</code>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="t-h3 sg-sub">Verified contrast</h3>
+    <div class="sg-tablewrap">
+      <table class="sg-table">
+        <thead>
+          <tr><th scope="col">Pair</th><th scope="col">Ratio</th><th scope="col">AA</th><th scope="col">Use</th></tr>
+        </thead>
+        <tbody>
+          {pairs.map(([fg, bg, note, large]) => {
+            const lv = level(PALETTE[fg], PALETTE[bg], large);
+            return (
+              <tr>
+                <td>
+                  <span class="sg-pairchip" style={`background:${PALETTE[bg]};color:${PALETTE[fg]}`}>Aa</span>
+                  <code>{fg} on {bg}</code>
+                </td>
+                <td><strong>{ratio(PALETTE[fg], PALETTE[bg])}:1</strong></td>
+                <td>
+                  <span class:list={['sg-badge', `sg-badge--${lv}`]}>
+                    {lv === 'pass' ? 'Pass' : lv === 'large-only' ? 'Large only' : 'Fail'}
+                  </span>
+                </td>
+                <td class="t-meta sg-note">{note}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Type ─────────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-type">
+    <p class="t-eyebrow">§4</p>
+    <h2 class="t-h2" id="sg-type">Type</h2>
+    <p class="t-body">
+      Jost, Karla, Caveat — self-hosted, latin subset, 114 KB total. No serif in
+      any type the site sets.
+    </p>
+
+    <dl class="sg-scale">
+      {typeScale.map(([name, size, treat]) => (
+        <div class="sg-scale__row">
+          <dt class="t-meta">{name}<br /><span class="sg-dim">{size}</span></dt>
+          <dd>
+            <p class:list={[`t-${name === 'body' ? 'body' : name}`]}>
+              {name === 'quote'
+                ? 'Come as you are, leave more you.'
+                : name === 'body'
+                  ? 'Sixty minutes, warm oil, and someone who actually listens when you say where it hurts.'
+                  : 'Sunshine for your soul'}
+            </p>
+            <p class="t-meta sg-dim">{treat}</p>
+          </dd>
+        </div>
+      ))}
+    </dl>
+
+    <h3 class="t-h3 sg-sub">Handwriting, used sparingly</h3>
+    <p class="t-body">
+      Caveat is reserved for three or four emotional moments per page — never
+      nav, buttons, forms, or repeated UI.
+    </p>
+    <p class="t-quote t-quote--tilt">Two hours that are only yours</p>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Shape ────────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-shape">
+    <p class="t-eyebrow">§5</p>
+    <h2 class="t-h2" id="sg-shape">Shape and texture</h2>
+    <p class="t-body">
+      Two image shapes, not one and not three. Arch for hero-adjacent and feature
+      images, hang tag for the small ones.
+    </p>
+
+    <div class="sg-shapes">
+      <figure class="sg-figure">
+        <div class="arch sg-arch grain"></div>
+        <figcaption class="t-meta">Arch · <code>50vw 50vw 4px 4px</code></figcaption>
+      </figure>
+      <figure class="sg-figure">
+        <div class="hangtag sg-tag grain"></div>
+        <figcaption class="t-meta">Hang tag · <code>999px</code></figcaption>
+      </figure>
+      <figure class="sg-figure">
+        <div class="sg-card-demo grain"></div>
+        <figcaption class="t-meta">Card · <code>6px</code></figcaption>
+      </figure>
+    </div>
+
+    <h3 class="t-h3 sg-sub">Grain</h3>
+    <p class="t-body">
+      An <code>feTurbulence</code> overlay at 3.5% on every flat colour field.
+      Left panel has it, right panel doesn't.
+    </p>
+    <div class="sg-grain-compare">
+      <div class="sg-grain-panel grain"><span class="t-meta">With grain</span></div>
+      <div class="sg-grain-panel"><span class="t-meta">Flat</span></div>
+    </div>
+
+    <h3 class="t-h3 sg-sub">Wave divider</h3>
+    <p class="t-body">
+      Never a straight rule. Two waves, drifting ±6px on different cycles so they
+      never move in lockstep.
+    </p>
+    <WaveDivider size="full" />
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Line art ─────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-icons">
+    <p class="t-eyebrow">§5 · §2.2</p>
+    <h2 class="t-h2" id="sg-icons">Line art</h2>
+    <p class="t-body">
+      The five icons are the service taxonomy. Single weight, round caps, no
+      fills, no second colour. Stroke scales with the icon so it never thins out.
+    </p>
+    <p class="sg-flag">
+      <strong>Drawn, not traced.</strong> These exist in the supplied assets only
+      as pixels inside the identity board, so they are fresh drawings in the §5
+      style. Authorised 2026-08-05 — worth a look before they go in the
+      treatments grid.
+    </p>
+
+    <ul class="sg-icons">
+      {icons.map(([name, labelText]) => (
+        <li class="sg-icon">
+          <Icon name={name} size={48} />
+          <span class="t-eyebrow">{labelText}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="t-h3 sg-sub">One weight at every size</h3>
+    <ul class="sg-icon-scale">
+      {[24, 32, 48, 72].map((s) => (
+        <li><Icon name="massage" size={s} /><span class="t-meta">{s}px</span></li>
+      ))}
+    </ul>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Logo ─────────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-logo">
+    <p class="t-eyebrow">§6</p>
+    <h2 class="t-h2" id="sg-logo">Logo</h2>
+    <p class="sg-flag">
+      <strong>Raster, masked.</strong> The supplied lockups are PNG-8, not SVG.
+      They are black-on-transparent, so masking recolours one file by context —
+      but they stay soft above ~285px wide and cannot do the §10 draw-on. The
+      wide/OG lockup was not supplied and is deliberately absent rather than
+      faked. Swapping in real SVGs later is a one-line change in{' '}
+      <code>Logo.astro</code>.
+    </p>
+
+    <div class="sg-logos">
+      <figure class="sg-figure">
+        <div class="sg-logo-plate grain"><Logo variant="horizontal" width={260} label="Sunnyside Spa" /></div>
+        <figcaption class="t-meta">Horizontal · desktop nav, footer</figcaption>
+      </figure>
+      <figure class="sg-figure">
+        <div class="sg-logo-plate grain"><Logo variant="stacked" width={180} /></div>
+        <figcaption class="t-meta">Stacked · mobile hero, hang-tag cards</figcaption>
+      </figure>
+      <figure class="sg-figure">
+        <div class="sg-logo-plate grain"><Logo variant="logomark" width={72} /></div>
+        <figcaption class="t-meta">Logomark · favicon, condensed nav</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="t-h3 sg-sub">Recolours by context</h3>
+    <div class="sg-logos">
+      <div class="sg-logo-plate sg-logo-plate--rose grain"><Logo variant="logomark" width={56} /></div>
+      <div class="sg-logo-plate sg-logo-plate--dark grain"><Logo variant="logomark" width={56} /></div>
+      <div class="sg-logo-plate sg-logo-plate--aqua grain"><Logo variant="logomark" width={56} /></div>
+    </div>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Buttons ──────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-buttons">
+    <p class="t-eyebrow">§9</p>
+    <h2 class="t-h2" id="sg-buttons">Buttons</h2>
+
+    <p class="sg-flag sg-flag--decide">
+      <strong>Settled 2026-08-05.</strong> §9 originally read “dusty rose fill,
+      shell text”, which measures <strong>{btnSpecced}:1</strong> and fails the
+      4.5:1 floor in §12 for a small tracked-caps label. No text colour rescues
+      it — ink on dusty rose is only <strong>{btnInkOnRose}:1</strong>, so that
+      mid-tone fill is a dead zone in both directions. §3's own rule applies:
+      darken the panel to <code>--rose-deep</code>, text in shell, which measures{' '}
+      <strong>{btnFixed}:1</strong>. §9 has been amended to match. The one
+      remaining deviation is hover, which mixes rose-deep toward ink because the
+      named palette has nothing darker.
+    </p>
+
+    <div class="sg-buttons">
+      <div class="sg-btn-demo">
+        <a class="btn btn--primary" href="#sg-buttons">Book a visit</a>
+        <p class="t-meta">Primary · rose-deep · {btnFixed}:1 · <span class="sg-badge sg-badge--pass">Pass</span></p>
+      </div>
+      <div class="sg-btn-demo">
+        <a class="btn btn--secondary" href="#sg-buttons">See treatments</a>
+        <p class="t-meta">Secondary · fills with chiffon on hover</p>
+      </div>
+      <div class="sg-btn-demo">
+        <button class="btn btn--primary" type="button" disabled>Booked.</button>
+        <p class="t-meta">Disabled</p>
+      </div>
+    </div>
+
+    <h3 class="t-h3 sg-sub">Text link</h3>
+    <p class="t-body">
+      A <a class="link" href="#sg-buttons">text link</a> is ink with a 1px rose
+      underline offset 4px. On hover the underline redraws left to right over 300ms.
+    </p>
+
+    <h3 class="t-h3 sg-sub">Tag</h3>
+    <p><span class="tag">60 min</span> <span class="tag">New</span></p>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Forms ────────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-forms">
+    <p class="t-eyebrow">§9</p>
+    <h2 class="t-h2" id="sg-forms">Form fields</h2>
+    <p class="t-body">
+      Underline only. No boxes, no fills. Focus thickens the rule to 2px and
+      shifts it to deep-sea, plus a visible offset ring for keyboard users.
+    </p>
+
+    <form class="sg-form" novalidate>
+      <div class="field">
+        <label class="field__label" for="sg-name">Name</label>
+        <input class="field__input" id="sg-name" name="name" type="text" placeholder="Your name" />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="sg-email">Email</label>
+        <input class="field__input" id="sg-email" name="email" type="email" placeholder="you@example.com" />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="sg-email-bad">Email, with an error</label>
+        <input
+          class="field__input"
+          id="sg-email-bad"
+          name="email-bad"
+          type="email"
+          value="peyton.example.com"
+          aria-invalid="true"
+          aria-describedby="sg-email-bad-err"
+        />
+        <p class="field__error" id="sg-email-bad-err">That email is missing an @.</p>
+      </div>
+
+      <button class="btn btn--primary" type="button">Join the list</button>
+    </form>
+  </section>
+
+  <div class="shell"><WaveDivider /></div>
+
+  <!-- ── Dark band ────────────────────────────────────────────────────── -->
+  <section class="band-dark grain sg-band" aria-labelledby="sg-band">
+    <div class="shell">
+      <p class="t-eyebrow">§8 · the only dark moment</p>
+      <h2 class="t-h2" id="sg-band">The closer</h2>
+      <p class="t-quote">Two hours that are only yours</p>
+      <p class="t-body sg-band__body">
+        The only place royal gold appears. Blue is punctuation — one full-bleed
+        band and the footer, nothing more.
+      </p>
+      <a class="btn btn--primary" href="#sg-band">Book a visit</a>
+    </div>
+  </section>
+
+  <!-- ── Motion ───────────────────────────────────────────────────────── -->
+  <section class="shell sg-section" aria-labelledby="sg-motion">
+    <p class="t-eyebrow">§10</p>
+    <h2 class="t-h2" id="sg-motion">Motion</h2>
+    <div class="sg-tablewrap">
+      <table class="sg-table">
+        <thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Used by</th></tr></thead>
+        <tbody>
+          <tr><td><code>--ease-reveal</code></td><td><code>cubic-bezier(0.22, 0.61, 0.36, 1)</code></td><td class="t-meta">Every reveal and transition</td></tr>
+          <tr><td><code>--dur-reveal</code></td><td>700ms</td><td class="t-meta">Scroll reveals, 24px rise + fade</td></tr>
+          <tr><td><code>--dur-stagger</code></td><td>80ms</td><td class="t-meta">Between siblings</td></tr>
+          <tr><td><code>--dur-nav</code></td><td>240ms</td><td class="t-meta">Nav condense, button states</td></tr>
+          <tr><td><code>--dur-link</code></td><td>300ms</td><td class="t-meta">Underline redraw</td></tr>
+          <tr><td><code>--dur-card</code></td><td>800ms</td><td class="t-meta">Treatment card image scale</td></tr>
+          <tr><td><code>--dur-draw</code></td><td>900ms</td><td class="t-meta">Logomark draw-on <span class="sg-dim">(needs vectors)</span></td></tr>
+          <tr><td><code>--dur-wave</code></td><td>12s</td><td class="t-meta">Wave divider drift</td></tr>
+          <tr><td><code>--dur-drift</code></td><td>45s</td><td class="t-meta">Leaf shadow <span class="sg-dim">(needs the overlay PNG)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sg-flag">
+      Two motion tokens have no asset behind them yet: the §10 logomark draw-on
+      needs real SVG paths, and the §7 leaf-shadow drift needs a leaf overlay PNG
+      that wasn't in the handoff. Both are wired up and inert.
+    </p>
+  </section>
+
+  <footer class="sg-foot grain">
+    <div class="shell">
+      <p class="t-meta">Sunnyside Spa · styleguide · phase 1</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .sg-head {
+    padding-block: var(--space-2xl) var(--space-xl);
+    background-color: var(--surface-soft);
+  }
+
+  .sg-lede { margin-top: var(--space-md); }
+
+  .sg-section { padding-block: var(--space-2xl); }
+
+  .sg-section > .t-h2 { margin-block: var(--space-2xs) var(--space-md); }
+
+  .sg-sub { margin-block: var(--space-xl) var(--space-sm); }
+
+  .sg-dim { color: var(--ink-soft); }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+  }
+
+  /* Swatches */
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+  }
+
+  .sg-swatch { display: flex; flex-direction: column; gap: var(--space-2xs); }
+
+  .sg-swatch__chip {
+    display: block;
+    height: 72px;
+    border-radius: var(--r-card);
+    border: 1px solid var(--line-hair);
+  }
+
+  .sg-hex { color: var(--ink-soft); }
+
+  /* Tables */
+  .sg-tablewrap { overflow-x: auto; margin-top: var(--space-md); }
+
+  .sg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-meta);
+  }
+
+  .sg-table th,
+  .sg-table td {
+    padding: var(--space-sm) var(--space-md) var(--space-sm) 0;
+    text-align: start;
+    vertical-align: middle;
+    border-block-end: 1px solid var(--line-hair);
+    white-space: nowrap;
+  }
+
+  .sg-table th {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    font-size: var(--fs-eyebrow);
+    color: var(--ink-soft);
+  }
+
+  .sg-note { white-space: normal; }
+
+  .sg-pairchip {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 1.6rem;
+    margin-inline-end: var(--space-xs);
+    border-radius: 3px;
+    border: 1px solid var(--line-hair);
+    font-family: var(--font-body);
+    vertical-align: middle;
+  }
+
+  .sg-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: var(--r-tag);
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+  }
+
+  .sg-badge--pass { background: var(--pearl-aqua); color: var(--ink); }
+  .sg-badge--large-only { background: var(--lemon-chiffon); color: var(--ink); }
+  .sg-badge--fail { background: var(--rose-deep); color: var(--shell); }
+
+  /* Type scale */
+  .sg-scale { margin-top: var(--space-md); }
+
+  .sg-scale__row {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-lg);
+    padding-block: var(--space-lg);
+    border-block-end: 1px solid var(--line-hair);
+    align-items: baseline;
+  }
+
+  .sg-scale__row dd { margin: 0; }
+
+  @media (max-width: 640px) {
+    .sg-scale__row { grid-template-columns: 1fr; gap: var(--space-xs); }
+  }
+
+  /* Shapes */
+  .sg-shapes,
+  .sg-logos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-md);
+    align-items: end;
+  }
+
+  .sg-figure { margin: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .sg-arch { aspect-ratio: 3 / 4; background-color: var(--surface-tint); }
+  .sg-tag { aspect-ratio: 3 / 4; background-color: var(--surface-aqua); }
+
+  .sg-card-demo {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--r-card);
+    border: 1px solid var(--line-hair);
+    background-color: var(--surface-soft);
+  }
+
+  /* Grain compare */
+  .sg-grain-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+  }
+
+  .sg-grain-panel {
+    display: grid;
+    place-items: center;
+    min-height: 130px;
+    border-radius: var(--r-card);
+    background-color: var(--rose-deep);
+    --meta-color: var(--shell);   /* 5.97:1 */
+  }
+
+  /* Icons */
+  .sg-icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+  }
+
+  .sg-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    text-align: center;
+  }
+
+  .sg-icon-scale {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-xl);
+    margin-top: var(--space-md);
+  }
+
+  .sg-icon-scale li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  /* Logo plates */
+  .sg-logo-plate {
+    display: grid;
+    place-items: center;
+    padding: var(--space-lg);
+    min-height: 130px;
+    border-radius: var(--r-card);
+    background-color: var(--surface-soft);
+    color: var(--ink);
+  }
+
+  .sg-logo-plate--rose { background-color: var(--rose-deep); color: var(--shell); }
+  .sg-logo-plate--dark { background-color: var(--deep-sea); color: var(--royal-gold); }
+  .sg-logo-plate--aqua { background-color: var(--pearl-aqua); color: var(--ink); }
+
+  /* Buttons */
+  .sg-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+    margin-top: var(--space-lg);
+  }
+
+  .sg-btn-demo { display: flex; flex-direction: column; gap: var(--space-xs); align-items: flex-start; }
+
+  /* Flags */
+  .sg-flag {
+    max-width: var(--measure);
+    margin-top: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-inline-start: 2px solid var(--dusty-rose);
+    background-color: var(--surface-tint);
+    border-radius: 0 var(--r-card) var(--r-card) 0;
+    font-size: var(--fs-meta);
+    line-height: 1.7;
+  }
+
+  .sg-flag--decide { border-inline-start-color: var(--deep-sea); }
+
+  /* Form */
+  .sg-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    max-width: 26rem;
+    margin-top: var(--space-lg);
+    align-items: flex-start;
+  }
+
+  .sg-form .field { width: 100%; }
+
+  /* Dark band */
+  .sg-band { padding-block: var(--space-2xl); margin-block: var(--space-2xl); }
+  .sg-band .t-quote { margin-block: var(--space-md); }
+  .sg-band__body { margin-block-end: var(--space-lg); }
+
+  .sg-foot {
+    padding-block: var(--space-xl);
+    background-color: var(--surface-soft);
+    margin-block-start: var(--space-2xl);
+  }
+</style>

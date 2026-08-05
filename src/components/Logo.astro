@@ -1,0 +1,73 @@
+---
+/**
+ * Logo — §6 gives each lockup a fixed role so the same logo never appears at
+ * two different proportions on one screen.
+ *
+ * ── Why this is a CSS mask and not an <svg> ───────────────────────────────
+ * The supplied lockups are PNG-8, not SVG (docs/asset-audit/README.md §1).
+ * They are pure black on transparent — the palette has exactly one opaque
+ * entry — so the alpha channel IS the artwork and masking recolours a single
+ * file by context, which is what §6 asks for. It is not a substitute for real
+ * vectors: at 570px these are soft above ~285px wide, and `stroke-dashoffset`
+ * draw-on (§10) needs real paths and cannot run on a mask.
+ *
+ * ── Swapping to SVG later ─────────────────────────────────────────────────
+ * Change the `src` values in ASSETS below to the .svg files and delete nothing
+ * else. Every caller keeps working, sizes and aspect ratios are already right.
+ *
+ * MISSING: the wide/banner lockup for OG and Twitter cards (§6 wants four
+ * lockups; three were supplied). `wide` is intentionally absent here rather
+ * than faked by stretching another file.
+ */
+export type LogoVariant = 'horizontal' | 'stacked' | 'logomark';
+
+const ASSETS: Record<LogoVariant, { src: string; w: number; h: number }> = {
+  horizontal: { src: '/brand/logo-horizontal.png', w: 570, h: 192 },
+  stacked:    { src: '/brand/logo-stacked.png',    w: 570, h: 298 },
+  logomark:   { src: '/brand/logomark.png',        w: 680, h: 680 },
+};
+
+interface Props {
+  variant?: LogoVariant;
+  /** Rendered width. Height follows the artwork's aspect ratio, so no CLS. */
+  width?: number;
+  /** Accessible name. Omit when a nearby heading already names the brand. */
+  label?: string;
+  class?: string;
+}
+
+const {
+  variant = 'horizontal',
+  width = 220,
+  label,
+  class: className = '',
+} = Astro.props;
+
+const asset = ASSETS[variant];
+const decorative = label === undefined;
+---
+
+<span
+  class:list={['logo', className]}
+  role={decorative ? 'presentation' : 'img'}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={label}
+  style={`--logo-src:url('${asset.src}');--logo-w:${width}px;--logo-ratio:${asset.w} / ${asset.h};`}
+></span>
+
+<style>
+  .logo {
+    display: block;
+    width: var(--logo-w);
+    aspect-ratio: var(--logo-ratio);
+    background-color: currentColor;
+    -webkit-mask-image: var(--logo-src);
+            mask-image: var(--logo-src);
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+            mask-position: center;
+    -webkit-mask-size: contain;
+            mask-size: contain;
+  }
+</style>

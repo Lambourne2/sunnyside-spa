@@ -1,0 +1,47 @@
+---
+/**
+ * Icon — references a symbol from IconSprite.astro (rendered once in the layout).
+ * Colour comes from `currentColor`, so an icon recolours by context (§2.2).
+ */
+export type IconName =
+  | 'massage'
+  | 'skincare'
+  | 'body'
+  | 'wellness'
+  | 'you-time'
+  | 'rays';
+
+interface Props {
+  name: IconName;
+  /** Box size in px. Stroke scales with it, per §2.2. */
+  size?: number;
+  /** Accessible name. Omit for decorative icons — they get aria-hidden. */
+  label?: string;
+  class?: string;
+}
+
+const { name, size = 24, label, class: className = '' } = Astro.props;
+const decorative = label === undefined;
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  role={decorative ? 'presentation' : 'img'}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={label}
+  focusable="false"
+>
+  {!decorative && <title>{label}</title>}
+  <use href={`#icon-${name}`} />
+</svg>
+
+<style>
+  .icon {
+    display: block;
+    flex: none;
+    color: var(--line);
+  }
+</style>

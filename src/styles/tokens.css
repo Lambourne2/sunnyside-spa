@@ -1,0 +1,97 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Sunnyside Spa — design tokens
+   Every value here traces to docs/design.md §3, §4, §5, §9, §10.
+   Nothing may be added that isn't in the doc. See CLAUDE.md.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Brand palette (§3, locked) ───────────────────────────────────────── */
+  --lemon-chiffon: #F4EDBE;  /* soft section grounds, cards, ribbons        */
+  --royal-gold:    #F8E16C;  /* on dark only: headings, marks, highlights   */
+  --dusty-rose:    #A57878;  /* line art, icons, decorative rules, tints    */
+  --ocean-blue:    #2E86AB;  /* accent only — never a text color on light   */
+  --pearl-aqua:    #8BC6BA;  /* tags, badges, quiet panels, hover states    */
+
+  /* ── Required extensions (§3) ─────────────────────────────────────────── */
+  /* The brand palette has no legible text color. These are measured, not
+     estimated — see the verified ratios in the comments. */
+  --shell:     #FCF8EF;  /* default page background — warm paper, never #FFF */
+  --ink:       #2A211C;  /* body copy — warm espresso,  14.87:1 on shell     */
+  --ink-soft:  #6E5A50;  /* secondary copy, captions,    6.11:1 on shell     */
+  --rose-deep: #7E5555;  /* rose as text or links,       5.97:1 on shell     */
+  --deep-sea:  #1D5A75;  /* carries light text,   shell  7.15:1 on it        */
+
+  /* ── Surface roles (§3 surface ratio: 55% shell+chiffon, 10% rose tint) ── */
+  --surface-page:  var(--shell);
+  --surface-soft:  var(--lemon-chiffon);
+  --surface-dark:  var(--deep-sea);
+  --surface-tint:  color-mix(in srgb, var(--dusty-rose) 14%, var(--shell));
+  --surface-aqua:  color-mix(in srgb, var(--pearl-aqua) 30%, var(--shell));
+
+  /* ── Line art (§2.2 — one stroke weight for everything) ───────────────── */
+  --line:        var(--dusty-rose);
+  --line-hair:   color-mix(in srgb, var(--dusty-rose) 30%, transparent);
+  --stroke-w:    1.5;    /* unitless, at a 24px icon box; scales with size   */
+
+  /* ── Type families (§4 — no serif in DOM type) ────────────────────────── */
+  --font-display: 'Jost', system-ui, sans-serif;
+  --font-body:    'Karla', system-ui, sans-serif;
+  --font-hand:    'Caveat', system-ui, cursive;
+
+  /* ── Type scale (§4) ──────────────────────────────────────────────────── */
+  --fs-display: clamp(2.5rem, 6vw, 4.5rem);
+  --fs-h2:      clamp(1.5rem, 2.6vw, 2.25rem);
+  --fs-h3:      1.125rem;
+  --fs-eyebrow: 0.6875rem;
+  --fs-quote:   clamp(1.75rem, 4vw, 3rem);
+  --fs-body:    1.0625rem;
+  --fs-meta:    0.8125rem;
+
+  --ls-display: 0.10em;
+  --ls-h2:      0.16em;
+  --ls-h3:      0.20em;
+  --ls-eyebrow: 0.28em;
+  --ls-meta:    0.14em;
+  --ls-button:  0.24em;  /* §9 */
+
+  --lh-body:    1.75;
+  --lh-tight:   1.2;
+
+  --measure:    62ch;    /* §4 — body copy maxes at 62 characters per line   */
+
+  /* ── Shape (§5) ───────────────────────────────────────────────────────── */
+  --r-arch: 50vw 50vw 4px 4px;  /* the plaster doorway — primary image shape */
+  --r-tag:  999px;              /* hang tag: buttons, badges, small images   */
+  --r-card: 6px;                /* §5 — cards stay 4–8px, not 16px           */
+
+  /* ── Shadow (§9 — the only shadow on the site) ────────────────────────── */
+  --shadow-warm: 0 20px 40px -24px rgba(42, 33, 28, 0.22);
+
+  /* ── Motion (§10) ─────────────────────────────────────────────────────── */
+  --ease-reveal:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-reveal:   700ms;
+  --dur-stagger:   80ms;
+  --dur-nav:      240ms;
+  --dur-draw:     900ms;
+  --dur-link:     300ms;
+  --dur-card:     800ms;
+  --dur-wave:      12s;
+  --dur-drift:     45s;
+
+  /* ── Grain (§5 — 3–4% on every flat color field) ──────────────────────── */
+  --grain-opacity: 0.035;
+  --grain-tile:    180px;
+
+  /* ── Spacing ──────────────────────────────────────────────────────────── */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  --gutter:    clamp(1.25rem, 5vw, 3rem);
+  --max-w:     72rem;
+}

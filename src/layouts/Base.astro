@@ -1,0 +1,39 @@
+---
+import IconSprite from '../components/IconSprite.astro';
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+
+    <!-- Downscaled from the supplied logomark onto a shell ground.
+         §6 wants a hand-tuned simplified variant at 32px because the rays fill
+         in and turn to mud — that still needs doing, and needs vectors. -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Self-hosted and subset. Preloaded because all three are used above the
+         fold on most pages; §12's transfer budget covers them at 114 KB total. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jost.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/karla.woff2" crossorigin />
+  </head>
+  <body>
+    <IconSprite />
+    <slot />
+  </body>
+</html>

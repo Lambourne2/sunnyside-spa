@@ -1,0 +1,214 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Base — reset, document defaults, type primitives, grain, motion primitives
+   ───────────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body,
+h1, h2, h3, h4, p, figure, blockquote, dl, dd,
+fieldset, legend { margin: 0; }
+
+fieldset { padding: 0; border: 0; }
+
+body {
+  min-height: 100dvh;
+  background-color: var(--surface-page);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+svg { display: block; max-width: 100%; }
+
+input,
+button,
+textarea,
+select { font: inherit; color: inherit; }
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* ── Type primitives (§4) ───────────────────────────────────────────────── */
+
+.t-display,
+.t-h2,
+.t-h3,
+.t-eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: var(--lh-tight);
+}
+
+/* §4 lists `meta` in the scale but NOT in the uppercase role row — that row
+   covers eyebrows, labels, nav, buttons and prices at 0.28em. Meta is the
+   0.14em caption role, so it stays sentence case; long captions in tracked
+   caps are hard to read. Add .t-meta--caps for prices and durations. */
+.t-meta {
+  font-family: var(--font-display);
+  line-height: var(--lh-tight);
+}
+
+.t-meta--caps { text-transform: uppercase; }
+
+.t-display {
+  font-size: var(--fs-display);
+  font-weight: 300;
+  letter-spacing: var(--ls-display);
+}
+
+.t-h2 {
+  font-size: var(--fs-h2);
+  font-weight: 300;
+  letter-spacing: var(--ls-h2);
+}
+
+.t-h3 {
+  font-size: var(--fs-h3);
+  font-weight: 400;
+  letter-spacing: var(--ls-h3);
+}
+
+/* Colour comes through an inherited custom property so a dark or tinted
+   surface can retarget it by setting --eyebrow-color, rather than a descendant
+   selector that would win only on specificity. */
+.t-eyebrow {
+  font-size: var(--fs-eyebrow);
+  font-weight: 400;
+  letter-spacing: var(--ls-eyebrow);
+  color: var(--eyebrow-color, var(--ink-soft));
+}
+
+.t-meta {
+  font-size: var(--fs-meta);
+  font-weight: 400;
+  letter-spacing: var(--ls-meta);
+  color: var(--meta-color, var(--ink-soft));
+}
+
+/* Handwriting — §4: three or four emotional moments per page.
+   Never in nav, buttons, forms, or repeated UI. */
+.t-quote {
+  font-family: var(--font-hand);
+  font-size: var(--fs-quote);
+  font-weight: 600;
+  line-height: 1.15;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--quote-color, inherit);
+}
+
+.t-quote--tilt { rotate: -1.5deg; }  /* §4 allows slight rotation */
+
+.t-body { max-width: var(--measure); }
+
+/* ── Links (§9: ink, 1px rose underline offset 4px, redraws on hover) ───── */
+
+.link {
+  color: var(--ink);
+  text-decoration: none;
+  background-image: linear-gradient(var(--dusty-rose), var(--dusty-rose));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  padding-bottom: 4px;
+  transition: background-size var(--dur-link) var(--ease-reveal);
+}
+
+/* Redraw left-to-right: collapse to zero, then grow back.
+   Guarded — §10 keeps opacity fades only under reduced motion, and a sweeping
+   underline is motion. The link still shows its underline, it just doesn't
+   re-draw. */
+@media (prefers-reduced-motion: no-preference) {
+  .link:hover,
+  .link:focus-visible {
+    animation: link-redraw var(--dur-link) var(--ease-reveal);
+  }
+
+  @keyframes link-redraw {
+    from { background-size: 0% 1px; }
+    to   { background-size: 100% 1px; }
+  }
+}
+
+/* ── Focus (§12: visible keyboard focus on every interactive element) ───── */
+
+:focus-visible {
+  outline: 2px solid var(--deep-sea);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Grain (§5: feTurbulence at 3–4% on every flat color field) ─────────── */
+/* Inline data URI so it costs no request. Tiles at 180px. */
+
+.grain { position: relative; isolation: isolate; }
+
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: var(--grain-tile) var(--grain-tile);
+  background-repeat: repeat;
+}
+
+.grain > * { position: relative; z-index: 2; }
+
+/* ── Scroll reveal (§10: 24px rise + fade, 700ms, 80ms sibling stagger) ───
+   Motion is opted INTO under `no-preference` rather than stripped out under
+   `reduce`. That keeps §10's "keep opacity fades only" as the base behaviour
+   and means no rule ever needs !important to win. */
+
+.reveal {
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-reveal);
+}
+
+.reveal.is-revealed { opacity: 1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+
+  .reveal {
+    translate: 0 24px;
+    transition:
+      opacity   var(--dur-reveal) var(--ease-reveal),
+      translate var(--dur-reveal) var(--ease-reveal);
+  }
+
+  .reveal.is-revealed { translate: 0 0; }
+}

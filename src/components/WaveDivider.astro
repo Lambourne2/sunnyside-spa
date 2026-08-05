@@ -1,0 +1,81 @@
+---
+/**
+ * Wave divider — §5 "Dividers are waves. Never a straight <hr>."
+ *
+ * DRAWN, NOT TRACED. The supplied logomark is raster-only (see
+ * docs/asset-audit/README.md), so the two-wave curve here is a fresh monoline
+ * drawing in the §5 style — single weight, round caps, no fill — not a trace
+ * of the supplied artwork. Authorised 2026-08-05.
+ *
+ * §10: the two waves drift ±6px over 12s, offset from each other so they never
+ * move in lockstep. Under reduced motion neither moves.
+ */
+interface Props {
+  /** Visual weight. `soft` is the default rule; `full` is a section break. */
+  size?: 'soft' | 'full';
+  class?: string;
+}
+const { size = 'soft', class: className = '' } = Astro.props;
+---
+
+<div class:list={['wave', `wave--${size}`, className]} aria-hidden="true">
+  <svg
+    class="wave__svg"
+    viewBox="0 0 240 28"
+    preserveAspectRatio="none"
+    role="presentation"
+    focusable="false"
+  >
+    <path
+      class="wave__line wave__line--a"
+      d="M-20 11 q15 -7 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0"
+      vector-effect="non-scaling-stroke"
+    />
+    <path
+      class="wave__line wave__line--b"
+      d="M-20 19 q15 7 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+</div>
+
+<style>
+  .wave {
+    width: 100%;
+    color: var(--dusty-rose);
+    opacity: 0.6; /* §5 — dusty rose at 60% */
+  }
+
+  .wave__svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .wave--soft .wave__svg { height: 20px; }
+  .wave--full .wave__svg { height: 34px; }
+
+  .wave__line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wave__line--a { animation: wave-drift-a var(--dur-wave) ease-in-out infinite; }
+    /* Different duration and direction so the pair never locks up. */
+    .wave__line--b { animation: wave-drift-b calc(var(--dur-wave) * 1.45) ease-in-out infinite; }
+  }
+
+  @keyframes wave-drift-a {
+    0%, 100% { transform: translateX(-6px); }
+    50%      { transform: translateX(6px); }
+  }
+
+  @keyframes wave-drift-b {
+    0%, 100% { transform: translateX(5px); }
+    50%      { transform: translateX(-5px); }
+  }
+</style>
