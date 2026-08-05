@@ -1,0 +1,101 @@
+---
+/**
+ * §8 — KIND WORDS. Caveat quotes on hang-tag shaped cards, aqua/rose tinted,
+ * slight rotation. Sits above the dark band so testimonials do the persuading
+ * before the closer asks (§8).
+ *
+ * All three quotes are DRAFT — written to the §11 voice, to be replaced with
+ * real ones. Attribution is a placeholder: never invent a customer.
+ */
+const QUOTES = [
+  {
+    // DRAFT COPY
+    quote: 'I said my shoulder, and she worked on my shoulder. That has not always been my experience.',
+    who: '[NAME]',
+    detail: '[TREATMENT]',
+    tint: 'aqua',
+  },
+  {
+    // DRAFT COPY
+    quote: 'I fell asleep. I never fall asleep.',
+    who: '[NAME]',
+    detail: '[TREATMENT]',
+    tint: 'rose',
+  },
+  {
+    // DRAFT COPY
+    quote: 'It is the one appointment I do not move when the week gets full.',
+    who: '[NAME]',
+    detail: '[TREATMENT]',
+    tint: 'aqua',
+  },
+];
+---
+
+<section class="kind" aria-labelledby="kind-title">
+  <div class="shell">
+    <p class="t-eyebrow">Kind words</p>
+    <h2 class="t-h2" id="kind-title">What people say after</h2>
+
+    <ul class="kind__list" role="list">
+      {
+        QUOTES.map((q, i) => (
+          <li class:list={['kind__card', `kind__card--${q.tint}`, i % 2 === 1 && 'kind__card--tilt', 'reveal']}>
+            <figure class="kind__fig">
+              {/* DRAFT COPY */}
+              <blockquote class="t-quote kind__quote">{q.quote}</blockquote>
+              <figcaption class="t-meta kind__who">
+                {q.who} · {q.detail}
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .kind { padding-block: var(--space-2xl); }
+
+  .kind__list {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block-start: var(--space-xl);
+  }
+
+  /* Hang tag — stadium radius at both ends (§5). The generous inline padding
+     is doing real work: at a full stadium radius the top and bottom curve
+     inward, so text set tight to the edge collides with the curve. */
+  .kind__card {
+    padding: clamp(var(--space-2xl), 6vw, var(--space-3xl)) clamp(var(--space-xl), 4vw, var(--space-2xl));
+    border-radius: var(--r-tag);
+    border: 1px solid var(--line-hair);
+  }
+
+  .kind__card--aqua { background-color: var(--surface-aqua); }
+  .kind__card--rose { background-color: var(--surface-tint); }
+
+  .kind__fig { margin: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+
+  .kind__quote {
+    margin: 0;
+    /* Caveat at quote scale is large display type, so it clears the §3
+       restriction on rose-toned text carrying small copy. */
+    font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+    color: var(--ink);
+  }
+
+  .kind__who { color: var(--ink-soft); }
+
+  /* §4 allows a slight rotation on handwriting moments. Alternate cards only,
+     so the row reads hand-placed rather than uniformly skewed. */
+  @media (prefers-reduced-motion: no-preference) {
+    .kind__card--tilt { rotate: -1.5deg; }
+  }
+
+  @media (min-width: 768px) {
+    .kind__list { grid-template-columns: repeat(3, 1fr); align-items: start; }
+    .kind__card:nth-child(2) { margin-block-start: var(--space-xl); }
+  }
+</style>

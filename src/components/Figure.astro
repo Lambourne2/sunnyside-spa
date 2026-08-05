@@ -1,0 +1,83 @@
+---
+/**
+ * Figure — an image in one of the two shapes §5 allows: arch for hero-adjacent
+ * and feature images, hang tag for small ones. No third shape.
+ *
+ * No photography was supplied beyond the water texture tile, so when `src` is
+ * omitted this renders an obvious warm-tinted placeholder with the shot it is
+ * waiting for. §12 requires warm-tinted placeholders, never gray. These are
+ * deliberately unmistakable — no stock imagery stands in for real photography,
+ * which §13 bans outright.
+ */
+interface Props {
+  shape?: 'arch' | 'hangtag';
+  /** Omit to render the pending-photo placeholder. */
+  src?: string;
+  /** Required when src is set. Written by someone who saw the photo (§12). */
+  alt?: string;
+  /** What this slot is waiting for. Shown in the placeholder. */
+  pending?: string;
+  ratio?: string;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const {
+  shape = 'arch',
+  src,
+  alt,
+  pending = 'Photography pending',
+  ratio = '3 / 4',
+  loading = 'lazy',
+  class: className = '',
+} = Astro.props;
+---
+
+{
+  src ? (
+    <figure class:list={[shape, 'fig', className]} style={`--fig-ratio:${ratio};`}>
+      <img src={src} alt={alt} loading={loading} decoding="async" />
+    </figure>
+  ) : (
+    <figure
+      class:list={[shape, 'fig', 'fig--pending', className]}
+      style={`--fig-ratio:${ratio};`}
+      role="img"
+      aria-label={`Placeholder: ${pending}`}
+    >
+      <span class="fig__note t-meta" aria-hidden="true">{pending}</span>
+    </figure>
+  )
+}
+
+<style>
+  .fig {
+    margin: 0;
+    aspect-ratio: var(--fig-ratio);
+    overflow: hidden;
+  }
+
+  .fig img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fig--pending {
+    display: grid;
+    place-items: center;
+    padding: var(--space-lg);
+    text-align: center;
+    /* Warm tint, never gray (§12). */
+    background-color: var(--surface-tint);
+  }
+
+  .fig__note {
+    /* Deliberately legible — this is a to-do, not decoration. Sentence case,
+       not tracked caps: these run to a full phrase and caps make them a chore
+       to read at a glance. */
+    color: var(--rose-deep);
+    max-width: 24ch;
+    line-height: 1.5;
+  }
+</style>

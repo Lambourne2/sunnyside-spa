@@ -1,10 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
+import Welcome from '../components/Welcome.astro';
+import Treatments from '../components/Treatments.astro';
+import Rituals from '../components/Rituals.astro';
+import Gallery from '../components/Gallery.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Shelf from '../components/Shelf.astro';
+import ClosingBand from '../components/ClosingBand.astro';
+import FirstVisit from '../components/FirstVisit.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BookingBar from '../components/BookingBar.astro';
 
-// Phase 2 — the hero only. The remaining §8 sections (ribbon, nav, welcome,
-// treatments, rituals, gallery, testimonials, shelf, dark band, first visit,
-// footer) land in phase 3.
+// Section order is §8's, unchanged. Testimonials sit above the dark band on
+// purpose: they do the persuading before the closer asks.
 ---
 
 <Base title="Sunnyside Spa" description="A day spa in Utah. Book a treatment.">
@@ -18,7 +28,20 @@ import Hero from '../components/Hero.astro';
     fetchpriority="high"
   />
 
-  <main>
+  <SiteHeader />
+
+  <main id="main">
     <Hero />
+    <Welcome />
+    <Treatments />
+    <Rituals />
+    <Gallery />
+    <Testimonials />
+    <Shelf />
+    <ClosingBand />
+    <FirstVisit />
   </main>
+
+  <SiteFooter />
+  <BookingBar />
 </Base>

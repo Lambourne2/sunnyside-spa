@@ -1,0 +1,85 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * §8 — YOUR FIRST VISIT. Accordion on hairline rose rules, no boxes, no
+ * containers (§9). The marker is the logomark's rays, rotating 45° on open.
+ *
+ * Native <details>/<summary>, so it works with no JS and is keyboard- and
+ * screen-reader-correct by default.
+ *
+ * All answers are DRAFT except where they only contain placeholders.
+ */
+const ITEMS = [
+  {
+    q: 'When should I arrive?',
+    // DRAFT COPY
+    a: 'Fifteen minutes before your appointment. That gives you time to change, fill in a short intake form, and sit down with a glass of water before we start.',
+  },
+  {
+    q: 'What do I wear?',
+    // DRAFT COPY
+    a: 'Whatever you are comfortable in. We provide a robe and slippers, and you undress only to the level you want to. You stay covered apart from the area being worked on.',
+  },
+  {
+    q: 'What if I need to cancel?',
+    // DRAFT COPY
+    a: 'Let us know at least [CANCELLATION WINDOW] ahead and there is no charge. Inside that window we ask for [CANCELLATION FEE]. Things come up — call us and we will work it out.',
+  },
+  {
+    q: 'Where do I park?',
+    // DRAFT COPY
+    a: '[PARKING DETAIL]. The entrance is [ENTRANCE DETAIL].',
+  },
+];
+---
+
+<section class="visit" aria-labelledby="visit-title">
+  <div class="shell">
+    <p class="t-eyebrow">Your first visit</p>
+    <h2 class="t-h2" id="visit-title">What to expect</h2>
+
+    <div class="accordion visit__list">
+      {
+        ITEMS.map((item) => (
+          <details class="accordion__item visit__item">
+            <summary class="accordion__trigger visit__trigger">
+              <span>{item.q}</span>
+              <Icon name="rays" size={22} class="visit__marker" />
+            </summary>
+            {/* DRAFT COPY */}
+            <div class="accordion__panel">
+              <p class="t-body">{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .visit { padding-block: var(--space-2xl); }
+
+  .visit__list { margin-block-start: var(--space-xl); }
+
+  /* Hairline rose rules, no containers (§9). */
+  .visit__item { border-block-end: 1px solid var(--line-hair); }
+
+  .visit__trigger {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  /* Remove the native disclosure triangle so the rays are the only marker. */
+  .visit__trigger::-webkit-details-marker { display: none; }
+
+  .visit__marker { color: var(--dusty-rose); }
+
+  /* §9 — the marker is the logomark's rays rotating 45° on open. */
+  @media (prefers-reduced-motion: no-preference) {
+    .visit__marker { transition: rotate var(--dur-nav) var(--ease-reveal); }
+  }
+
+  .visit__item[open] .visit__marker { rotate: 45deg; }
+</style>

@@ -121,7 +121,25 @@ normal motion (23% of ordinary frame steps are larger) at 2.5 MB, under the 3 MB
 **If this footage is ever re-rendered**, ask for genuinely cyclic motion — then a straight
 loop works and the ping-pong can be dropped.
 
-### 6. The five-icon sprite has no source file
+### 6. No wordmark-only lockup, so the footer sign-off can't be built
+
+§11 asks the footer to sign off with "the tagline, hand-lettered, in gold". Every supplied
+lockup bakes the tagline into the artwork, so setting a separate gold sign-off underneath
+printed the tagline **twice** — once inside the logo, once below it. The duplicate has been
+removed and the lockup carries it, which means §11's sign-off is not really satisfied: the
+baked tagline is geometric sans, not hand-lettering.
+
+**What would fix it:** a wordmark-only export with no tagline. Then the tagline can be real
+gold text under it, and can change seasonally. A hand-lettered tagline drawn as artwork would
+satisfy §11 fully.
+
+### 7. No leaf-shadow overlay PNG
+
+§7 wants a leaf shadow drifting on a 45s loop over interior page headers and the poster-still
+fallback, so the whole site reads as lit by one sun. Without it the mobile hero is static
+while the desktop hero moves. The motion token (`--dur-drift`) is wired and inert.
+
+### 8. The five-icon sprite has no source file
 
 §5 makes the five icons — sun-over-water, botanical sprig, lotus, wave-and-circle, full sun —
 the service taxonomy, and §8 puts them in the treatments grid and the treatments-index filter.

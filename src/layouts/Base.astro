@@ -1,5 +1,6 @@
 ---
 import IconSprite from '../components/IconSprite.astro';
+import SiteScript from '../components/SiteScript.astro';
 import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
@@ -37,5 +38,8 @@ const { title, description } = Astro.props;
   <body>
     <IconSprite />
     <slot />
+    {/* §10 — the whole page reads as one long afternoon. */}
+    <div class="sun-wash" aria-hidden="true"></div>
+    <SiteScript />
   </body>
 </html>

@@ -1,0 +1,42 @@
+---
+/**
+ * §8 — THE CLOSER. The page's only dark moment and the only place royal gold
+ * appears. It carries booking, not membership: when memberships launch they
+ * take this band back and booking returns to a lighter band above the FAQ.
+ *
+ * All copy verbatim §11.
+ */
+---
+
+<section class="closer band-dark grain" aria-labelledby="closer-title">
+  <div class="shell closer__inner reveal">
+    <p class="t-eyebrow">No membership needed</p>
+    <!-- §11 verbatim -->
+    <h2 class="t-quote closer__quote" id="closer-title">Two hours that are only yours</h2>
+    <!-- §11 verbatim -->
+    <a class="btn closer__cta" href="/booking/">Book a visit</a>
+  </div>
+</section>
+
+<style>
+  .closer { padding-block: clamp(var(--space-2xl), 10vw, var(--space-3xl)); }
+
+  .closer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+
+  .closer__quote { margin: 0; max-width: 16ch; }
+
+  /* On deep-sea the rose button loses its footing, so the closer's CTA is
+     chiffon on deep-sea: 6.39:1 against the band, and the label is ink on
+     chiffon at 13.28:1. Both are named palette colours. */
+  .closer__cta {
+    background-color: var(--lemon-chiffon);
+    color: var(--ink);
+  }
+
+  .closer__cta:hover { background-color: var(--royal-gold); }
+</style>

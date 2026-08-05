@@ -1,0 +1,129 @@
+---
+import Logo from './Logo.astro';
+import WaveDivider from './WaveDivider.astro';
+
+/**
+ * §8 — deep-sea footer: gold wordmark, hours, address, newsletter, instagram row.
+ *
+ * BLOCKED — §11 wants a sign-off of "the tagline, hand-lettered, in gold".
+ * Every supplied lockup bakes the tagline into the artwork, so adding a
+ * separate sign-off printed it twice: once inside the gold logo, once beneath.
+ * The duplicate is removed and the lockup carries it for now, which means §11's
+ * sign-off is not really satisfied — the baked tagline is geometric sans, not
+ * hand-lettering. A wordmark-only export with no tagline would let us set the
+ * tagline as real gold text underneath. Noted in docs/asset-audit.
+ *
+ * The supplied footer.png is not used: it is a flattened 2752×688 banner that
+ * cannot reflow, and its tagline is the serif one. See docs/asset-audit.
+ */
+const NAV = [
+  { href: '/treatments/', label: 'Treatments' },
+  { href: '/our-story/', label: 'Our story' },
+  { href: '/visit/', label: 'Visit' },
+  { href: '/booking/', label: 'Book' },
+];
+---
+
+<footer class="foot band-dark grain">
+  <div class="shell">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <Logo variant="stacked" width={190} label="Sunnyside Spa" class="foot__logo" />
+      </div>
+
+      <div class="foot__cols">
+        <section class="foot__col" aria-labelledby="foot-hours">
+          <h2 class="t-eyebrow" id="foot-hours">Hours</h2>
+          <p class="t-body foot__lines">
+            [DAYS] · [HOURS]<br />
+            [DAYS] · [HOURS]<br />
+            [CLOSED DAY] · closed
+          </p>
+        </section>
+
+        <section class="foot__col" aria-labelledby="foot-find">
+          <h2 class="t-eyebrow" id="foot-find">Find us</h2>
+          <address class="t-body foot__lines">
+            [STREET ADDRESS]<br />
+            [CITY], UT [ZIP]<br />
+            <a class="link foot__link" href="tel:[PHONE]">[PHONE]</a>
+          </address>
+        </section>
+
+        <nav class="foot__col" aria-label="Footer">
+          <h2 class="t-eyebrow">Visit</h2>
+          <ul class="foot__nav" role="list">
+            {NAV.map((i) => (
+              <li><a class="link foot__link" href={i.href}>{i.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="foot__wave"><WaveDivider /></div>
+
+    <div class="foot__bottom">
+      <p class="t-meta foot__fine">© {new Date().getFullYear()} Sunnyside Spa</p>
+      <ul class="foot__social" role="list">
+        <li><a class="link foot__link" href="[INSTAGRAM URL]">Instagram</a></li>
+        <li><a class="link foot__link" href="mailto:[EMAIL]">Email</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot { padding-block: var(--space-2xl) var(--space-xl); }
+
+  .foot__top {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  /* Gold wordmark (§8). Set on the wrapper rather than on .foot__logo: the
+     Logo mask paints with currentColor, so it inherits this — which also
+     sidesteps the fact that a child component never receives this component's
+     scope attribute. */
+  .foot__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    color: var(--royal-gold);
+  }
+
+  .foot__cols {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .foot__col { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .foot__lines { font-style: normal; }
+
+  /* On deep-sea the link underline switches from rose (2.1:1 here) to chiffon
+     so it stays visible against the band. */
+  .foot__link {
+    color: var(--shell);
+    background-image: linear-gradient(var(--lemon-chiffon), var(--lemon-chiffon));
+  }
+
+  .foot__nav { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .foot__wave { margin-block: var(--space-xl); opacity: 0.5; }
+
+  .foot__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  .foot__social { display: flex; gap: var(--space-lg); }
+
+  @media (min-width: 768px) {
+    .foot__top { grid-template-columns: 1fr 1.4fr; align-items: start; }
+    .foot__cols { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

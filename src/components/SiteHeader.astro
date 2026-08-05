@@ -1,0 +1,110 @@
+---
+import Logo from './Logo.astro';
+
+/**
+ * Ribbon + nav (§8). The nav is transparent over the hero and condenses to
+ * shell once the hero clears, over 240ms (§10).
+ *
+ * The neighbourhood is a placeholder — real value to be supplied.
+ */
+const NAV = [
+  { href: '/treatments/', label: 'Treatments' },
+  { href: '/our-story/', label: 'About' },
+  { href: '/visit/', label: 'Visit' },
+];
+---
+
+<!-- Ribbon: lemon chiffon, tracked caps (§8) -->
+<p class="ribbon grain">
+  <span class="t-eyebrow ribbon__text">Now booking · [NEIGHBOURHOOD], UT</span>
+</p>
+
+<header class="nav" data-nav>
+  <div class="shell nav__inner">
+    <a class="nav__home" href="/">
+      <Logo variant="horizontal" width={168} label="Sunnyside Spa, home" />
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <ul class="nav__list">
+        {NAV.map((item) => (
+          <li>
+            <a class="nav__link t-eyebrow" href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="btn btn--primary nav__cta" href="/booking/">Book</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .ribbon {
+    margin: 0;
+    padding-block: var(--space-xs);
+    text-align: center;
+    background-color: var(--lemon-chiffon);
+  }
+
+  .ribbon__text { color: var(--ink); }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: transparent;
+    transition: background-color var(--dur-nav) var(--ease-reveal),
+                box-shadow var(--dur-nav) var(--ease-reveal);
+  }
+
+  /* §10 — transparent to shell once the hero clears. */
+  .nav.is-condensed {
+    background-color: var(--shell);
+    box-shadow: var(--shadow-warm);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+  }
+
+  .nav__home {
+    display: block;
+    color: var(--ink);
+    border-radius: 2px;
+  }
+
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--space-md), 3vw, var(--space-xl));
+  }
+
+  .nav__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--space-md), 3vw, var(--space-xl));
+  }
+
+  .nav__link {
+    color: var(--ink);
+    text-decoration: none;
+    padding-block: var(--space-2xs);
+    border-block-end: 1px solid transparent;
+    transition: border-color var(--dur-nav) var(--ease-reveal);
+  }
+
+  .nav__link:hover { border-block-end-color: var(--dusty-rose); }
+
+  .nav__cta { padding: 10px 20px; }
+
+  /* Under 640px the links move to the booking bar and the footer; keeping five
+     tracked-caps targets in a 360px bar would make each one too small to hit. */
+  @media (max-width: 639px) {
+    .nav__list { display: none; }
+  }
+
+</style>

@@ -1,0 +1,86 @@
+---
+import Figure from './Figure.astro';
+
+/**
+ * §8 — THE SPACE. Mixed-ratio strip: [tall][wide][water/stone tile][tall],
+ * horizontal scroll on mobile, exactly one texture tile.
+ *
+ * The water tile is the one piece of real photography in the handoff. Its
+ * "REST. RECHARGE. RADIATE." lettering is baked into the pixels, so it cannot
+ * reflow or be translated — noted in docs/asset-audit. The other three slots
+ * are waiting on photography.
+ */
+---
+
+<section class="gallery" aria-labelledby="gallery-title">
+  <div class="shell">
+    <p class="t-eyebrow">The space</p>
+    <h2 class="t-h2" id="gallery-title">Where it happens</h2>
+  </div>
+
+  {/* tabindex makes the overflow region reachable, so the strip can be
+      scrolled without a mouse when it overflows on small screens. */}
+  <ul class="gallery__strip" role="list" tabindex="0" aria-label="Photographs of the space">
+    <li class="gallery__item gallery__item--tall reveal">
+      <Figure shape="arch" ratio="2 / 3" pending="A robe on a hook, morning light" />
+    </li>
+
+    <li class="gallery__item gallery__item--wide reveal">
+      <Figure shape="hangtag" ratio="4 / 3" pending="The room, wide, mid-afternoon" />
+    </li>
+
+    <li class="gallery__item gallery__item--tall reveal">
+      <Figure
+        shape="hangtag"
+        ratio="2 / 3"
+        src="/img/water-tile.webp"
+        alt="Sunlight breaking into gold lines across the surface of a still pool, with the words rest, recharge, radiate and the Sunnyside sun mark set over the water."
+      />
+    </li>
+
+    <li class="gallery__item gallery__item--tall reveal">
+      <Figure shape="arch" ratio="2 / 3" pending="Sandstone, dry light, hard shadow" />
+    </li>
+  </ul>
+</section>
+
+<style>
+  .gallery { padding-block: var(--space-2xl); }
+
+  .gallery__strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 62vw);
+    gap: var(--space-md);
+    margin-block-start: var(--space-xl);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* Keyboard users can scroll the strip, so it needs to be focusable. */
+    scrollbar-color: var(--dusty-rose) transparent;
+  }
+
+  .gallery__item { scroll-snap-align: start; }
+
+  .gallery__strip:focus-visible {
+    outline: 2px solid var(--deep-sea);
+    outline-offset: 4px;
+  }
+
+  /* Mixed ratios, staggered heights — not a tidy equal-height row. */
+  @media (min-width: 768px) {
+    .gallery__strip {
+      grid-auto-flow: row;
+      grid-template-columns: 0.9fr 1.3fr 0.85fr 0.95fr;
+      grid-auto-columns: auto;
+      align-items: start;
+      overflow-x: visible;
+      max-width: var(--max-w);
+      margin-inline: auto;
+      gap: var(--space-lg);
+    }
+
+    .gallery__item--wide { margin-block-start: var(--space-2xl); }
+    .gallery__item--tall:last-child { margin-block-start: var(--space-lg); }
+  }
+</style>

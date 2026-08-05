@@ -193,22 +193,59 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    `reduce`. That keeps §10's "keep opacity fades only" as the base behaviour
    and means no rule ever needs !important to win. */
 
-.reveal {
+/* Scoped to .js-reveal, which the site script sets on <html>. Without JS
+   nothing is ever hidden, so content can't be lost to a failed script. */
+.js-reveal .reveal {
   opacity: 0;
   transition: opacity var(--dur-reveal) var(--ease-reveal);
 }
 
-.reveal.is-revealed { opacity: 1; }
+.js-reveal .reveal.is-revealed { opacity: 1; }
 
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
 
-  .reveal {
+  .js-reveal .reveal {
     translate: 0 24px;
     transition:
       opacity   var(--dur-reveal) var(--ease-reveal),
       translate var(--dur-reveal) var(--ease-reveal);
   }
 
-  .reveal.is-revealed { translate: 0 0; }
+  .js-reveal .reveal.is-revealed { translate: 0 0; }
+}
+
+/* ── Scroll-advanced sun (§10) ──────────────────────────────────────────────
+   Two fixed washes cross-faded by --sun, which the site script drives from
+   scroll position: midday at the top, late-afternoon gold at the footer. The
+   doc keeps this under reduced motion — a colour shift this slow is not
+   perceptible as motion. Values are the ones §10 specifies.
+
+   The wash sits over text as well as ground, so it costs contrast. Measured at
+   full strength (--sun: 1, i.e. at the footer) every text pair still clears
+   4.5:1, but the margin is thin: rose-deep on lemon-chiffon drops 5.34 -> 4.74.
+   If the footer alpha is ever raised above 0.07, re-check that pair first. */
+
+.sun-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.sun-wash::before,
+.sun-wash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.sun-wash::before {
+  background: hsl(45 70% 60% / 0.03);
+  opacity: calc(1 - var(--sun, 0));
+}
+
+.sun-wash::after {
+  background: hsl(30 75% 55% / 0.07);
+  opacity: var(--sun, 0);
 }

@@ -1,0 +1,84 @@
+---
+import Figure from './Figure.astro';
+
+/**
+ * §8 — 2–3 alternating rows, image side alternates. "The sunrise ritual" is
+ * named in the §8 layout; the second is a placeholder name.
+ */
+const ROWS = [
+  {
+    eyebrow: 'Signature',
+    title: 'The sunrise ritual',
+    // DRAFT COPY
+    body: 'Ninety minutes that start with your feet and end with your scalp. Warm oil, slow pressure, and a room that smells like the desert after rain. Book it early — the first appointment of the day is the quiet one.',
+    price: '[PRICE]',
+    duration: '[DURATION]',
+    pending: 'Oils and unglazed ceramic on linen',
+  },
+  {
+    eyebrow: 'Also worth your time',
+    title: '[RITUAL NAME]',
+    // DRAFT COPY
+    body: 'One line about what happens, then one about how you will feel walking out. Replace this once the ritual is named and priced.',
+    price: '[PRICE]',
+    duration: '[DURATION]',
+    pending: 'Detail shot — hands, linen, water in a vessel',
+  },
+];
+---
+
+<section class="rituals" aria-labelledby="rituals-title">
+  <h2 class="visually-hidden" id="rituals-title">Rituals</h2>
+
+  {
+    ROWS.map((row, i) => (
+      <div class:list={['shell', 'ritual', i % 2 === 1 && 'ritual--flip']}>
+        <Figure
+          class="ritual__figure reveal"
+          shape="arch"
+          ratio="4 / 5"
+          pending={row.pending}
+        />
+        <div class="ritual__copy reveal">
+          <p class="t-eyebrow">{row.eyebrow}</p>
+          <h3 class="t-h2 ritual__title">{row.title}</h3>
+          {/* DRAFT COPY */}
+          <p class="t-body">{row.body}</p>
+          <p class="t-meta">From {row.price} · {row.duration}</p>
+          <p>
+            <a class="btn btn--primary" href="/booking/">Book a visit</a>
+          </p>
+        </div>
+      </div>
+    ))
+  }
+</section>
+
+<style>
+  .rituals { padding-block: var(--space-2xl); }
+
+  .ritual {
+    display: grid;
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+  }
+
+  .ritual__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+
+  .ritual__title { margin-block-start: var(--space-2xs); }
+
+  @media (min-width: 768px) {
+    .ritual {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    }
+
+    /* The image side alternates (§8). Order, not direction, so the DOM stays
+       in reading order for screen readers and keyboard users.
+       :global on the inner half because Figure.astro carries its own scope and
+       so never receives this component's scope attribute — the left-hand
+       selector stays scoped, so this does not leak. */
+    .ritual--flip :global(.ritual__figure) { order: 2; }
+  }
+</style>

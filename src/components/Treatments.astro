@@ -1,0 +1,133 @@
+---
+import Icon from './Icon.astro';
+import Figure from './Figure.astro';
+import { TREATMENTS } from '../data/treatments';
+
+/**
+ * §8 — asymmetric, explicitly not a 5-up grid and not an even 5-column icon row
+ * (§13 bans that). One wide feature card, four standard, arched tops.
+ */
+const feature = TREATMENTS.find((t) => t.feature)!;
+const rest = TREATMENTS.filter((t) => !t.feature);
+---
+
+<section class="treatments" aria-labelledby="treatments-title">
+  <div class="shell">
+    <p class="t-eyebrow">
+      <Icon name="massage" size={16} class="treatments__mark" />
+      Treatments
+    </p>
+    <h2 class="t-h2" id="treatments-title">What we do</h2>
+
+    <div class="treatments__grid">
+      <article class="card treatments__feature reveal">
+        <a class="treatments__link" href={`/treatments/${feature.slug}/`}>
+          <Figure
+            class="card__media"
+            shape="arch"
+            ratio="16 / 10"
+            pending="Hands, warm oil, shoulder"
+          />
+          <span class="card__body">
+            <Icon name={feature.icon} size={32} />
+            <span class="t-h3 card__name">{feature.name}</span>
+            <!-- §11 verbatim -->
+            <span class="t-body card__line">{feature.line}</span>
+            <span class="t-meta card__meta">
+              From {feature.price} · {feature.duration}
+            </span>
+          </span>
+        </a>
+      </article>
+
+      {
+        rest.map((t) => (
+          <article class="card treatments__item reveal">
+            <a class="treatments__link" href={`/treatments/${t.slug}/`}>
+              <Figure class="card__media" shape="arch" ratio="3 / 4" pending={`${t.name} — photo`} />
+              <span class="card__body">
+                <Icon name={t.icon} size={26} />
+                <span class="t-h3 card__name">{t.name}</span>
+                {/* DRAFT COPY */}
+                <span class="t-body card__line">{t.line}</span>
+                <span class="t-meta card__meta">
+                  From {t.price} · {t.duration}
+                </span>
+              </span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .treatments { padding-block: var(--space-2xl); }
+
+  .treatments .t-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .treatments__mark { color: var(--dusty-rose); }
+
+  /* Two-up from the smallest size. One card per row put five full-width arches
+     in a column and made the page ~10,400px on a phone; this halves that
+     without touching the desktop composition. Still not the even 5-up row §13
+     rules out — the feature card spans, the other four sit beside each other. */
+  .treatments__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg) var(--space-md);
+    margin-block-start: var(--space-xl);
+  }
+
+  .treatments__feature { grid-column: 1 / -1; }
+
+  .treatments__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .card__name { color: var(--ink); }
+  .card__line { max-width: 44ch; }
+
+  /* Image scale on hover — §9. Guarded so reduced motion gets nothing. */
+  @media (prefers-reduced-motion: no-preference) {
+    .treatments__link :global(.fig) { overflow: hidden; }
+    .treatments__link :global(.fig img) {
+      transition: scale var(--dur-card) var(--ease-reveal);
+    }
+    .treatments__link:hover :global(.fig img) { scale: 1.03; }
+  }
+
+  /* One wide feature spanning the row, then four beneath it. */
+  @media (min-width: 640px) {
+    .treatments__grid { gap: var(--space-xl); }
+
+    .treatments__feature .treatments__link {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+
+    .treatments__feature :global(.fig) { flex: 1 1 55%; }
+    .treatments__feature .card__body { flex: 1 1 45%; }
+  }
+
+  @media (min-width: 960px) {
+    .treatments__grid { grid-template-columns: repeat(4, 1fr); }
+    .treatments__feature { grid-column: 1 / -1; }
+  }
+</style>

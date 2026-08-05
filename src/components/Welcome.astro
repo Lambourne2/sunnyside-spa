@@ -1,0 +1,65 @@
+---
+import WaveDivider from './WaveDivider.astro';
+import Figure from './Figure.astro';
+
+// "come as you are, leave more you." is on the identity board and in the §8
+// layout, so it is real copy, not invented.
+---
+
+<section class="welcome" aria-labelledby="welcome-quote">
+  <div class="shell"><WaveDivider size="full" /></div>
+
+  <div class="shell welcome__grid">
+    <div class="welcome__copy reveal">
+      <p class="t-quote t-quote--tilt" id="welcome-quote">
+        Come as you are, leave more you.
+      </p>
+      <!-- DRAFT COPY -->
+      <p class="t-body">
+        One room, one therapist, and the time set aside for it. You tell us what
+        hurts and what you would rather we left alone, and we work from there.
+      </p>
+      <!-- DRAFT COPY -->
+      <p class="t-body">
+        We are on [STREET] in [NEIGHBOURHOOD], open [DAYS]. Parking is [PARKING].
+      </p>
+    </div>
+
+    <Figure
+      class="welcome__figure reveal"
+      shape="arch"
+      ratio="4 / 5"
+      pending="The treatment room, light across the table"
+    />
+  </div>
+</section>
+
+<style>
+  .welcome { padding-block: var(--space-2xl); }
+
+  .welcome__grid {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block-start: var(--space-2xl);
+  }
+
+  .welcome__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+
+  .welcome__copy .t-quote { color: var(--rose-deep); }
+
+  /* Off-centre, per §8 — the copy column is wider and sits left, the arch
+     hangs right and slightly high. Not a symmetrical two-up. */
+  @media (min-width: 768px) {
+    .welcome__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: start;
+      gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    }
+
+    .welcome__copy { padding-block-start: var(--space-xl); }
+    /* :global for the same reason as Rituals — Figure.astro has its own scope. */
+    .welcome__grid :global(.welcome__figure) {
+      margin-block-start: calc(var(--space-2xl) * -1);
+    }
+  }
+</style>

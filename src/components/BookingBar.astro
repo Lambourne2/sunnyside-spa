@@ -1,0 +1,50 @@
+---
+/**
+ * §8 — "Mobile keeps a persistent bottom booking bar (shell background, rose
+ * pill button, hairline top rule)."
+ *
+ * Hidden at 640px and up, where the nav's Book button is always in reach.
+ * Padded for the iOS home indicator so the button is never under it.
+ */
+---
+
+<div class="bookbar">
+  <div class="bookbar__inner">
+    <span class="t-meta bookbar__note">Appointments only</span>
+    <a class="btn btn--primary bookbar__cta" href="/booking/">Book a visit</a>
+  </div>
+</div>
+
+<style>
+  .bookbar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 60;
+    background-color: var(--shell);
+    border-block-start: 1px solid var(--line-hair);
+    padding-block-end: env(safe-area-inset-bottom, 0px);
+  }
+
+  .bookbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--gutter);
+  }
+
+  .bookbar__note { color: var(--ink-soft); }
+
+  .bookbar__cta { padding: 12px 22px; }
+
+  @media (min-width: 640px) {
+    .bookbar { display: none; }
+  }
+
+  /* The bar is fixed, so without this the last of the footer sits under it
+     permanently. Applied to the document rather than the bar itself. */
+  @media (max-width: 639px) {
+    :global(body) { padding-block-end: 4.5rem; }
+  }
+</style>

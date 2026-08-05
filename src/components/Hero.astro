@@ -44,7 +44,7 @@ const POSTER = '/brand/hero/poster.webp';
 <section class="hero">
   <h1 class="visually-hidden">Sunnyside Spa — sunshine for your soul</h1>
 
-  <div class="hero__media">
+  <div class="hero__media" data-hero-media>
     <img
       class="hero__poster"
       src={POSTER}
@@ -132,10 +132,26 @@ const POSTER = '/brand/hero/poster.webp';
   .hero__poster,
   .hero__video {
     position: absolute;
+    object-fit: cover;
+  }
+
+  .hero__poster {
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+  }
+
+  /* Inset by 1px so the video's painted area is strictly smaller than the
+     poster's. Measured, the two were within 473px² of each other and the video
+     — arriving later — was replacing the poster as the LCP element, which §6
+     forbids outright. LCP only promotes a LARGER candidate, so a hair of inset
+     keeps the poster as the LCP no matter how late the video lands. The 1px
+     ring of poster showing through is frame 0 of the same footage on a soft
+     plaster gradient, and is not perceptible. */
+  .hero__video {
+    inset: 1px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
   }
 
   /* The video sits over the poster and only becomes visible once it is actually

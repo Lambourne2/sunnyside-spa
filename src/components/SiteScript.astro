@@ -1,0 +1,87 @@
+---
+/**
+ * The site's only JavaScript. Three jobs, one scroll listener:
+ *
+ *  1. §10 nav condense — transparent to shell once the hero clears.
+ *  2. §10 "scroll advances the sun" — one custom property, --sun, from 0 at the
+ *     top to 1 at the footer. It drives a warm overlay from midday to
+ *     late-afternoon gold, and (once the asset lands) the leaf-shadow drift.
+ *     Under reduced motion the doc keeps the colour shift and drops the
+ *     movement, because the colour shift isn't perceptible as motion.
+ *  3. §10 scroll reveals — 24px rise plus fade, 80ms stagger between siblings.
+ *     Under reduced motion the CSS already reduces this to an opacity fade;
+ *     the observer just adds the class either way.
+ *
+ * Everything degrades to plain visible content without JS: .reveal only hides
+ * once this script marks the document as able to run it.
+ */
+---
+
+<script is:inline>
+  (() => {
+    const doc = document.documentElement;
+    const nav = document.querySelector('[data-nav]');
+    const hero = document.querySelector('[data-hero-media]');
+
+    // Only hide reveal targets once we know we can reveal them again.
+    doc.classList.add('js-reveal');
+
+    // ── 1 + 2: one rAF-throttled scroll listener ────────────────────────────
+    let ticking = false;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+
+      if (nav) {
+        // Condense once the hero has passed under the nav.
+        const clearAt = hero ? hero.offsetHeight - nav.offsetHeight : 24;
+        nav.classList.toggle('is-condensed', y > clearAt);
+      }
+
+      // 0 at the top of the page, 1 at the bottom.
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      const sun = scrollable > 0 ? Math.min(1, Math.max(0, y / scrollable)) : 0;
+      doc.style.setProperty('--sun', sun.toFixed(4));
+
+      ticking = false;
+    };
+
+    const requestTick = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(onScroll);
+      }
+    };
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick, { passive: true });
+    onScroll();
+
+    // ── 3: scroll reveals ───────────────────────────────────────────────────
+    const targets = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || !targets.length) {
+      targets.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target;
+          // 80ms stagger between siblings sharing a reveal group.
+          const siblings = el.parentElement
+            ? [...el.parentElement.children].filter((n) => n.classList.contains('reveal'))
+            : [el];
+          const i = Math.max(0, siblings.indexOf(el));
+          el.style.transitionDelay = i * 80 + 'ms';
+          el.classList.add('is-revealed');
+          io.unobserve(el);
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.05 }
+    );
+
+    targets.forEach((el) => io.observe(el));
+  })();
+</script>

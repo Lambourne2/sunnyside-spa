@@ -1,0 +1,123 @@
+---
+import Figure from './Figure.astro';
+
+/**
+ * §8 — THE SHELF, SOON. A waitlist, not a store: one product, one email field,
+ * no cart and no prices. Building the list before the line exists keeps the
+ * slot warm for a real product trio later.
+ *
+ * All copy here is verbatim §11.
+ */
+---
+
+<section class="shelf grain" aria-labelledby="shelf-title">
+  <div class="shell shelf__grid">
+    <Figure
+      class="shelf__figure reveal"
+      shape="hangtag"
+      ratio="4 / 5"
+      pending="The facial oil, shot properly"
+    />
+
+    <div class="shelf__copy reveal">
+      <p class="t-eyebrow">The shelf, soon</p>
+      <!-- §11 verbatim -->
+      <h2 class="t-h2" id="shelf-title">The shelf is almost ready</h2>
+      <!-- §11 verbatim -->
+      <p class="t-body">Facial oil first. Tell us where to send it.</p>
+
+      <form class="shelf__form" data-waitlist novalidate>
+        <div class="field">
+          <label class="field__label" for="shelf-email">Email</label>
+          <input
+            class="field__input"
+            id="shelf-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            aria-describedby="shelf-email-error"
+          />
+          <!-- §11 verbatim error string, revealed by the validation script -->
+          <p class="field__error" id="shelf-email-error" data-error hidden>
+            That email is missing an @.
+          </p>
+        </div>
+
+        <!-- §11 verbatim -->
+        <button class="btn btn--primary" type="submit">Join the list</button>
+
+        <!-- §11 verbatim confirmation -->
+        <p class="t-body shelf__done" data-done hidden role="status">You're on the list.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const form = document.querySelector('[data-waitlist]');
+    if (!form) return;
+    const input = form.querySelector('input[type="email"]');
+    const error = form.querySelector('[data-error]');
+    const done = form.querySelector('[data-done]');
+
+    const clear = () => {
+      error.hidden = true;
+      input.removeAttribute('aria-invalid');
+    };
+
+    input.addEventListener('input', clear);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const value = input.value.trim();
+      // §11 names one specific failure, so only that case gets that message.
+      if (!value.includes('@')) {
+        error.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      clear();
+      // No endpoint wired yet — this is list-building UI, not a live signup.
+      form.querySelector('button[type="submit"]').disabled = true;
+      done.hidden = false;
+    });
+  })();
+</script>
+
+<style>
+  .shelf {
+    padding-block: var(--space-2xl);
+    background-color: var(--lemon-chiffon);
+  }
+
+  .shelf__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .shelf__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+
+  .shelf__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    align-items: flex-start;
+    max-width: 24rem;
+    margin-block-start: var(--space-sm);
+  }
+
+  .shelf__form .field { width: 100%; }
+
+  .shelf__done { color: var(--rose-deep); }
+
+  @media (min-width: 768px) {
+    .shelf__grid {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    }
+  }
+</style>
