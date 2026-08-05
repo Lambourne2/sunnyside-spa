@@ -1,5 +1,12 @@
 # Asset audit — 2026-08-05
 
+> **Sample photography is in place.** Twelve slots that were waiting on real
+> photography now hold Pexels samples, graded to one warm palette, listed with
+> their source URLs in `public/img/samples/SOURCES.json`. They are placeholders:
+> licensed for use (Pexels License, no attribution required) but generic, and
+> none of them is this spa. Replace them with the real shoot. Nothing else in
+> this document has been resolved by them.
+
 Findings from inspecting `sunnyside-spa-assets/` against `docs/design.md` §5, §6, §12.
 Nothing here has been redrawn, retraced, or altered. This is a report only.
 

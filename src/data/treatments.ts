@@ -20,6 +20,9 @@ export interface Treatment {
   duration: string;
   /** The wide feature card in the §8 grid. Exactly one. */
   feature?: boolean;
+  /** SAMPLE photography — see public/img/samples/SOURCES.json. To be replaced. */
+  image: string;
+  alt: string;
 }
 
 export const TREATMENTS: Treatment[] = [
@@ -32,6 +35,8 @@ export const TREATMENTS: Treatment[] = [
     price: '[PRICE]',
     duration: '[DURATION]',
     feature: true,
+    image: '/img/samples/massage.webp',
+    alt: "Two hands tipping warm oil from a small dish onto someone's bare back.",
   },
   {
     slug: 'skincare',
@@ -41,6 +46,8 @@ export const TREATMENTS: Treatment[] = [
     draft: true,
     price: '[PRICE]',
     duration: '[DURATION]',
+    image: '/img/samples/skincare.webp',
+    alt: 'A woman with her eyes closed, turned to the sun, the shadow of a plant falling across her face.',
   },
   {
     slug: 'body',
@@ -50,6 +57,8 @@ export const TREATMENTS: Treatment[] = [
     draft: true,
     price: '[PRICE]',
     duration: '[DURATION]',
+    image: '/img/samples/body.webp',
+    alt: 'A bare shoulder in low gold light, cut by a hard bar of window shadow.',
   },
   {
     slug: 'wellness',
@@ -59,6 +68,8 @@ export const TREATMENTS: Treatment[] = [
     draft: true,
     price: '[PRICE]',
     duration: '[DURATION]',
+    image: '/img/samples/wellness.webp',
+    alt: 'Someone sitting and stretching on a wooden sill in warm slatted light.',
   },
   {
     slug: 'you-time',
@@ -68,5 +79,7 @@ export const TREATMENTS: Treatment[] = [
     draft: true,
     price: '[PRICE]',
     duration: '[DURATION]',
+    image: '/img/samples/you-time.webp',
+    alt: 'Someone resting in rumpled linen, one hand open on the bed.',
   },
 ];

@@ -26,7 +26,8 @@ const rest = TREATMENTS.filter((t) => !t.feature);
             class="card__media"
             shape="arch"
             ratio="16 / 10"
-            pending="Hands, warm oil, shoulder"
+            src={feature.image}
+            alt={feature.alt}
           />
           <span class="card__body">
             <Icon name={feature.icon} size={32} />
@@ -44,7 +45,7 @@ const rest = TREATMENTS.filter((t) => !t.feature);
         rest.map((t) => (
           <article class="card treatments__item reveal">
             <a class="treatments__link" href={`/treatments/${t.slug}/`}>
-              <Figure class="card__media" shape="arch" ratio="3 / 4" pending={`${t.name} — photo`} />
+              <Figure class="card__media" shape="arch" ratio="3 / 4" src={t.image} alt={t.alt} />
               <span class="card__body">
                 <Icon name={t.icon} size={26} />
                 <span class="t-h3 card__name">{t.name}</span>

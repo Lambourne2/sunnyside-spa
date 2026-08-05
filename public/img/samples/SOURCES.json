@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "welcome-room",
+    "file": "/img/samples/welcome-room.webp",
+    "source": "https://www.pexels.com/photo/11774389/",
+    "pexels_id": 11774389,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "1000x1250",
+    "bytes": 77814,
+    "shows": "Warm plaster treatment room with arched alcoves"
+  },
+  {
+    "slug": "massage",
+    "file": "/img/samples/massage.webp",
+    "source": "https://www.pexels.com/photo/19641816/",
+    "pexels_id": 19641816,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "1400x875",
+    "bytes": 50366,
+    "shows": "Hands pouring warm oil onto a back"
+  },
+  {
+    "slug": "skincare",
+    "file": "/img/samples/skincare.webp",
+    "source": "https://www.pexels.com/photo/6996168/",
+    "pexels_id": 6996168,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1013",
+    "bytes": 23736,
+    "shows": "Face turned to the sun, plant shadow across it"
+  },
+  {
+    "slug": "body",
+    "file": "/img/samples/body.webp",
+    "source": "https://www.pexels.com/photo/34625022/",
+    "pexels_id": 34625022,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1013",
+    "bytes": 19084,
+    "shows": "Bare shoulder in low gold light, hard window shadow"
+  },
+  {
+    "slug": "wellness",
+    "file": "/img/samples/wellness.webp",
+    "source": "https://www.pexels.com/photo/16216651/",
+    "pexels_id": 16216651,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1013",
+    "bytes": 56464,
+    "shows": "Sitting stretch on a wooden sill, warm slatted light"
+  },
+  {
+    "slug": "you-time",
+    "file": "/img/samples/you-time.webp",
+    "source": "https://www.pexels.com/photo/10408382/",
+    "pexels_id": 10408382,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1013",
+    "bytes": 22408,
+    "shows": "Resting in linen, hand open on the bed"
+  },
+  {
+    "slug": "ritual-oils",
+    "file": "/img/samples/ritual-oils.webp",
+    "source": "https://www.pexels.com/photo/4889547/",
+    "pexels_id": 4889547,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "1200x1500",
+    "bytes": 105540,
+    "shows": "Amber bottle on linen with dried grasses"
+  },
+  {
+    "slug": "ritual-water",
+    "file": "/img/samples/ritual-water.webp",
+    "source": "https://www.pexels.com/photo/10504656/",
+    "pexels_id": 10504656,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "1200x1500",
+    "bytes": 41756,
+    "shows": "Pouring from a clay jug into an unglazed bowl"
+  },
+  {
+    "slug": "gallery-robe",
+    "file": "/img/samples/gallery-robe.webp",
+    "source": "https://www.pexels.com/photo/8967723/",
+    "pexels_id": 8967723,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1140",
+    "bytes": 89136,
+    "shows": "Linen hanging on a hook, hard sunlight on the wall"
+  },
+  {
+    "slug": "gallery-room",
+    "file": "/img/samples/gallery-room.webp",
+    "source": "https://www.pexels.com/photo/17885652/",
+    "pexels_id": 17885652,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "900x675",
+    "bytes": 15046,
+    "shows": "Plaster wall and arch cut by hard window shadow"
+  },
+  {
+    "slug": "gallery-stone",
+    "file": "/img/samples/gallery-stone.webp",
+    "source": "https://www.pexels.com/photo/20091794/",
+    "pexels_id": 20091794,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "760x1140",
+    "bytes": 118310,
+    "shows": "Layered sandstone in warm raking light"
+  },
+  {
+    "slug": "shelf-oil",
+    "file": "/img/samples/shelf-oil.webp",
+    "source": "https://www.pexels.com/photo/7795816/",
+    "pexels_id": 7795816,
+    "licence": "Pexels License (free use, no attribution required)",
+    "dimensions": "800x1000",
+    "bytes": 25632,
+    "shows": "Amber dropper bottle on linen beside a wooden bowl"
+  }
+]

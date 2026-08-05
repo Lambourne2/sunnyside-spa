@@ -28,10 +28,14 @@ import BookingBar from '../components/BookingBar.astro';
     fetchpriority="high"
   />
 
-  <SiteHeader />
+  {/* Ribbon + nav + hero share one viewport-height column, so the hero fills
+      whatever the chrome leaves. No JS measurement, so no CLS. */}
+  <div class="masthead">
+    <SiteHeader />
+    <Hero />
+  </div>
 
   <main id="main">
-    <Hero />
     <Welcome />
     <Treatments />
     <Rituals />
@@ -45,3 +49,19 @@ import BookingBar from '../components/BookingBar.astro';
   <SiteFooter />
   <BookingBar />
 </Base>
+
+<style>
+  /* Only on desktop: on a phone a full-height hero would mean cropping the
+     landscape frame to portrait, which cuts the wordmark (§6). */
+  @media (min-width: 768px) {
+    .masthead {
+      display: flex;
+      flex-direction: column;
+      /* Full viewport, but never so tall that object-fit: cover crops into the
+         wordmark. The footage is 16/9 and the lettering runs to roughly 80% of
+         the frame width, so past about 78vw of height the crop starts eating
+         the final E. 88vw is that limit plus the ribbon and nav. */
+      min-height: min(100svh, 88vw);
+    }
+  }
+</style>

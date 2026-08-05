@@ -22,11 +22,21 @@ import Figure from './Figure.astro';
       scrolled without a mouse when it overflows on small screens. */}
   <ul class="gallery__strip" role="list" tabindex="0" aria-label="Photographs of the space">
     <li class="gallery__item gallery__item--tall reveal">
-      <Figure shape="arch" ratio="2 / 3" pending="A robe on a hook, morning light" />
+      <Figure
+        shape="arch"
+        ratio="2 / 3"
+        src="/img/samples/gallery-robe.webp"
+        alt="Soft linen hanging from a hook, with hard sunlight thrown across the wall behind it."
+      />
     </li>
 
     <li class="gallery__item gallery__item--wide reveal">
-      <Figure shape="hangtag" ratio="4 / 3" pending="The room, wide, mid-afternoon" />
+      <Figure
+        shape="hangtag"
+        ratio="4 / 3"
+        src="/img/samples/gallery-room.webp"
+        alt="A plaster wall and a shallow arch, cut across by the hard shadow of a window frame."
+      />
     </li>
 
     <li class="gallery__item gallery__item--tall reveal">
@@ -39,7 +49,12 @@ import Figure from './Figure.astro';
     </li>
 
     <li class="gallery__item gallery__item--tall reveal">
-      <Figure shape="arch" ratio="2 / 3" pending="Sandstone, dry light, hard shadow" />
+      <Figure
+        shape="arch"
+        ratio="2 / 3"
+        src="/img/samples/gallery-stone.webp"
+        alt="Layered sandstone lit from the side, the grain of the rock picked out in gold."
+      />
     </li>
   </ul>
 </section>

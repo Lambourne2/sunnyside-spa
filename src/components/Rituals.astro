@@ -13,7 +13,8 @@ const ROWS = [
     body: 'Ninety minutes that start with your feet and end with your scalp. Warm oil, slow pressure, and a room that smells like the desert after rain. Book it early — the first appointment of the day is the quiet one.',
     price: '[PRICE]',
     duration: '[DURATION]',
-    pending: 'Oils and unglazed ceramic on linen',
+    src: '/img/samples/ritual-oils.webp',
+    alt: 'A small amber bottle lying on striped linen with dried grasses beside it.',
   },
   {
     eyebrow: 'Also worth your time',
@@ -22,7 +23,8 @@ const ROWS = [
     body: 'One line about what happens, then one about how you will feel walking out. Replace this once the ritual is named and priced.',
     price: '[PRICE]',
     duration: '[DURATION]',
-    pending: 'Detail shot — hands, linen, water in a vessel',
+    src: '/img/samples/ritual-water.webp',
+    alt: 'Two hands tipping water from an unglazed clay jug into a small bowl.',
   },
 ];
 ---
@@ -37,7 +39,8 @@ const ROWS = [
           class="ritual__figure reveal"
           shape="arch"
           ratio="4 / 5"
-          pending={row.pending}
+          src={row.src}
+          alt={row.alt}
         />
         <div class="ritual__copy reveal">
           <p class="t-eyebrow">{row.eyebrow}</p>

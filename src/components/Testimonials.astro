@@ -64,11 +64,21 @@ const QUOTES = [
     margin-block-start: var(--space-xl);
   }
 
-  /* Hang tag — stadium radius at both ends (§5). The generous inline padding
-     is doing real work: at a full stadium radius the top and bottom curve
-     inward, so text set tight to the edge collides with the curve. */
+  /* Hang tag — stadium radius at both ends (§5). Proportion matters as much as
+     the radius: at a full stadium radius a card as wide as it is tall renders
+     as a circle, not a tag. The min-height keeps it portrait so the straight
+     sides read. The generous padding keeps text clear of the end curves. */
   .kind__card {
-    padding: clamp(var(--space-2xl), 6vw, var(--space-3xl)) clamp(var(--space-xl), 4vw, var(--space-2xl));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 23rem;
+    /* Width is capped, not just height — a stadium only reads as a tag while
+       it is clearly taller than it is wide. Left to fill a 350px column it
+       came out a circle. */
+    max-width: 17.5rem;
+    margin-inline: auto;
+    padding: clamp(var(--space-xl), 4vw, var(--space-2xl)) var(--space-xl);
     border-radius: var(--r-tag);
     border: 1px solid var(--line-hair);
   }

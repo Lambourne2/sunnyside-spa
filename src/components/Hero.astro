@@ -67,7 +67,7 @@ const POSTER = '/brand/hero/poster.webp';
       tabindex="-1"></video>
   </div>
 
-  <div class="hero__content">
+  <div class="hero__content" data-hero-actions>
     <div class="shell hero__actions">
       <a class="btn btn--primary" href="/booking/">Book a visit</a>
       <a class="link hero__link" href="/treatments/">See treatments&nbsp;→</a>
@@ -112,17 +112,17 @@ const POSTER = '/brand/hero/poster.webp';
 </script>
 
 <style>
-  .hero { position: relative; }
+  .hero {
+    position: relative;
+    display: grid;
+  }
 
-  /* Height is resolved from the viewport, not from the image, so the box is
-     correct on the very first layout pass — that is what keeps CLS at 0.
-     56.25vw is 16/9. Capping with max-height on an aspect-ratio box would
-     shrink the WIDTH to preserve the ratio and leave a gap beside the video,
-     so the cap goes on height and object-fit: cover crops instead. */
+  /* Mobile: natural 16/9. A phone-height hero would mean cropping a landscape
+     frame to portrait, which cuts the wordmark in half — §6 rules it out. */
   .hero__media {
     position: relative;
     width: 100%;
-    height: min(56.25vw, 82vh);
+    height: 56.25vw;
     min-height: 200px;
     overflow: hidden;
     /* Warm-tinted placeholder, never gray (§12). */
@@ -170,14 +170,50 @@ const POSTER = '/brand/hero/poster.webp';
     gap: var(--space-lg);
   }
 
+  /* The CTAs stay out of the way until the visitor scrolls, so the hero reads
+     as just the wall and the light. The nav's Book button and the mobile
+     booking bar are both persistent, so booking is never more than one tap
+     away while these are hidden. */
   .hero__content { padding-block: var(--space-lg); }
 
-  /* Mobile keeps the media at its native ratio and puts the CTAs beneath it.
-     §6 forbids letterboxing or scaling the landscape render to fit a phone —
-     the lettering would go tiny and the shadow motion illegible. */
+  /* §10 keeps opacity fades under reduced motion, so the fade is unconditional
+     and only the rise is gated. */
+  :global(.js-reveal) .hero__content {
+    opacity: 0;
+    transition: opacity 520ms var(--ease-reveal);
+  }
+
+  :global(.js-reveal) .hero__content.is-shown { opacity: 1; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-reveal) .hero__content {
+      translate: 0 16px;
+      transition:
+        opacity   520ms var(--ease-reveal),
+        translate 520ms var(--ease-reveal);
+    }
+
+    :global(.js-reveal) .hero__content.is-shown { translate: 0 0; }
+  }
+
+  /* Desktop: near full screen. The masthead is a flex column of ribbon + nav +
+     hero, so `flex: 1` fills whatever the chrome leaves without measuring
+     anything in JS — deterministic on the first layout pass, which is what
+     keeps CLS at 0. The CTAs stack over the media rather than sitting below it. */
   @media (min-width: 768px) {
-    .hero { display: grid; }
-    .hero__media { grid-area: 1 / 1; }
+    .hero {
+      flex: 1 1 auto;
+      grid-template-rows: 1fr;
+      min-height: 0;
+    }
+
+    .hero__media {
+      grid-area: 1 / 1;
+      height: 100%;
+      /* Never shorter than the source framing, so a short landscape window
+         letterboxes rather than cropping into the wordmark. */
+      min-height: min(56.25vw, 100%);
+    }
 
     .hero__content {
       grid-area: 1 / 1;
