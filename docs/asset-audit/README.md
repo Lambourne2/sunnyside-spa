@@ -90,11 +90,36 @@ transition.
 Loop seam measured at 2.6× a normal adjacent-frame delta — a visible hitch, so §6's
 crossfade applies.
 
-Transcode, audio strip, MP4/WebM, and poster export are all mechanical and can be done here.
-Duration is the interesting one: retimed from 60 fps to 24 fps the clip runs 9.8 s and the
-shadow drift slows by 2.5×, which lands in the §6 window and reads closer to §7's "tracking
-slowly" than the current speed does. No new footage needed. This is a proposal, not a
-change — nothing has been re-encoded.
+**Resolved 2026-08-05.** All of the above is now done, but the loop needed more than §6's
+suggested fix. Recorded here because it constrains any future re-render.
+
+The clip **does not cycle**. It opens on fast motion (adjacent-frame delta 0.44) and ends
+nearly static (0.05), so no cut point matches. A search over every start/end pair at least
+180 frames apart found the best natural loop still costs 2.88× a mean frame step — there is
+no clean seam anywhere in this footage.
+
+§6's remedy — crossfade the last 0.5 s into the first — was built and measured. It helped
+but did not solve it: the wrap went from 3.7× to 2.6× a mean step, still the 99th percentile
+of normal motion, i.e. a visible hitch. A dissolve cannot reconcile two genuinely different
+shadow positions moving at different rates.
+
+**What shipped instead: a ping-pong.** Source frames 88–235 forward, then 234–89 reversed.
+Both junctions are adjacent frame steps, so the cycle is seamless by construction rather
+than by blending. The 88–235 range was picked by searching for junctions where the shadow is
+nearly still — measured losslessly, the wrap is 0.35× a mean step and the turnaround 0.21×,
+both smaller than 97% of ordinary frames. 294 frames at 24 fps = **12.25 s**, mid-spec.
+
+Retiming 60→24 fps replays the same frames with no interpolation and slows the drift 2.5×,
+which reads closer to §7's "tracking slowly."
+
+Encoding note: a 48-frame GOP placed I-frame pops at frames 47, 95 and 239, visible as
+periodic flickers in a shot this soft. The shipped encode uses a single keyframe. The
+remaining measurable difference at the wrap is the frame-0 I-frame carrying different
+quantisation noise than its P-frame neighbours — CRF 22 keeps that inside the range of
+normal motion (23% of ordinary frame steps are larger) at 2.5 MB, under the 3 MB budget.
+
+**If this footage is ever re-rendered**, ask for genuinely cyclic motion — then a straight
+loop works and the ping-pong can be dropped.
 
 ### 6. The five-icon sprite has no source file
 

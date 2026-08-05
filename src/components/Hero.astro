@@ -1,0 +1,175 @@
+---
+/**
+ * Hero — §6, §7, §8, §12.
+ *
+ * The wordmark and tagline live in the footage, so nothing is overlaid on it
+ * except the CTAs. The page announces itself through a visually hidden <h1>.
+ *
+ * Loading rules, all from §6:
+ *   - poster is the LCP element, preloaded as an image by the page
+ *   - the video is never the LCP: preload="none", no src until after load
+ *   - video only above 768px, and only when saveData isn't set
+ *   - under prefers-reduced-motion the video is never loaded at all
+ *   - CLS: the media box reserves 16/9 up front, so nothing moves on swap
+ *
+ * GAP: §7 wants a leaf-shadow PNG drifting over the poster-still fallback so
+ * mobile is lit by the same sun. That asset wasn't in the handoff, so the
+ * mobile hero is currently static. See docs/asset-audit/README.md.
+ *
+ * CTA placement was checked against the footage rather than assumed: across the
+ * loop the button's edge holds 3.85:1 against the wall at its darkest, and ink
+ * never drops below 9.58:1.
+ *
+ * ── On the loop (§6 wants a seamless 10–15s cycle) ────────────────────────
+ * The supplied 3.93s clip does not cycle: it opens on fast motion and ends
+ * nearly static, so no cut point matches. §6's suggested remedy — crossfade the
+ * last 0.5s into the first — was tried and measured, and it only got the wrap
+ * from 3.7x to 2.6x a mean frame step, still a visible hitch at the 99th
+ * percentile of normal motion.
+ *
+ * The shipped loop is a ping-pong instead: source frames 88–235 forward, then
+ * 234–89 in reverse. Both junctions are adjacent frame steps, so the cycle is
+ * seamless by construction, and the range was chosen so both land where the
+ * shadow is nearly still. Measured losslessly the wrap is 0.35x a mean step —
+ * smaller than 97% of ordinary frames. 294 frames at 24fps = 12.25s, mid-spec.
+ *
+ * Encoded with a single keyframe: a 48-frame GOP put I-frame pops at frames 47,
+ * 95 and 239, which read as periodic flickers in a shot this soft.
+ */
+const MP4 = '/brand/hero/hero.mp4';
+const WEBM = '/brand/hero/hero.webm';
+const POSTER = '/brand/hero/poster.webp';
+---
+
+<section class="hero">
+  <h1 class="visually-hidden">Sunnyside Spa — sunshine for your soul</h1>
+
+  <div class="hero__media">
+    <img
+      class="hero__poster"
+      src={POSTER}
+      width="1920"
+      height="1080"
+      fetchpriority="high"
+      decoding="async"
+      alt="Afternoon light on a warm yellow plaster wall, the shadow of a palm frond drifting across the hand-lettered wordmark."
+    />
+    <video
+      class="hero__video"
+      data-hero-video
+      data-mp4={MP4}
+      data-webm={WEBM}
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-hidden="true"
+      tabindex="-1"></video>
+  </div>
+
+  <div class="hero__content">
+    <div class="shell hero__actions">
+      <a class="btn btn--primary" href="/booking/">Book a visit</a>
+      <a class="link hero__link" href="/treatments/">See treatments&nbsp;→</a>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const v = document.querySelector('[data-hero-video]');
+    if (!v) return;
+
+    const start = () => {
+      // §6 — never load the video at all under reduced motion.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      // §6 — desktop only.
+      if (!window.matchMedia('(min-width: 768px)').matches) return;
+      // §6 — respect Save-Data. Undefined means unsupported, which is permissive.
+      if (navigator.connection && navigator.connection.saveData) return;
+
+      for (const [src, type] of [
+        [v.dataset.webm, 'video/webm'],
+        [v.dataset.mp4, 'video/mp4'],
+      ]) {
+        const s = document.createElement('source');
+        s.src = src;
+        s.type = type;
+        v.appendChild(s);
+      }
+
+      v.addEventListener('playing', () => v.classList.add('is-playing'), { once: true });
+      v.load();
+      // Autoplay can still be refused; the poster simply stays put.
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {});
+    };
+
+    // After load, so the video never competes with the poster for LCP.
+    if (document.readyState === 'complete') requestAnimationFrame(start);
+    else window.addEventListener('load', () => requestAnimationFrame(start), { once: true });
+  })();
+</script>
+
+<style>
+  .hero { position: relative; }
+
+  /* Height is resolved from the viewport, not from the image, so the box is
+     correct on the very first layout pass — that is what keeps CLS at 0.
+     56.25vw is 16/9. Capping with max-height on an aspect-ratio box would
+     shrink the WIDTH to preserve the ratio and leave a gap beside the video,
+     so the cap goes on height and object-fit: cover crops instead. */
+  .hero__media {
+    position: relative;
+    width: 100%;
+    height: min(56.25vw, 82vh);
+    min-height: 200px;
+    overflow: hidden;
+    /* Warm-tinted placeholder, never gray (§12). */
+    background-color: var(--lemon-chiffon);
+  }
+
+  .hero__poster,
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The video sits over the poster and only becomes visible once it is actually
+     playing, so a stalled or refused load degrades to the still with no flash. */
+  .hero__video { opacity: 0; }
+  .hero__video.is-playing { opacity: 1; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__video { transition: opacity 600ms var(--ease-reveal); }
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .hero__content { padding-block: var(--space-lg); }
+
+  /* Mobile keeps the media at its native ratio and puts the CTAs beneath it.
+     §6 forbids letterboxing or scaling the landscape render to fit a phone —
+     the lettering would go tiny and the shadow motion illegible. */
+  @media (min-width: 768px) {
+    .hero { display: grid; }
+    .hero__media { grid-area: 1 / 1; }
+
+    .hero__content {
+      grid-area: 1 / 1;
+      align-self: end;
+      /* Positioned so it paints above .hero__media, which is itself relative —
+         a static child would be covered by the video no matter the DOM order. */
+      position: relative;
+      padding-block-end: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    }
+  }
+</style>

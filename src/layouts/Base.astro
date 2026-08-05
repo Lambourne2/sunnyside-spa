@@ -31,6 +31,8 @@ const { title, description } = Astro.props;
          fold on most pages; §12's transfer budget covers them at 114 KB total. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/jost.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/karla.woff2" crossorigin />
+
+    <slot name="head" />
   </head>
   <body>
     <IconSprite />
