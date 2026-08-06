@@ -157,24 +157,20 @@ const POSTER = '/brand/hero/poster.webp';
     .hero__video { transition: opacity 600ms var(--ease-reveal); }
   }
 
-  /* Desktop: near full screen. The masthead is a flex column of ribbon + nav +
-     hero, so `flex: 1` fills whatever the chrome leaves without measuring
-     anything in JS — deterministic on the first layout pass, which is what
-     keeps CLS at 0. The CTAs stack over the media rather than sitting below it. */
+  /* Desktop: the full viewport, running under the fixed nav so the footage is
+     edge-to-edge from the very top. Resolved from the viewport rather than from
+     the image, so it is correct on the first layout pass and CLS stays 0.
+
+     Capped at 78vw because object-fit: cover on a 16/9 frame starts cropping
+     into the wordmark past that — verified at 1280x1400, where the final E of
+     SUNNYSIDE was being cut off. */
   @media (min-width: 768px) {
-    .hero {
-      flex: 1 1 auto;
-      grid-template-rows: 1fr;
-      min-height: 0;
-    }
-
-    .hero__media {
-      grid-area: 1 / 1;
-      height: 100%;
-      /* Never shorter than the source framing, so a short landscape window
-         letterboxes rather than cropping into the wordmark. */
-      min-height: min(56.25vw, 100%);
-    }
-
+    /* 4px under the viewport, and that 4px is load-bearing. Chrome excludes an
+       image that covers the whole viewport from LCP — it assumes a background —
+       so at exactly 100svh the poster stopped being a candidate and the video,
+       inset by 1px and therefore fractionally smaller than the viewport, became
+       the LCP instead. §6 forbids that outright. Sitting just under the
+       threshold keeps the poster the largest eligible element. */
+    .hero__media { height: min(calc(100svh - 4px), 78vw); }
   }
 </style>

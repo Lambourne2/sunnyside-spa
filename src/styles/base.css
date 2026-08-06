@@ -162,7 +162,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   border: 0;
 }
 
-/* Off-screen until focused, then it lands on the ribbon line. */
+/* Off-screen until focused, then it drops into the top of the page. */
 .skip-link {
   position: absolute;
   top: 0;

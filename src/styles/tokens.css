@@ -92,6 +92,10 @@
   --space-2xl: 4rem;
   --space-3xl: 6rem;
 
+  /* Fixed nav height. Both the bar itself and the interior page offset read
+     this, so they can never drift apart. */
+  --nav-h:     4rem;
+
   --gutter:    clamp(1.25rem, 5vw, 3rem);
   --max-w:     72rem;
 }

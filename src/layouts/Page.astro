@@ -20,7 +20,8 @@ const { title, description, eyebrow, heading, lede } = Astro.props;
   {/* No hero to sit over, so the nav starts condensed rather than transparent. */}
   <SiteHeader solid />
 
-  <main id="main" tabindex="-1">
+  {/* Clears the fixed nav — same token the nav sizes itself from. */}
+  <main id="main" tabindex="-1" class="page-main">
     <PageHeader eyebrow={eyebrow} title={heading} lede={lede} />
     <slot />
   </main>
@@ -28,3 +29,7 @@ const { title, description, eyebrow, heading, lede } = Astro.props;
   <SiteFooter />
   <BookingBar />
 </Base>
+
+<style>
+  .page-main { padding-block-start: var(--nav-h); }
+</style>

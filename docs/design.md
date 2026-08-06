@@ -233,6 +233,25 @@ This is where the boldness gets spent. Everything else stays quiet and disciplin
 
 Mobile keeps a persistent bottom booking bar (shell background, rose pill button, hairline top rule).
 
+> **Amended 2026-08-05.** Two changes to the top of the homepage, both on request.
+>
+> **The ribbon is gone.** §8 opened with a lemon chiffon strip reading
+> `NOW BOOKING · [NEIGHBOURHOOD], UT`. It was removed; the neighbourhood still
+> appears in the page ledes and the footer, so only the strip was lost. With it
+> gone the chrome above the hero dropped from ~126px to a 64px nav.
+>
+> **The hero CTAs moved out of the hero.** §8 draws `⟨Book a visit⟩ see
+> treatments →` over the footage. They now sit in a chiffon bar directly beneath
+> it, so nothing is overlaid on the wall at all, and "see treatments" became a §9
+> secondary button rather than a text link so the pair reads as a bar.
+>
+> **The nav floats over the footage** and is `position: fixed`, not sticky —
+> sticky was bounded by its parent and scrolled away after the hero. Over the
+> video it carries a soft shell gradient scrim, because the frond shadow crosses
+> the top-left and dark ink on it measured 3.81:1. With the scrim, 7.62:1
+> measured on rendered pixels. The scrim is a tint, not a frosted panel, so §13
+> still holds.
+
 ### Other pages
 Treatments index (filter by the five icons) · Treatment detail (arched hero, what to expect, duration/price, add-ons, book) · Our story (founder photo, Caveat-heavy) · Visit (hours, map, parking, what to expect on arrival) · Booking (embedded scheduler, restyled to the palette).
 

@@ -3,10 +3,12 @@ import Logo from './Logo.astro';
 import BookCta from './BookCta.astro';
 
 /**
- * Ribbon + nav (§8). The nav is transparent over the hero and condenses to
- * shell once the hero clears, over 240ms (§10).
+ * Nav (§8). Transparent over the hero, condensing to shell once the hero
+ * clears, over 240ms (§10).
  *
- * The neighbourhood is a placeholder — real value to be supplied.
+ * §8's ribbon ("NOW BOOKING · [NEIGHBOURHOOD], UT") was removed on request —
+ * see the amendment in docs/design.md §8. The neighbourhood still appears in
+ * the page ledes and the footer, so nothing was lost but the strip itself.
  */
 interface Props {
   /** Interior pages have no hero to sit over, so the nav starts on shell. */
@@ -21,15 +23,10 @@ const NAV = [
 ];
 ---
 
-<!-- Ribbon: lemon chiffon, tracked caps (§8) -->
-<p class="ribbon grain">
-  <span class="t-eyebrow ribbon__text">Now booking · [NEIGHBOURHOOD], UT</span>
-</p>
-
 <header class:list={['nav', solid && 'is-condensed']} data-nav data-nav-solid={solid ? '' : undefined}>
   <div class="shell nav__inner">
     <a class="nav__home" href="/">
-      <Logo variant="horizontal" width={168} label="Sunnyside Spa, home" />
+      <Logo variant="horizontal" width={132} label="Sunnyside Spa, home" />
     </a>
 
     <nav class="nav__links" aria-label="Primary">
@@ -46,17 +43,13 @@ const NAV = [
 </header>
 
 <style>
-  .ribbon {
-    margin: 0;
-    padding-block: var(--space-xs);
-    text-align: center;
-    background-color: var(--lemon-chiffon);
-  }
-
-  .ribbon__text { color: var(--ink); }
-
+  /* Fixed, not sticky: sticky is bounded by its parent, so inside the masthead
+     the nav unstuck at the hero's bottom edge and scrolled off — after ~266px
+     on a phone. Fixed keeps it for the whole page and lets the hero run
+     edge-to-edge underneath it. */
   .nav {
-    position: sticky;
+    position: fixed;
+    inset-inline: 0;
     top: 0;
     z-index: 20;
     background-color: transparent;
@@ -65,9 +58,38 @@ const NAV = [
   }
 
   /* §10 — transparent to shell once the hero clears. */
+  /* Legibility scrim, only while the nav floats over the footage. The frond
+     shadow sweeps the top-left of the frame, and dark ink on a dark shadow
+     measured 3.81:1 behind the wordmark — under the 4.5:1 floor. A soft
+     shell gradient fading to nothing fixes it without reading as a band. Not
+     glassmorphism: no blur, no frost, just a tint (§13). */
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: calc(var(--nav-h) + 2rem);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgb(252 248 239 / 0.62),
+      rgb(252 248 239 / 0.34) 55%,
+      rgb(252 248 239 / 0)
+    );
+    transition: opacity var(--dur-nav) var(--ease-reveal);
+  }
+
+  /* Once it has its own shell background the scrim is redundant. */
+  .nav.is-condensed::before { opacity: 0; }
+
+  .nav__inner { position: relative; }
+
+  /* A hairline rather than --shadow-warm: a 40px diffuse shadow under a bar
+     this thin reads as weight, and the site's own language for separating
+     bands is a 1px rose rule (§9). */
   .nav.is-condensed {
     background-color: var(--shell);
-    box-shadow: var(--shadow-warm);
+    border-block-end: 1px solid var(--line-hair);
   }
 
   .nav__inner {
@@ -75,7 +97,7 @@ const NAV = [
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    padding-block: var(--space-sm);
+    min-height: var(--nav-h);
   }
 
   .nav__home {
@@ -96,17 +118,35 @@ const NAV = [
     gap: clamp(var(--space-md), 3vw, var(--space-xl));
   }
 
+  /* The underline is drawn on a pseudo-element so it can sit tight under the
+     baseline and grow from the centre, instead of a border that pushes the
+     link's own box around. */
   .nav__link {
+    position: relative;
     color: var(--ink);
     text-decoration: none;
     padding-block: var(--space-2xs);
-    border-block-end: 1px solid transparent;
-    transition: border-color var(--dur-nav) var(--ease-reveal);
   }
 
-  .nav__link:hover { border-block-end-color: var(--dusty-rose); }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--dusty-rose);
+    scale: 0 1;
+    transition: scale var(--dur-nav) var(--ease-reveal);
+  }
 
-  .nav__links :global(.btn) { padding: 10px 20px; }
+  .nav__link:hover::after,
+  .nav__link:focus-visible::after { scale: 1 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__link::after { transition: none; }
+  }
+
+  .nav__links :global(.btn) { padding: 9px 18px; }
 
   /* Under 640px the links move to the booking bar and the footer; keeping five
      tracked-caps targets in a 360px bar would make each one too small to hit. */
