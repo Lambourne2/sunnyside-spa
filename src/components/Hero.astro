@@ -1,10 +1,10 @@
 ---
-import BookCta from './BookCta.astro';
 /**
  * Hero — §6, §7, §8, §12.
  *
- * The wordmark and tagline live in the footage, so nothing is overlaid on it
- * except the CTAs. The page announces itself through a visually hidden <h1>.
+ * The wordmark and tagline live in the footage, so nothing is overlaid on it at
+ * all — the CTAs sit in HeroActions, in a bar directly beneath. The page
+ * announces itself through a visually hidden <h1>.
  *
  * Loading rules, all from §6:
  *   - poster is the LCP element, preloaded as an image by the page
@@ -66,13 +66,6 @@ const POSTER = '/brand/hero/poster.webp';
       preload="none"
       aria-hidden="true"
       tabindex="-1"></video>
-  </div>
-
-  <div class="hero__content" data-hero-actions>
-    <div class="shell hero__actions">
-      <BookCta />
-      <a class="link hero__link" href="/treatments/">See treatments&nbsp;→</a>
-    </div>
   </div>
 </section>
 
@@ -164,39 +157,6 @@ const POSTER = '/brand/hero/poster.webp';
     .hero__video { transition: opacity 600ms var(--ease-reveal); }
   }
 
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-lg);
-  }
-
-  /* The CTAs stay out of the way until the visitor scrolls, so the hero reads
-     as just the wall and the light. The nav's Book button and the mobile
-     booking bar are both persistent, so booking is never more than one tap
-     away while these are hidden. */
-  .hero__content { padding-block: var(--space-lg); }
-
-  /* §10 keeps opacity fades under reduced motion, so the fade is unconditional
-     and only the rise is gated. */
-  :global(.js-reveal) .hero__content {
-    opacity: 0;
-    transition: opacity 520ms var(--ease-reveal);
-  }
-
-  :global(.js-reveal) .hero__content.is-shown { opacity: 1; }
-
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.js-reveal) .hero__content {
-      translate: 0 16px;
-      transition:
-        opacity   520ms var(--ease-reveal),
-        translate 520ms var(--ease-reveal);
-    }
-
-    :global(.js-reveal) .hero__content.is-shown { translate: 0 0; }
-  }
-
   /* Desktop: near full screen. The masthead is a flex column of ribbon + nav +
      hero, so `flex: 1` fills whatever the chrome leaves without measuring
      anything in JS — deterministic on the first layout pass, which is what
@@ -216,13 +176,5 @@ const POSTER = '/brand/hero/poster.webp';
       min-height: min(56.25vw, 100%);
     }
 
-    .hero__content {
-      grid-area: 1 / 1;
-      align-self: end;
-      /* Positioned so it paints above .hero__media, which is itself relative —
-         a static child would be covered by the video no matter the DOM order. */
-      position: relative;
-      padding-block-end: clamp(var(--space-xl), 6vw, var(--space-3xl));
-    }
   }
 </style>

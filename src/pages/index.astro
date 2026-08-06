@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
+import HeroActions from '../components/HeroActions.astro';
 import Welcome from '../components/Welcome.astro';
 import Treatments from '../components/Treatments.astro';
 import Rituals from '../components/Rituals.astro';
@@ -36,6 +37,9 @@ import BookingBar from '../components/BookingBar.astro';
   </div>
 
   <main id="main" tabindex="-1">
+    {/* First thing under the full-screen hero, and the first thing the skip
+        link lands on. */}
+    <HeroActions />
     <Welcome />
     <Treatments />
     <Rituals />
