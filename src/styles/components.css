@@ -33,6 +33,7 @@
   text-transform: uppercase;
   text-decoration: none;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color var(--dur-nav) var(--ease-reveal),
               border-color     var(--dur-nav) var(--ease-reveal),
@@ -240,4 +241,98 @@
   --eyebrow-color: var(--lemon-chiffon);     /* 6.39:1 */
   --meta-color: var(--lemon-chiffon);        /* 6.39:1 */
   --quote-color: var(--royal-gold);          /* 5.76:1 */
+}
+
+/* ── Button flourish (§2.3 — "rays alone become the hover flourish") ────── */
+
+.btn__rays {
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-start: 0.1em;
+  color: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn__rays { transition: rotate 700ms var(--ease-glide), scale 700ms var(--ease-glide); }
+  .btn:hover .btn__rays,
+  .btn:focus-visible .btn__rays { rotate: 90deg; scale: 1.15; }
+}
+
+/* Magnetic buttons are nudged by site.ts through these two properties, so
+   the effect composes with every other transform rather than replacing it. */
+[data-magnetic] {
+  translate: var(--mx, 0) var(--my, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-magnetic] { transition: translate 500ms var(--ease-glide), background-color var(--dur-nav) var(--ease-reveal), border-color var(--dur-nav) var(--ease-reveal), color var(--dur-nav) var(--ease-reveal); }
+}
+
+.btn--lg { padding: 18px 34px; }
+
+/* ── Liquid glass (§13 amendment — floating chrome only) ────────────────────
+   Baseline everywhere: a shell-tinted blur with a lit rim. In Chromium,
+   liquid-glass.ts layers a per-element displacement map on top so the edges
+   bend what is behind them like a lens; elsewhere this is the whole effect. */
+
+.glass {
+  position: relative;
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.7) brightness(1.04);
+          backdrop-filter: blur(var(--glass-blur)) saturate(1.7) brightness(1.04);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), var(--shadow-warm);
+}
+
+/* The specular sweep across the top of the pane. A shell gradient, so the
+   brightest point is paper rather than white. */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 20% -20%, rgb(252 248 239 / 0.75), transparent 55%),
+    radial-gradient(80% 60% at 110% 120%, rgb(248 225 108 / 0.12), transparent 60%);
+  mix-blend-mode: soft-light;
+}
+
+/* Without backdrop-filter the tint alone would be too thin to read on. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background-color: var(--glass-tint-hi); }
+}
+
+/* ── Section heading block — eyebrow over title, used on every section ──── */
+
+.sec-head {
+  display: grid;
+  gap: var(--space-sm);
+  margin-block-end: clamp(var(--space-xl), 5vw, var(--space-2xl));
+}
+
+.sec-head .t-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.sec-head .t-eyebrow .icon { color: var(--dusty-rose); }
+
+.sec-head__title { max-width: 20ch; }
+
+/* A count beside the eyebrow — "01 / Treatments" — set in the same caps. */
+.sec-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  color: var(--rose-deep);
+}
+
+/* Chromium: the pane bends its backdrop at the rim (liquid-glass.ts). Less
+   frost than the fallback, because the refraction is now doing the work.
+   Each pane keeps its own tint — a menu sheet needs more body than a tag. */
+.has-liquid .glass[data-liquid] {
+  -webkit-backdrop-filter: blur(4px) var(--lg-filter,) saturate(1.8) brightness(1.05);
+          backdrop-filter: blur(4px) var(--lg-filter,) saturate(1.8) brightness(1.05);
 }

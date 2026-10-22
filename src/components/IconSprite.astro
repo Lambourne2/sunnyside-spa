@@ -11,7 +11,11 @@
  * viewBox on purpose, so the weight tracks the icon size and never thins out.
  *
  * Rendered once per page in the layout; Icon.astro references these by id.
+ *
+ * The logomark symbol is built from src/data/marks.ts — the same strokes the
+ * glass 3D mark is extruded from.
  */
+import { LOGOMARK } from '../data/marks';
 ---
 
 <svg
@@ -77,6 +81,13 @@
       <circle cx="12" cy="12" r="4.6" />
       <path d="M12 2.2v2.6M12 19.2v2.6M21.8 12h-2.6M4.8 12H2.2" />
       <path d="M18.9 5.1 17 7M7 17l-1.9 1.9M18.9 18.9 17 17M7 7 5.1 5.1" />
+    </g>
+  </symbol>
+
+  <!-- LOGOMARK — sun, rays, two waves. Interpretation, see marks.ts -->
+  <symbol id="icon-logomark" viewBox={`0 0 ${LOGOMARK.box[0]} ${LOGOMARK.box[1]}`}>
+    <g fill="none" stroke="currentColor" stroke-width={LOGOMARK.stroke} stroke-linecap="round" stroke-linejoin="round">
+      {LOGOMARK.paths.map((p) => <path d={p.d} />)}
     </g>
   </symbol>
 

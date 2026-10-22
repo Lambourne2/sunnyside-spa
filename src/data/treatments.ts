@@ -15,6 +15,9 @@ export interface Treatment {
   name: string;
   /** One line. Verbatim §11 copy where it exists, otherwise DRAFT. */
   line: string;
+  /** The week this one is for — the homepage finder leads with it. DRAFT,
+   *  §11 voice, and kept to six words so it can run in tracked caps (§4). */
+  need: string;
   draft: boolean;
   price: string;
   duration: string;
@@ -36,6 +39,7 @@ export interface Treatment {
 export const TREATMENTS: Treatment[] = [
   {
     slug: 'massage',
+    need: 'Shoulders up by your ears',
     icon: 'massage',
     name: 'Massage',
     line: 'Sixty minutes, warm oil, and someone who actually listens when you say where it hurts.',
@@ -63,6 +67,7 @@ export const TREATMENTS: Treatment[] = [
   },
   {
     slug: 'skincare',
+    need: 'Skin that looks how you feel',
     icon: 'skincare',
     name: 'Skincare',
     line: 'I look at your skin in daylight, ask what you already use, and work with it.',
@@ -88,6 +93,7 @@ export const TREATMENTS: Treatment[] = [
   },
   {
     slug: 'body',
+    need: 'You want to feel soft again',
     icon: 'body',
     name: 'Body',
     line: 'A scrub, a wrap, and a warm shower to finish. You leave softer than you came.',
@@ -113,6 +119,7 @@ export const TREATMENTS: Treatment[] = [
   },
   {
     slug: 'wellness',
+    need: 'Your head will not switch off',
     icon: 'wellness',
     name: 'Wellness',
     line: 'Breathwork, stretching, and quiet. Bring socks.',
@@ -137,6 +144,7 @@ export const TREATMENTS: Treatment[] = [
   },
   {
     slug: 'you-time',
+    need: 'You need one whole afternoon',
     icon: 'you-time',
     name: 'You time',
     line: 'Book the room for the afternoon and decide what happens once you are in it.',

@@ -1,6 +1,5 @@
 ---
 import IconSprite from '../components/IconSprite.astro';
-import SiteScript from '../components/SiteScript.astro';
 import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
@@ -18,7 +17,8 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#FCF8EF" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
 
@@ -32,6 +32,17 @@ const { title, description } = Astro.props;
          fold on most pages; §12's transfer budget covers them at 114 KB total. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/jost.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/karla.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/caveat.woff2" crossorigin />
+
+    {/* Runs before first paint so reveal targets are hidden from the start
+        rather than flashing visible and then hiding when the module lands.
+        If the module never arrives, the fallback timer shows everything. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      setTimeout(() => {
+        if (!window.__sunnyside) document.documentElement.classList.add('js-failed');
+      }, 3500);
+    </script>
 
     <slot name="head" />
   </head>
@@ -43,6 +54,12 @@ const { title, description } = Astro.props;
     <slot />
     {/* §10 — the whole page reads as one long afternoon. */}
     <div class="sun-wash" aria-hidden="true"></div>
-    <SiteScript />
+    {/* Liquid glass displacement filters are written in here at runtime,
+        sized to each glass element (Chromium only — see liquid-glass.ts). */}
+    <svg class="lg-defs" aria-hidden="true" focusable="false"><defs data-lg-defs></defs></svg>
   </body>
 </html>
+
+<script>
+  import '../scripts/site';
+</script>

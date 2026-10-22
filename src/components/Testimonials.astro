@@ -1,111 +1,228 @@
 ---
 /**
- * §8 — KIND WORDS. Caveat quotes on hang-tag shaped cards, aqua/rose tinted,
- * slight rotation. Sits above the dark band so testimonials do the persuading
- * before the closer asks (§8).
+ * §8 — KIND WORDS. Caveat quotes on hang-tag cards (§5), aqua and rose
+ * tinted — now actually hung: each tag dangles from a rose line on its own
+ * string, and swings when you brush past it or tap it. A light pendulum, one
+ * rAF loop that sleeps as soon as every tag is still. They also swing once,
+ * softly, as they come into view. Under reduced motion they hang still at
+ * §4's slight tilt.
  *
  * All three quotes are DRAFT — written to the §11 voice, to be replaced with
  * real ones. Attribution is a placeholder: never invent a customer.
  */
 const QUOTES = [
-  {
-    // DRAFT COPY
-    quote: 'I said my shoulder, and she worked on my shoulder. That has not always been my experience.',
-    who: '[NAME]',
-    detail: '[TREATMENT]',
-    tint: 'aqua',
-  },
-  {
-    // DRAFT COPY
-    quote: 'I fell asleep. I never fall asleep.',
-    who: '[NAME]',
-    detail: '[TREATMENT]',
-    tint: 'rose',
-  },
-  {
-    // DRAFT COPY
-    quote: 'It is the one appointment I do not move when the week gets full.',
-    who: '[NAME]',
-    detail: '[TREATMENT]',
-    tint: 'aqua',
-  },
+  // DRAFT COPY
+  { quote: 'I said my shoulder, and she worked on my shoulder. That has not always been my experience.', who: '[NAME]', detail: '[TREATMENT]', tint: 'aqua' },
+  // DRAFT COPY
+  { quote: 'I fell asleep. I never fall asleep.', who: '[NAME]', detail: '[TREATMENT]', tint: 'rose' },
+  // DRAFT COPY
+  { quote: 'It is the one appointment I do not move when the week gets full.', who: '[NAME]', detail: '[TREATMENT]', tint: 'chiffon' },
 ];
 ---
 
 <section class="kind" aria-labelledby="kind-title">
   <div class="shell">
-    <p class="t-eyebrow">Kind words</p>
-    <h2 class="t-h2" id="kind-title">What people say after</h2>
+    <header class="sec-head">
+      <p class="t-eyebrow reveal"><span class="sec-num">06</span> &nbsp;Kind words</p>
+      <h2 class="t-display sec-head__title" id="kind-title" data-split>What people say after</h2>
+    </header>
+  </div>
 
-    <ul class="kind__list" role="list">
-      {
-        QUOTES.map((q, i) => (
-          <li class:list={['kind__card', `kind__card--${q.tint}`, i % 2 === 1 && 'kind__card--tilt', 'reveal']}>
-            <figure class="kind__fig">
-              {/* DRAFT COPY */}
-              <blockquote class="t-quote kind__quote">{q.quote}</blockquote>
-              <figcaption class="t-meta kind__who">
-                {q.who} · {q.detail}
-              </figcaption>
-            </figure>
-          </li>
-        ))
-      }
+  <div class="kind__rail" data-tags>
+    <svg class="kind__line" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 8 Q600 34 1200 8" vector-effect="non-scaling-stroke" />
+    </svg>
+    <ul class="kind__list shell" role="list">
+      {QUOTES.map((q, i) => (
+        <li class="kind__slot" style={`--i:${i}`}>
+          <figure class:list={['kind__tag', `kind__tag--${q.tint}`]} data-tag tabindex="-1">
+            <span class="kind__string" aria-hidden="true"></span>
+            <span class="kind__hole" aria-hidden="true"></span>
+            {/* DRAFT COPY */}
+            <blockquote class="t-quote kind__quote">{q.quote}</blockquote>
+            <figcaption class="t-meta kind__who">{q.who} · {q.detail}</figcaption>
+          </figure>
+        </li>
+      ))}
     </ul>
   </div>
 </section>
 
+<script>
+  const tags = [...document.querySelectorAll<HTMLElement>('[data-tag]')];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (tags.length && !reduce) {
+    // θ'' = −k·θ − c·θ' : a damped pendulum per tag, in degrees.
+    const state = tags.map((el, i) => ({ el, a: 0, v: 0, rest: [-1.5, 1.2, -0.8][i % 3] }));
+    let raf = 0;
+    let last = 0;
+
+    const step = (now: number) => {
+      const dt = Math.min(0.033, (now - last) / 1000 || 0.016);
+      last = now;
+      let moving = false;
+      for (const s of state) {
+        const acc = -38 * (s.a - s.rest) - 2.6 * s.v;
+        s.v += acc * dt;
+        s.a += s.v * dt;
+        if (Math.abs(s.v) > 0.02 || Math.abs(s.a - s.rest) > 0.02) moving = true;
+        s.el.style.rotate = `${s.a.toFixed(3)}deg`;
+      }
+      raf = moving ? requestAnimationFrame(step) : 0;
+    };
+
+    const nudge = (i: number, dv: number) => {
+      state[i].v += dv;
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(step);
+      }
+    };
+
+    state.forEach((s, i) => {
+      s.a = s.rest;
+      s.el.style.rotate = `${s.rest}deg`;
+      let lastX: number | null = null;
+      s.el.addEventListener('pointerenter', (e) => (lastX = e.clientX));
+      s.el.addEventListener('pointermove', (e) => {
+        if (lastX !== null) nudge(i, Math.max(-60, Math.min(60, (e.clientX - lastX) * 1.6)));
+        lastX = e.clientX;
+      });
+      s.el.addEventListener('pointerleave', () => (lastX = null));
+      s.el.addEventListener('pointerdown', () => nudge(i, i % 2 ? -70 : 70));
+    });
+
+    // One soft swing each as they come into view, staggered.
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const i = tags.indexOf(e.target as HTMLElement);
+        setTimeout(() => nudge(i, i % 2 ? -46 : 46), i * 140);
+        io.unobserve(e.target);
+      }
+    }, { threshold: 0.4 });
+    tags.forEach((t) => io.observe(t));
+  }
+</script>
+
 <style>
-  .kind { padding-block: var(--space-2xl); }
+  .kind { padding-block: var(--section-y); overflow-x: clip; }
+
+  .kind__rail { position: relative; padding-block-start: var(--space-md); }
+
+  .kind__line {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    fill: none;
+    stroke: var(--dusty-rose);
+    stroke-width: 1.5;
+    opacity: 0.6;
+  }
 
   .kind__list {
     display: grid;
-    gap: var(--space-xl);
-    margin-block-start: var(--space-xl);
+    gap: var(--space-2xl);
+    justify-items: center;
   }
 
-  /* Hang tag — stadium radius at both ends (§5). Proportion matters as much as
-     the radius: at a full stadium radius a card as wide as it is tall renders
-     as a circle, not a tag. The min-height keeps it portrait so the straight
-     sides read. The generous padding keeps text clear of the end curves. */
-  .kind__card {
+  .kind__slot { display: flex; justify-content: center; }
+
+  /* Hang tag — stadium radius at both ends (§5). Kept clearly taller than
+     wide, or a full stadium radius renders as a circle. The string runs up
+     from the hole to the rail, and the tag pivots where the string is tied. */
+  .kind__tag {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 23rem;
-    /* Width is capped, not just height — a stadium only reads as a tag while
-       it is clearly taller than it is wide. Left to fill a 350px column it
-       came out a circle. */
-    max-width: 17.5rem;
-    margin-inline: auto;
-    padding: clamp(var(--space-xl), 4vw, var(--space-2xl)) var(--space-xl);
+    gap: var(--space-md);
+    width: min(100%, 16rem);
+    min-height: 25rem;
+    margin: 0;
+    margin-block-start: calc(var(--space-2xl) + var(--i) * 1.5rem);
+    padding: 4.5rem var(--space-lg) var(--space-2xl);
     border-radius: var(--r-tag);
     border: 1px solid var(--line-hair);
+    transform-origin: 50% calc(-1 * (var(--space-2xl) + var(--i) * 1.5rem));
+    cursor: grab;
+    touch-action: pan-y;
   }
 
-  .kind__card--aqua { background-color: var(--surface-aqua); }
-  .kind__card--rose { background-color: var(--surface-tint); }
+  .kind__tag--aqua    { background-color: var(--surface-aqua); }
+  .kind__tag--rose    { background-color: var(--surface-tint); }
+  .kind__tag--chiffon { background-color: var(--lemon-chiffon); }
 
-  .kind__fig { margin: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+  .kind__hole {
+    position: absolute;
+    top: 1.6rem;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    translate: -50% 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--dusty-rose);
+    background: var(--shell);
+  }
+
+  .kind__string {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% - 1.6rem - 7px);
+    width: 1.5px;
+    height: calc(var(--space-2xl) + var(--i) * 1.5rem + 2.4rem);
+    translate: -50% 0;
+    background: var(--dusty-rose);
+    opacity: 0.7;
+  }
 
   .kind__quote {
     margin: 0;
-    /* Caveat at quote scale is large display type, so it clears the §3
-       restriction on rose-toned text carrying small copy. */
-    font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+    font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+    line-height: 1.15;
     --quote-color: var(--ink);
   }
 
   .kind__who { color: var(--ink-soft); }
 
-  /* §4 allows a slight rotation on handwriting moments. Alternate cards only,
-     so the row reads hand-placed rather than uniformly skewed. */
-  @media (prefers-reduced-motion: no-preference) {
-    .kind__card--tilt { rotate: -1.5deg; }
+  @media (prefers-reduced-motion: reduce) {
+    .kind__slot:nth-child(2n) .kind__tag { rotate: -1.5deg; }
   }
 
   @media (min-width: 768px) {
     .kind__list { grid-template-columns: repeat(3, 1fr); align-items: start; }
-    .kind__card:nth-child(2) { margin-block-start: var(--space-xl); }
+  }
+
+  /* Phone: the tags stay on one rail and the row swipes sideways, rather
+     than stacking three tall tags into a long scroll. A straight rail here,
+     so strings meet it at the same height however far the row has moved. */
+  @media (max-width: 767px) {
+    .kind__line { display: none; }
+    .kind__rail::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      top: 14px;
+      height: 1.5px;
+      background: var(--dusty-rose);
+      opacity: 0.6;
+    }
+    .kind__list {
+      display: flex;
+      gap: var(--space-md);
+      max-width: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      padding-block-end: var(--space-xl);
+      scrollbar-width: none;
+    }
+    .kind__list::-webkit-scrollbar { display: none; }
+    .kind__slot { flex: 0 0 min(72vw, 16rem); scroll-snap-align: center; }
+    .kind__tag { margin-block-start: calc(2rem + var(--i) * 1rem); transform-origin: 50% calc(-1 * (2rem + var(--i) * 1rem)); min-height: 24rem; }
+    .kind__string { height: calc(2rem + var(--i) * 1rem + 1.6rem + 10px); }
   }
 </style>

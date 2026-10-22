@@ -4,32 +4,31 @@ import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import BookingBar from '../components/BookingBar.astro';
 import PageHeader from '../components/PageHeader.astro';
+import type { IconName } from '../components/Icon.astro';
 
-/** Shell for every page except the homepage, which has the full-bleed hero. */
+/** Shell for every page except the homepage, which has the full hero. */
 interface Props {
   title: string;
   description?: string;
   eyebrow: string;
   heading: string;
   lede?: string;
+  /** The glass mark on this page's sun wall. */
+  mark?: IconName;
 }
-const { title, description, eyebrow, heading, lede } = Astro.props;
+const { title, description, eyebrow, heading, lede, mark } = Astro.props;
 ---
 
 <Base title={title} description={description}>
-  {/* No hero to sit over, so the nav starts condensed rather than transparent. */}
-  <SiteHeader solid />
+  {/* Every page now opens on the sun wall, so the nav floats over it exactly
+      as it does on the homepage and firms up once the header clears. */}
+  <SiteHeader />
 
-  {/* Clears the fixed nav — same token the nav sizes itself from. */}
-  <main id="main" tabindex="-1" class="page-main">
-    <PageHeader eyebrow={eyebrow} title={heading} lede={lede} />
+  <main id="main" tabindex="-1">
+    <PageHeader eyebrow={eyebrow} title={heading} lede={lede} mark={mark} />
     <slot />
   </main>
 
   <SiteFooter />
   <BookingBar />
 </Base>
-
-<style>
-  .page-main { padding-block-start: var(--nav-h); }
-</style>

@@ -1,52 +1,72 @@
 ---
 import BookCta from './BookCta.astro';
+import Icon from './Icon.astro';
 
 /**
- * §8 — "Mobile keeps a persistent bottom booking bar (shell background, rose
- * pill button, hairline top rule)."
+ * §8 — "Mobile keeps a persistent bottom booking bar." Now a floating glass
+ * dock (§13 amendment) rather than a full-width strip: it sits above the iOS
+ * home indicator, lets the page show around it, and keeps the one action a
+ * thumb's reach away on every screen.
  *
  * Hidden at 640px and up, where the nav's Book button is always in reach.
- * Padded for the iOS home indicator so the button is never under it.
  */
 ---
 
-<div class="bookbar">
-  <div class="bookbar__inner">
-    <span class="t-meta bookbar__note">Appointments only</span>
+<div class="dock">
+  <div class="dock__bar glass" data-liquid="20">
+    <span class="dock__note">
+      <Icon name="logomark" size={30} />
+      <span class="t-meta">Appointments only</span>
+    </span>
     <BookCta />
   </div>
 </div>
 
 <style>
-  .bookbar {
+  .dock {
     position: fixed;
     inset-inline: 0;
-    bottom: 0;
+    bottom: max(10px, env(safe-area-inset-bottom));
     z-index: 60;
-    background-color: var(--shell);
-    border-block-start: 1px solid var(--line-hair);
-    padding-block-end: env(safe-area-inset-bottom, 0px);
+    display: flex;
+    justify-content: center;
+    padding-inline: 10px;
+    pointer-events: none;
   }
 
-  .bookbar__inner {
+  .dock__bar {
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-md);
-    padding: var(--space-sm) var(--gutter);
+    gap: var(--space-sm);
+    width: min(100%, 26rem);
+    padding: 6px 6px 6px 14px;
+    border-radius: var(--r-tag);
+    background-color: var(--glass-tint-hi);
   }
 
-  .bookbar__note { color: var(--ink-soft); }
+  .dock__note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 0;
+    color: var(--ink-soft);
+    --meta-color: var(--ink-soft);
+  }
 
-  .bookbar__inner :global(.btn) { padding: 12px 22px; }
+  .dock__note .t-meta { font-size: 0.75rem; line-height: 1.25; }
+
+  @media (max-width: 359px) {
+    .dock__note :global(.icon) { display: none; }
+  }
+
+  .dock__note :global(.icon) { color: var(--dusty-rose); }
+
+  .dock__bar :global(.btn) { padding: 14px 20px; }
 
   @media (min-width: 640px) {
-    .bookbar { display: none; }
+    .dock { display: none; }
   }
 
-  /* The bar is fixed, so without this the last of the footer sits under it
-     permanently. Applied to the document rather than the bar itself. */
-  @media (max-width: 639px) {
-    :global(body) { padding-block-end: 4.5rem; }
-  }
 </style>

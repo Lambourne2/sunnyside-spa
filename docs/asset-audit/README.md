@@ -160,3 +160,15 @@ sprite means drawing them from scratch, which collides with "don't redraw suppli
 
 The same applies to the wave divider: §5 specifies it as "the logomark's two-wave curve as an
 inline SVG rule," and the logomark is raster only.
+
+## Update 2026-10-22 — the redesign
+
+- **§7 leaf shadow (blocker 7): worked around.** The sun wall (`src/scripts/sunwall.ts`)
+  draws the frond shadow procedurally in a shader, on the homepage hero and on every
+  interior page header. A photographed leaf-shadow PNG is no longer needed.
+- **Logomark paths (blocker 1, partly).** `src/data/marks.ts` holds the logomark as
+  monoline paths, set by eye against the PNG at 1/10 scale — an interpretation, not a
+  trace. It drives the glass 3D mark, the closer's draw-on, the dock and the
+  back-to-top. Swap in the traced SVG's paths there when it exists.
+- **Hero footage moved** from the hero to the mid-page "afternoon" section, so its baked
+  serif tagline and second wordmark drawing no longer sit next to the nav wordmark.

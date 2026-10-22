@@ -1,67 +1,114 @@
 ---
-import WaveDivider from './WaveDivider.astro';
+import Icon, { type IconName } from './Icon.astro';
 
 /**
- * Interior page header (§7).
+ * Interior page header (§7) — the same sun wall as the homepage, so every page
+ * reads as lit by the same sun. §7 asked for a leaf-shadow PNG drifting here;
+ * that asset never arrived, and the shader draws the shadow instead.
  *
- * §7 wants a leaf-shadow PNG drifting across these on a 45s loop, so every page
- * reads as lit by the same sun as the hero. That asset was not in the handoff.
- * The overlay element and its keyframes are here and inert — drop the PNG in at
- * --leaf-shadow and it starts moving. See docs/asset-audit.
+ * Each page stands its own glass mark on the wall: the service icon on a
+ * treatment page, the logomark elsewhere. The title is split into words here,
+ * on the server, and animated in CSS, because it is the page's LCP and must
+ * never wait on script.
  */
 interface Props {
   eyebrow: string;
   title: string;
   lede?: string;
+  mark?: IconName;
 }
-const { eyebrow, title, lede } = Astro.props;
+const { eyebrow, title, lede, mark = 'logomark' } = Astro.props;
+const words = title.split(' ');
 ---
 
-<header class="phead grain">
-  <div class="phead__light" aria-hidden="true"></div>
+<header class="phead" data-hero data-sunwall-host data-progress="leave">
+  <canvas class="phead__canvas" data-sunwall data-mark={mark} data-shadow="0.8" data-intro aria-hidden="true"></canvas>
   <div class="shell phead__inner">
-    <p class="t-eyebrow">{eyebrow}</p>
-    <h1 class="t-display phead__title">{title}</h1>
-    {lede && <p class="t-body phead__lede">{lede}</p>}
+    <div class="phead__copy">
+      <p class="t-eyebrow phead__eyebrow phead__in" style="--d: 0ms">{eyebrow}</p>
+      <h1 class="t-display phead__title">
+        {words.map((w, i) => (
+          <>
+            <span class="split-word"><span style={`--d:${120 + i * 70}ms`}>{w}</span></span>{i < words.length - 1 && ' '}
+          </>
+        ))}
+      </h1>
+      {lede && <p class="t-body phead__lede phead__in" style="--d: 420ms">{lede}</p>}
+    </div>
+    <div class="phead__slot" data-mark-slot aria-hidden="true">
+      <Icon name={mark} size={320} class="phead__flat" />
+    </div>
   </div>
-  <div class="shell"><WaveDivider /></div>
 </header>
 
 <style>
   .phead {
     position: relative;
-    padding-block: clamp(var(--space-xl), 6vw, var(--space-3xl)) var(--space-lg);
-    background-color: var(--lemon-chiffon);
+    isolation: isolate;
     overflow: hidden;
+    background:
+      radial-gradient(90% 70% at 88% 6%, var(--shell), transparent 60%),
+      linear-gradient(160deg, color-mix(in srgb, var(--lemon-chiffon) 78%, var(--royal-gold)), var(--lemon-chiffon));
   }
 
-  .phead__inner { position: relative; z-index: 2; }
-
-  .phead__title { margin-block: var(--space-2xs) var(--space-md); }
-
-  .phead__lede { max-width: 52ch; }
-
-  /* Inert until a leaf-shadow PNG exists. With --leaf-shadow set it becomes the
-     §7 signature: 45s drift, translate plus a 2% scale, multiply at ~0.18. */
-  .phead__light {
+  .phead__canvas {
     position: absolute;
-    inset: -10%;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.18;
-    mix-blend-mode: multiply;
-    background-image: var(--leaf-shadow, none);
-    background-size: cover;
-    background-position: center;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
   }
+
+  .phead__canvas:global(.is-ready) { opacity: 1; }
 
   @media (prefers-reduced-motion: no-preference) {
-    .phead__light { animation: leaf-drift var(--dur-drift) linear infinite; }
+    .phead__canvas { transition: opacity 900ms var(--ease-reveal); }
+    .phead__title .split-word > span { animation: ph-word var(--dur-glide) var(--d, 0ms) var(--ease-glide) both; }
+    .phead__in { animation: ph-in 900ms var(--d, 0ms) var(--ease-glide) both; }
+    .phead__copy { translate: 0 calc(var(--p, 0) * -8vh); }
   }
 
-  @keyframes leaf-drift {
-    0%   { transform: translate3d(-2%, 0, 0) scale(1); }
-    50%  { transform: translate3d(2%, 1%, 0) scale(1.02); }
-    100% { transform: translate3d(-2%, 0, 0) scale(1); }
+  @keyframes ph-word { from { translate: 0 105%; } }
+  @keyframes ph-in   { from { opacity: 0; translate: 0 16px; } }
+
+  .phead__inner {
+    display: grid;
+    align-items: end;
+    gap: var(--space-lg);
+    min-height: min(80svh, 44rem);
+    padding-block: calc(var(--nav-h) + var(--space-2xl)) var(--space-2xl);
+  }
+
+  .phead__copy { position: relative; z-index: 1; display: grid; gap: var(--space-md); }
+
+  .phead__eyebrow { --eyebrow-color: var(--ink); }
+
+  .phead__title { max-width: 14ch; margin: 0; }
+
+  .phead__lede { max-width: 46ch; color: var(--ink); }
+
+  .phead__slot {
+    aspect-ratio: 1;
+    width: min(44vw, 13rem);
+    justify-self: end;
+    order: -1;
+  }
+
+  .phead__slot :global(.phead__flat) {
+    width: 100%;
+    height: 100%;
+    color: var(--rose-deep);
+    transition: opacity 600ms var(--ease-reveal);
+  }
+
+  .phead__canvas:global(.is-ready) ~ .phead__inner .phead__slot :global(.phead__flat) { opacity: 0; }
+
+  @media (min-width: 900px) {
+    .phead__inner {
+      grid-template-columns: 1.3fr 0.7fr;
+      align-items: center;
+    }
+    .phead__slot { order: 0; width: min(100%, 22rem); justify-self: center; }
   }
 </style>

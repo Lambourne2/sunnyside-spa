@@ -1,20 +1,21 @@
 ---
 import Logo from './Logo.astro';
+import Icon from './Icon.astro';
 import WaveDivider from './WaveDivider.astro';
+import { BOOKING, SITE, HOURS } from '../config/site';
 
 /**
- * §8 — deep-sea footer: gold wordmark, hours, address, newsletter, instagram row.
+ * §8 — deep-sea footer: gold wordmark, hours, address, instagram row. It
+ * opens with the booking line at display size, so the last thing on every
+ * page is the one thing the site is for.
+ *
+ * The logomark doubles as the back-to-top control (§2.3: "the full mark
+ * becomes the favicon and the scroll-to-top").
  *
  * BLOCKED — §11 wants a sign-off of "the tagline, hand-lettered, in gold".
- * Every supplied lockup bakes the tagline into the artwork, so adding a
- * separate sign-off printed it twice: once inside the gold logo, once beneath.
- * The duplicate is removed and the lockup carries it for now, which means §11's
- * sign-off is not really satisfied — the baked tagline is geometric sans, not
- * hand-lettering. A wordmark-only export with no tagline would let us set the
- * tagline as real gold text underneath. Noted in docs/asset-audit.
- *
- * The supplied footer.png is not used: it is a flattened 2752×688 banner that
- * cannot reflow, and its tagline is the serif one. See docs/asset-audit.
+ * Every supplied lockup bakes the tagline into the artwork, so the lockup
+ * carries it for now (geometric sans, not hand-lettering). A wordmark-only
+ * export would fix it. See docs/asset-audit.
  */
 const NAV = [
   { href: '/treatments/', label: 'Treatments' },
@@ -22,36 +23,51 @@ const NAV = [
   { href: '/visit/', label: 'Visit' },
   { href: '/booking/', label: 'Book' },
 ];
+const live = BOOKING.configured && !BOOKING.url.startsWith('[');
+const bookHref = live ? BOOKING.url : '/booking/';
 ---
 
 <footer class="foot band-dark grain">
   <div class="shell">
+    <a
+      class="foot__book"
+      href={bookHref}
+      target={live ? '_blank' : undefined}
+      rel={live ? 'noopener' : undefined}
+    >
+      <span class="t-eyebrow">Ready when you are</span>
+      <span class="foot__book-line">
+        Book a visit
+        <svg class="foot__rays" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
+      </span>
+    </a>
+
+    <div class="foot__wave"><WaveDivider size="full" /></div>
+
     <div class="foot__top">
       <div class="foot__brand">
-        <Logo variant="stacked" width={190} label="Sunnyside Spa" class="foot__logo" />
+        <Logo variant="stacked" width={200} label="Sunnyside Spa" />
       </div>
 
       <div class="foot__cols">
         <section class="foot__col" aria-labelledby="foot-hours">
           <h2 class="t-eyebrow" id="foot-hours">Hours</h2>
           <p class="t-body foot__lines">
-            [DAYS] · [HOURS]<br />
-            [DAYS] · [HOURS]<br />
-            [CLOSED DAY] · closed
+            {HOURS.map((h) => (<>{h.days} · {h.hours}<br /></>))}
           </p>
         </section>
 
         <section class="foot__col" aria-labelledby="foot-find">
           <h2 class="t-eyebrow" id="foot-find">Find us</h2>
           <address class="t-body foot__lines">
-            [STREET ADDRESS]<br />
-            [CITY], UT [ZIP]<br />
-            <a class="link foot__link" href="tel:[PHONE]">[PHONE]</a>
+            {SITE.street}<br />
+            {SITE.city}, {SITE.state} {SITE.zip}<br />
+            <a class="link foot__link" href={`tel:${SITE.phone}`}>{SITE.phone}</a>
           </address>
         </section>
 
         <nav class="foot__col" aria-label="Footer">
-          <h2 class="t-eyebrow">Visit</h2>
+          <h2 class="t-eyebrow">Around here</h2>
           <ul class="foot__nav" role="list">
             {NAV.map((i) => (
               <li><a class="link foot__link" href={i.href}>{i.label}</a></li>
@@ -61,48 +77,81 @@ const NAV = [
       </div>
     </div>
 
-    <div class="foot__wave"><WaveDivider /></div>
-
     <div class="foot__bottom">
-      <p class="t-meta foot__fine">© {new Date().getFullYear()} Sunnyside Spa</p>
+      <p class="t-meta foot__fine">© {new Date().getFullYear()} Sunnyside Spa · {SITE.neighbourhood}, Utah</p>
       <ul class="foot__social" role="list">
-        <li><a class="link foot__link" href="[INSTAGRAM URL]">Instagram</a></li>
-        <li><a class="link foot__link" href="mailto:[EMAIL]">Email</a></li>
+        <li><a class="link foot__link" href={SITE.instagram}>Instagram</a></li>
+        <li><a class="link foot__link" href={`mailto:${SITE.email}`}>Email</a></li>
       </ul>
+      <a class="foot__top-btn" href="#main">
+        <Icon name="logomark" size={44} />
+        <span class="t-eyebrow">Back to top</span>
+      </a>
     </div>
   </div>
 </footer>
 
 <style>
-  .foot { padding-block: var(--space-2xl) var(--space-xl); }
+  .foot { padding-block: var(--section-y) var(--space-xl); }
 
-  .foot__top {
-    display: grid;
-    gap: var(--space-2xl);
+  /* The dock floats over the bottom of the screen on phones. The clearance
+     lives inside the footer so the deep-sea ground runs all the way down. */
+  @media (max-width: 639px) {
+    .foot { padding-block-end: calc(var(--space-xl) + 5.5rem + env(safe-area-inset-bottom)); }
   }
 
-  /* Gold wordmark (§8). Set on the wrapper rather than on .foot__logo: the
-     Logo mask paints with currentColor, so it inherits this — which also
-     sidesteps the fact that a child component never receives this component's
-     scope attribute. */
-  .foot__brand {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+  .foot__book {
+    display: grid;
+    gap: var(--space-sm);
+    color: var(--shell);
+    text-decoration: none;
+    --eyebrow-color: var(--lemon-chiffon);
+  }
+
+  .foot__book-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.5rem, 9.5vw, 8.5rem);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--lemon-chiffon);
+    transition: color var(--dur-nav) var(--ease-reveal);
+  }
+
+  .foot__rays {
+    width: 0.6em;
+    height: 0.6em;
+    flex: none;
     color: var(--royal-gold);
   }
 
-  .foot__cols {
-    display: grid;
-    gap: var(--space-xl);
+  @media (prefers-reduced-motion: no-preference) {
+    .foot__rays { transition: rotate 900ms var(--ease-glide); }
+    .foot__book:hover .foot__rays,
+    .foot__book:focus-visible .foot__rays { rotate: 135deg; }
   }
+
+  .foot__book:hover .foot__book-line { color: var(--royal-gold); }
+
+  .foot__wave { margin-block: var(--space-2xl); color: var(--lemon-chiffon); }
+  .foot__wave :global(.wave) { color: var(--lemon-chiffon); opacity: 0.45; }
+
+  .foot__top { display: grid; gap: var(--space-2xl); }
+
+  /* Gold wordmark (§8). The Logo mask paints with currentColor. */
+  .foot__brand { color: var(--royal-gold); }
+
+  .foot__cols { display: grid; gap: var(--space-xl); }
 
   .foot__col { display: flex; flex-direction: column; gap: var(--space-xs); }
 
   .foot__lines { font-style: normal; }
 
-  /* On deep-sea the link underline switches from rose (2.1:1 here) to chiffon
-     so it stays visible against the band. */
+  /* On deep-sea the link underline switches from rose (2.1:1 here) to chiffon. */
   .foot__link {
     color: var(--shell);
     background-image: linear-gradient(var(--lemon-chiffon), var(--lemon-chiffon));
@@ -110,20 +159,37 @@ const NAV = [
 
   .foot__nav { display: flex; flex-direction: column; gap: var(--space-xs); }
 
-  .foot__wave { margin-block: var(--space-xl); opacity: 0.5; }
-
   .foot__bottom {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--space-md);
     align-items: center;
+    gap: var(--space-lg);
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: 1px solid rgb(252 248 239 / 0.2);
   }
 
   .foot__social { display: flex; gap: var(--space-lg); }
 
+  .foot__top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--royal-gold);
+    text-decoration: none;
+    --eyebrow-color: var(--lemon-chiffon);
+  }
+
+  .foot__top-btn :global(.icon) { color: inherit; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .foot__top-btn :global(.icon) { transition: translate 600ms var(--ease-glide); }
+    .foot__top-btn:hover :global(.icon) { translate: 0 -4px; }
+  }
+
   @media (min-width: 768px) {
-    .foot__top { grid-template-columns: 1fr 1.4fr; align-items: start; }
+    .foot__top { grid-template-columns: 1fr 1.6fr; align-items: start; }
     .foot__cols { grid-template-columns: repeat(3, 1fr); }
   }
 </style>

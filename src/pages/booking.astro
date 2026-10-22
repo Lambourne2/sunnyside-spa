@@ -4,27 +4,34 @@ import WaveDivider from '../components/WaveDivider.astro';
 import BookCta from '../components/BookCta.astro';
 import Icon from '../components/Icon.astro';
 import { BOOKING, SITE, HOURS } from '../config/site';
+import { TREATMENTS } from '../data/treatments';
 
 /**
- * Booking — and the one page where §8 could not be built as written.
+ * Booking — a short, honest flow in front of the Square handoff.
  *
  * §8 asks for "embedded scheduler, restyled to the palette". Square does not
- * offer that: their embed code hands off to Square's hosted booking site and
- * they block framing, so there is no inline flow for our CSS to reach. See the
- * note in src/config/site.ts for what CAN be brought onto the palette from
- * inside the Square dashboard, and for the providers that do support a real
- * inline embed if that matters more than staying on Square.
+ * offer that: its embed hands off to Square's hosted booking site and blocks
+ * framing (see src/config/site.ts). So this page does what an embed would have
+ * done up to the moment of handoff: you pick what you are booking, see exactly
+ * what it is — length, price, what happens when you arrive — and then go to
+ * Square to pick the time.
  *
- * So this page does the work an embed would have done: it sets expectations,
- * answers the questions that stop people booking, and then hands off cleanly.
+ * The choice does not travel to Square (their booking URL takes no service
+ * parameter we can rely on), and the page says so rather than pretending. It
+ * still earns its place: it answers "what am I booking" before the handoff,
+ * which is the question that stops first-time visitors.
+ *
+ * ?t=<slug> preselects a treatment, so "Book a visit" on a treatment page lands
+ * with that treatment already chosen. Works without JS: the radios are real
+ * radios and the summary shows the first treatment.
  */
 const live = BOOKING.configured && !BOOKING.url.startsWith('[');
 
 const STEPS = [
   // DRAFT COPY
-  'Pick a treatment and a time on the booking page.',
-  'You get a confirmation by email, and a reminder the day before.',
-  'Arrive fifteen minutes early on your first visit so there is time to change and talk.',
+  { title: 'Pick a time', body: 'Booking runs on Square and opens in a new tab. It takes about a minute.' },
+  { title: 'Get the confirmation', body: 'By email, straight away, and a reminder the day before.' },
+  { title: 'Arrive fifteen minutes early', body: 'On a first visit, so there is time to change and talk before we start.' },
 ];
 ---
 
@@ -34,80 +41,140 @@ const STEPS = [
   eyebrow="Booking"
   heading="Book a visit"
   lede="Appointments only, one at a time, so the room is yours for the whole of it."
+  mark="you-time"
 >
-  <section class="bk">
+  <section class="bk" data-bk>
     <div class="shell bk__grid">
-      <div class="bk__main reveal">
-        {
-          live ? (
-            <>
-              <h2 class="t-h2">Pick a time</h2>
-              <p class="t-body bk__lede">
-                Booking runs on Square. It opens in a new tab and takes about a minute.
-              </p>
-              <BookCta label="Open the booking page" />
-            </>
-          ) : (
-            <div class="bk__pending">
-              <p class="t-eyebrow">Not connected yet</p>
-              <h2 class="t-h2">Booking goes here</h2>
-              <p class="t-body">
-                Square Appointments hands off to its own hosted booking page rather
-                than embedding inside this one, so this is where that handoff will
-                sit. Drop the booking URL into <code>src/config/site.ts</code> and
-                set <code>configured: true</code>, and this panel becomes the button.
-              </p>
-              <p class="t-body bk__hint">
-                Square dashboard → Appointments → Online Booking → Booking Site.
-                While you are there, set the accent colour to <code>#7E5555</code> and
-                upload the stacked logo, so the hosted page lands as close to this
-                palette as Square allows.
-              </p>
+      <form class="bk__pick reveal" aria-labelledby="bk-pick-title" onsubmit="return false">
+        <p class="t-eyebrow"><span class="sec-num">01</span> &nbsp;Choose</p>
+        <h2 class="t-h2" id="bk-pick-title">What are you booking?</h2>
+
+        <fieldset class="bk__options">
+          <legend class="visually-hidden">Treatment</legend>
+          {TREATMENTS.map((t, i) => (
+            <label class="bk__opt">
+              <input
+                class="bk__radio"
+                type="radio"
+                name="treatment"
+                value={t.slug}
+                checked={i === 0}
+                data-bk-radio
+              />
+              <span class="bk__opt-icon"><Icon name={t.icon} size={28} /></span>
+              <span class="bk__opt-text">
+                <span class="t-h3">{t.name}</span>
+                <span class="t-body bk__opt-need">{t.need}</span>
+              </span>
+              <span class="t-meta bk__opt-meta">{t.price}<br />{t.duration}</span>
+              <svg class="bk__tick" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
+            </label>
+          ))}
+        </fieldset>
+      </form>
+
+      <aside class="bk__summary reveal" aria-labelledby="bk-sum-title" aria-live="polite">
+        <div class="bk__card grain">
+          <p class="t-eyebrow"><span class="sec-num">02</span> &nbsp;Your visit</p>
+          {TREATMENTS.map((t, i) => (
+            <div class="bk__sum" data-bk-sum={t.slug} hidden={i !== 0}>
+              <div class="bk__sum-top">
+                <span class="hangtag bk__sum-img"><img src={t.image} alt="" loading="lazy" decoding="async" /></span>
+                <div>
+                  <h2 class="t-h2 bk__sum-name" id={i === 0 ? 'bk-sum-title' : undefined}>{t.name}</h2>
+                  <p class="t-body bk__sum-line">{t.line}</p>
+                </div>
+              </div>
+              <dl class="bk__facts">
+                <div><dt class="t-eyebrow">From</dt><dd class="t-h3">{t.price}</dd></div>
+                <div><dt class="t-eyebrow">Takes</dt><dd class="t-h3">{t.duration}</dd></div>
+                <div><dt class="t-eyebrow">Arrive early</dt><dd class="t-h3">15 min</dd></div>
+              </dl>
+              <a class="link bk__more" href={`/treatments/${t.slug}/`}>What happens in a {t.name.toLowerCase()} appointment</a>
             </div>
-          )
-        }
+          ))}
 
-        <div class="bk__steps">
-          <h3 class="t-h3">How it goes</h3>
-          {/* DRAFT COPY */}
-          <ol class="bk__list">
-            {STEPS.map((s) => (
-              <li class="bk__step"><span class="t-body">{s}</span></li>
-            ))}
-          </ol>
+          <div class="bk__go">
+            {live ? (
+              <BookCta label="Choose a time" size="lg" magnetic />
+            ) : (
+              /* Until Square is connected the button would only reload this
+                 page, so it points at the owner's note instead. */
+              <a class="btn btn--primary btn--lg" href="#bk-pending-title" data-magnetic>
+                Book a visit
+                <svg class="btn__rays" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
+              </a>
+            )}
+            <p class="t-meta bk__go-note">
+              {live
+                ? 'Opens Square in a new tab. Pick the same treatment there.'
+                : 'Online booking is not connected yet — see the note below.'}
+            </p>
+          </div>
         </div>
-      </div>
+      </aside>
+    </div>
 
-      <aside class="bk__aside reveal" aria-labelledby="bk-aside-title">
+    <div class="shell"><WaveDivider size="full" /></div>
+
+    <div class="shell bk__how">
+      <header class="sec-head">
+        <p class="t-eyebrow reveal"><span class="sec-num">03</span> &nbsp;Then</p>
+        <h2 class="t-display sec-head__title" data-split>How it goes</h2>
+      </header>
+      <ol class="bk__steps" role="list">
+        {STEPS.map((s, i) => (
+          <li class="bk__step reveal">
+            <span class="bk__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="t-h3">{s.title}</h3>
+            {/* DRAFT COPY */}
+            <p class="t-body">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="shell bk__lower">
+      <section class="bk__aside reveal" aria-labelledby="bk-aside-title">
         <h2 class="t-h3" id="bk-aside-title">Rather not book online?</h2>
         {/* DRAFT COPY */}
         <p class="t-body">
           Call or text and I will find you something. If a time you wanted has
           just gone, say what you were after and I will tell you what is close.
         </p>
-
         <p class="bk__contact">
           <a class="link" href={`tel:${SITE.phone}`}>{SITE.phone}</a><br />
           <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
         </p>
-
         <h3 class="t-eyebrow bk__hours-title">Hours</h3>
         <dl class="bk__hours">
-          {
-            HOURS.map((h) => (
-              <div class="bk__hours-row">
-                <dt class="t-meta">{h.days}</dt>
-                <dd class="t-meta">{h.hours}</dd>
-              </div>
-            ))
-          }
+          {HOURS.map((h) => (
+            <div class="bk__hours-row">
+              <dt class="t-meta">{h.days}</dt>
+              <dd class="t-meta">{h.hours}</dd>
+            </div>
+          ))}
         </dl>
+      </section>
 
-        <p class="bk__icon" aria-hidden="true"><Icon name="you-time" size={28} /></p>
-      </aside>
+      {!live && (
+        <section class="bk__pending reveal" aria-labelledby="bk-pending-title">
+          <p class="t-eyebrow">Not connected yet</p>
+          <h2 class="t-h3" id="bk-pending-title">For the site owner: connecting Square</h2>
+          <p class="t-body">
+            Square Appointments hands off to its own hosted booking page rather
+            than embedding inside this one. Drop the booking URL into
+            <code>src/config/site.ts</code> and set <code>configured: true</code>,
+            and every Book button on the site goes straight there.
+          </p>
+          <p class="t-body bk__hint">
+            Square dashboard → Appointments → Online Booking → Booking Site. Set
+            the accent colour to <code>#7E5555</code> and upload the stacked logo,
+            so the hosted page lands as close to this palette as Square allows.
+          </p>
+        </section>
+      )}
     </div>
-
-    <div class="shell"><WaveDivider /></div>
 
     <div class="shell bk__foot reveal">
       <p class="t-quote">Two hours that are only yours</p>
@@ -115,57 +182,192 @@ const STEPS = [
   </section>
 </Page>
 
+<script>
+  const root = document.querySelector<HTMLElement>('[data-bk]');
+  if (root) {
+    const radios = [...root.querySelectorAll<HTMLInputElement>('[data-bk-radio]')];
+    const sums = [...root.querySelectorAll<HTMLElement>('[data-bk-sum]')];
+    const show = (slug: string) => {
+      sums.forEach((s) => (s.hidden = s.dataset.bkSum !== slug));
+      // The visible summary's heading names the region for screen readers.
+      root.querySelectorAll('[id="bk-sum-title"]').forEach((h) => h.removeAttribute('id'));
+      sums.find((s) => !s.hidden)?.querySelector('.bk__sum-name')?.setAttribute('id', 'bk-sum-title');
+    };
+    radios.forEach((r) => r.addEventListener('change', () => r.checked && show(r.value)));
+
+    const want = new URLSearchParams(location.search).get('t');
+    const pre = radios.find((r) => r.value === want);
+    if (pre) {
+      pre.checked = true;
+      show(pre.value);
+    }
+  }
+</script>
+
 <style>
-  .bk { padding-block: var(--space-2xl); }
+  .bk { padding-block: var(--section-y) var(--space-2xl); }
 
-  .bk__grid { display: grid; gap: var(--space-2xl); align-items: start; }
+  .bk__grid { display: grid; gap: var(--space-2xl); align-items: start; padding-block-end: var(--space-3xl); }
 
-  .bk__main { display: flex; flex-direction: column; gap: var(--space-xl); align-items: flex-start; }
+  .bk__pick { display: grid; gap: var(--space-md); }
 
-  .bk__lede { max-width: var(--measure); }
-
-  /* Deliberately unmistakable while the URL is missing — this is a to-do. */
-  .bk__pending {
-    display: flex;
-    flex-direction: column;
+  .bk__options {
+    display: grid;
     gap: var(--space-sm);
-    padding: var(--space-xl);
-    border-inline-start: 2px solid var(--dusty-rose);
-    background-color: var(--surface-tint);
-    border-radius: 0 var(--r-card) var(--r-card) 0;
-    max-width: var(--measure);
-  }
-
-  .bk__hint { color: var(--ink-soft); font-size: 0.9375rem; }
-
-  code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.85em;
-  }
-
-  .bk__list {
-    counter-reset: s;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
     margin-block-start: var(--space-md);
-    max-width: var(--measure);
   }
+
+  /* Each option is a whole-row target: icon, name, the week it is for, and
+     the price — the radio itself is visually hidden but still the control. */
+  .bk__opt {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border: 1px solid var(--line-hair);
+    border-radius: var(--r-tag);
+    cursor: pointer;
+    transition: background-color var(--dur-nav) var(--ease-reveal),
+                border-color var(--dur-nav) var(--ease-reveal);
+  }
+
+  .bk__opt:hover { background-color: color-mix(in srgb, var(--lemon-chiffon) 50%, transparent); }
+
+  .bk__radio {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .bk__opt:has(.bk__radio:checked) {
+    background-color: var(--lemon-chiffon);
+    border-color: var(--rose-deep);
+  }
+
+  .bk__opt:has(.bk__radio:focus-visible) {
+    outline: 2px solid var(--deep-sea);
+    outline-offset: 3px;
+  }
+
+  .bk__opt-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--shell);
+    border: 1px solid var(--line-hair);
+  }
+
+  .bk__opt-text { display: grid; gap: 2px; }
+  .bk__opt-need { font-size: 0.9375rem; color: var(--ink-soft); line-height: 1.5; }
+  .bk__opt-meta { text-align: end; line-height: 1.5; }
+
+  .bk__tick {
+    position: absolute;
+    right: -6px;
+    top: -6px;
+    width: 26px;
+    height: 26px;
+    padding: 3px;
+    border-radius: 50%;
+    background: var(--rose-deep);
+    color: var(--shell);
+    opacity: 0;
+    scale: 0.4;
+  }
+
+  .bk__opt:has(.bk__radio:checked) .bk__tick { opacity: 1; scale: 1; rotate: 45deg; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bk__tick { transition: opacity 300ms var(--ease-reveal), scale 600ms var(--ease-glide), rotate 900ms var(--ease-glide); }
+  }
+
+  /* ── The summary ──────────────────────────────────────────────────────── */
+  .bk__card {
+    display: grid;
+    gap: var(--space-lg);
+    padding: clamp(var(--space-lg), 3vw, var(--space-xl));
+    border-radius: var(--r-card);
+    border: 1px solid var(--line-hair);
+    background-color: var(--surface-tint);
+    box-shadow: var(--shadow-warm);
+  }
+
+  .bk__sum { display: grid; gap: var(--space-lg); }
+  .bk__sum[hidden] { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bk__sum:not([hidden]) { animation: sum-in 600ms var(--ease-glide); }
+  }
+
+  @keyframes sum-in { from { opacity: 0; translate: 0 10px; } }
+
+  .bk__sum-top { display: grid; grid-template-columns: 5rem 1fr; gap: var(--space-md); align-items: center; }
+  .bk__sum-img { aspect-ratio: 2 / 3; }
+  .bk__sum-line { font-size: 0.9375rem; line-height: 1.6; margin-block-start: var(--space-2xs); }
+
+  .bk__facts {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: var(--space-xl);
+    margin: 0;
+    padding-block: var(--space-md);
+    border-block: 1px solid var(--line-hair);
+  }
+
+  .bk__facts dd { margin: var(--space-2xs) 0 0; }
+
+  .bk__more { justify-self: start; font-size: 0.9375rem; }
+
+  .bk__go { display: grid; gap: var(--space-sm); justify-items: start; }
+  .bk__go-note { line-height: 1.5; }
+
+  @media (min-width: 960px) {
+    .bk__grid { grid-template-columns: 1.1fr 0.9fr; gap: clamp(var(--space-2xl), 5vw, var(--space-3xl)); }
+    .bk__summary { position: sticky; top: calc(var(--nav-h) + var(--space-xl)); }
+  }
+
+  @media (max-width: 479px) {
+    .bk__opt { grid-template-columns: auto 1fr; padding: var(--space-md); border-radius: 28px; }
+    .bk__opt-meta { grid-column: 2; text-align: start; }
+    .bk__facts { grid-template-columns: repeat(2, auto); gap: var(--space-md) var(--space-xl); }
+  }
+
+  /* ── How it goes ──────────────────────────────────────────────────────── */
+  .bk__how { padding-block: var(--section-y) 0; }
+
+  .bk__steps { display: grid; gap: var(--space-xl); }
 
   .bk__step {
-    counter-increment: s;
     display: grid;
-    grid-template-columns: 2rem 1fr;
-    gap: var(--space-sm);
-    align-items: baseline;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-md);
+    border-block-start: 1px solid var(--line-hair);
   }
 
-  .bk__step::before {
-    content: counter(s, decimal-leading-zero);
+  .bk__n {
     font-family: var(--font-display);
-    font-size: var(--fs-eyebrow);
-    letter-spacing: var(--ls-eyebrow);
-    color: var(--rose-deep);
+    font-weight: 300;
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 1;
+    color: var(--dusty-rose);
+  }
+
+  @media (min-width: 768px) {
+    .bk__steps { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* ── Lower: contact + owner note ──────────────────────────────────────── */
+  .bk__lower {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+    padding-block: var(--space-3xl) 0;
   }
 
   .bk__aside {
@@ -178,9 +380,7 @@ const STEPS = [
   }
 
   .bk__contact { line-height: 2; }
-
   .bk__hours-title { margin-block-start: var(--space-sm); }
-
   .bk__hours { margin: 0; }
 
   .bk__hours-row {
@@ -193,12 +393,26 @@ const STEPS = [
 
   .bk__hours-row dd { margin: 0; }
 
-  .bk__icon { margin: 0; color: var(--rose-deep); }
+  /* Deliberately plain — it is a to-do for the owner, not part of the design. */
+  .bk__pending {
+    display: grid;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    border-inline-start: 2px solid var(--dusty-rose);
+    background-color: var(--surface-tint);
+    border-radius: 0 var(--r-card) var(--r-card) 0;
+  }
 
-  .bk__foot { padding-block: var(--space-2xl); }
-  .bk__foot { --quote-color: var(--rose-deep); }
+  .bk__hint { color: var(--ink-soft); font-size: 0.9375rem; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+  }
 
   @media (min-width: 860px) {
-    .bk__grid { grid-template-columns: 1.4fr 0.6fr; gap: clamp(var(--space-xl), 5vw, var(--space-3xl)); }
+    .bk__lower { grid-template-columns: 0.8fr 1.2fr; gap: clamp(var(--space-xl), 5vw, var(--space-3xl)); }
   }
+
+  .bk__foot { padding-block: var(--space-3xl) 0; --quote-color: var(--rose-deep); }
 </style>

@@ -9,7 +9,8 @@ export type IconName =
   | 'body'
   | 'wellness'
   | 'you-time'
-  | 'rays';
+  | 'rays'
+  | 'logomark';
 
 interface Props {
   name: IconName;
@@ -27,8 +28,8 @@ const decorative = label === undefined;
 <svg
   class:list={['icon', className]}
   width={size}
-  height={size}
-  viewBox="0 0 24 24"
+  height={name === 'logomark' ? Math.round((size * 56) / 68) : size}
+  viewBox={name === 'logomark' ? '0 0 68 56' : '0 0 24 24'}
   role={decorative ? 'presentation' : 'img'}
   aria-hidden={decorative ? 'true' : undefined}
   aria-label={label}

@@ -2,100 +2,187 @@
 import Figure from './Figure.astro';
 
 /**
- * §8 — THE SPACE. Mixed-ratio strip: [tall][wide][water/stone tile][tall],
- * horizontal scroll on mobile, exactly one texture tile.
+ * §8 — THE SPACE. A mixed-ratio strip with exactly one texture tile.
  *
- * The water tile is the one piece of real photography in the handoff. Its
- * "REST. RECHARGE. RADIATE." lettering is baked into the pixels, so it cannot
- * reflow or be translated — noted in docs/asset-audit. The other three slots
- * are waiting on photography.
+ * Desktop: the section pins and scrolling down walks the strip sideways —
+ * your wheel or trackpad moves you along the wall of the room. Phone: a
+ * native swipe strip with snap points, because hijacking vertical scroll on a
+ * touch screen fights the thumb. Reduced motion gets the swipe strip too.
+ *
+ * The water tile is the one piece of real photography in the handoff; its
+ * "REST. RECHARGE. RADIATE." lettering is baked in. The others are samples.
  */
+const ITEMS = [
+  { shape: 'arch', ratio: '2 / 3', size: 'tall', src: '/img/samples/gallery-robe.webp', alt: 'Soft linen hanging from a hook, with hard sunlight thrown across the wall behind it.', cap: 'A hook for your things' },
+  { shape: 'hangtag', ratio: '4 / 3', size: 'wide', src: '/img/samples/gallery-room.webp', alt: 'A plaster wall and a shallow arch, cut across by the hard shadow of a window frame.', cap: 'Plaster, and the afternoon' },
+  { shape: 'hangtag', ratio: '2 / 3', size: 'tall', src: '/img/water-tile.webp', alt: 'Sunlight breaking into gold lines across the surface of a still pool, with the words rest, recharge, radiate and the Sunnyside sun mark set over the water.', cap: 'Rest, recharge, radiate' },
+  { shape: 'arch', ratio: '2 / 3', size: 'tall', src: '/img/samples/gallery-stone.webp', alt: 'Layered sandstone lit from the side, the grain of the rock picked out in gold.', cap: 'Sandstone, not the sea' },
+] as const;
 ---
 
-<section class="gallery" aria-labelledby="gallery-title">
-  <div class="shell">
-    <p class="t-eyebrow">The space</p>
-    <h2 class="t-h2" id="gallery-title">Where it happens</h2>
+<section class="gal" data-gal aria-labelledby="gal-title">
+  <div class="gal__pin">
+    <header class="shell gal__head">
+      <p class="t-eyebrow"><span class="sec-num">05</span> &nbsp;The space</p>
+      <h2 class="t-display gal__title" id="gal-title" data-split>Where it happens</h2>
+      <p class="gal__hint t-meta" aria-hidden="true"><span class="gal__bar"><span data-gal-bar></span></span></p>
+    </header>
+
+    {/* tabindex makes the strip scrollable from the keyboard when it overflows. */}
+    <ul class="gal__strip" role="list" tabindex="0" aria-label="Photographs of the space" data-gal-strip>
+      {ITEMS.map((it, i) => (
+        <li class:list={['gal__item', `gal__item--${it.size}`]} style={`--i:${i}`}>
+          <Figure shape={it.shape} ratio={it.ratio} src={it.src} alt={it.alt} />
+          <p class="t-meta gal__cap"><span class="sec-num">{String(i + 1).padStart(2, '0')}</span> {it.cap}</p>
+        </li>
+      ))}
+    </ul>
   </div>
-
-  {/* tabindex makes the overflow region reachable, so the strip can be
-      scrolled without a mouse when it overflows on small screens. */}
-  <ul class="gallery__strip" role="list" tabindex="0" aria-label="Photographs of the space">
-    <li class="gallery__item gallery__item--tall reveal">
-      <Figure
-        shape="arch"
-        ratio="2 / 3"
-        src="/img/samples/gallery-robe.webp"
-        alt="Soft linen hanging from a hook, with hard sunlight thrown across the wall behind it."
-      />
-    </li>
-
-    <li class="gallery__item gallery__item--wide reveal">
-      <Figure
-        shape="hangtag"
-        ratio="4 / 3"
-        src="/img/samples/gallery-room.webp"
-        alt="A plaster wall and a shallow arch, cut across by the hard shadow of a window frame."
-      />
-    </li>
-
-    <li class="gallery__item gallery__item--tall reveal">
-      <Figure
-        shape="hangtag"
-        ratio="2 / 3"
-        src="/img/water-tile.webp"
-        alt="Sunlight breaking into gold lines across the surface of a still pool, with the words rest, recharge, radiate and the Sunnyside sun mark set over the water."
-      />
-    </li>
-
-    <li class="gallery__item gallery__item--tall reveal">
-      <Figure
-        shape="arch"
-        ratio="2 / 3"
-        src="/img/samples/gallery-stone.webp"
-        alt="Layered sandstone lit from the side, the grain of the rock picked out in gold."
-      />
-    </li>
-  </ul>
 </section>
 
-<style>
-  .gallery { padding-block: var(--space-2xl); }
+<script>
+  const root = document.querySelector<HTMLElement>('[data-gal]');
+  const strip = root?.querySelector<HTMLElement>('[data-gal-strip]');
+  const bar = root?.querySelector<HTMLElement>('[data-gal-bar]');
+  const mq = window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)');
 
-  .gallery__strip {
+  if (root && strip && bar) {
+    let shift = 0;
+    let ticking = false;
+
+    const measure = () => {
+      if (!mq.matches) {
+        root.classList.remove('is-pinned');
+        root.style.removeProperty('height');
+        strip.style.removeProperty('translate');
+        return;
+      }
+      root.classList.add('is-pinned');
+      shift = Math.max(0, strip.scrollWidth - window.innerWidth);
+      // Pinned height = one screen plus however far the strip has to travel.
+      root.style.height = `${window.innerHeight + shift}px`;
+      update();
+    };
+
+    const update = () => {
+      ticking = false;
+      if (!mq.matches) {
+        const max = strip.scrollWidth - strip.clientWidth;
+        bar.style.scale = `${max > 0 ? Math.max(0.08, strip.scrollLeft / max) : 1} 1`;
+        return;
+      }
+      const r = root.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, shift)));
+      strip.style.translate = `${(-p * shift).toFixed(1)}px 0`;
+      bar.style.scale = `${Math.max(0.08, p)} 1`;
+    };
+
+    const tick = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener('scroll', tick, { passive: true });
+    strip.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', measure);
+    mq.addEventListener('change', measure);
+    // Images change the strip's width as they decode.
+    new ResizeObserver(measure).observe(strip);
+    measure();
+  }
+</script>
+
+<style>
+  .gal { position: relative; padding-block: var(--section-y) var(--space-2xl); }
+
+  .gal__head {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(220px, 62vw);
-    gap: var(--space-md);
-    margin-block-start: var(--space-xl);
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--space-sm) var(--space-lg);
+    margin-block-end: var(--space-xl);
+  }
+
+  .gal__head .t-eyebrow { grid-column: 1 / -1; }
+
+  @media (max-width: 639px) {
+    .gal__head { grid-template-columns: 1fr; }
+  }
+
+  .gal__bar {
+    position: relative;
+    display: block;
+    width: 8rem;
+    height: 1px;
+    background: var(--line-hair);
+  }
+
+  .gal__bar span {
+    position: absolute;
+    inset: 0;
+    background: var(--rose-deep);
+    transform-origin: 0 50%;
+    scale: 0.08 1;
+  }
+
+  .gal__strip {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(var(--space-md), 3vw, var(--space-xl));
     padding-inline: var(--gutter);
+    padding-block-end: var(--space-md);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    /* Keyboard users can scroll the strip, so it needs to be focusable. */
-    scrollbar-color: var(--dusty-rose) transparent;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
   }
 
-  .gallery__item { scroll-snap-align: start; }
+  .gal__strip::-webkit-scrollbar { display: none; }
 
-  .gallery__strip:focus-visible {
-    outline: 2px solid var(--deep-sea);
-    outline-offset: 4px;
+  .gal__strip:focus-visible { outline: 2px solid var(--deep-sea); outline-offset: 4px; }
+
+  .gal__item {
+    flex: none;
+    scroll-snap-align: start;
+    display: grid;
+    gap: var(--space-sm);
   }
 
-  /* Mixed ratios, staggered heights — not a tidy equal-height row. */
-  @media (min-width: 768px) {
-    .gallery__strip {
-      grid-auto-flow: row;
-      grid-template-columns: 0.9fr 1.3fr 0.85fr 0.95fr;
-      grid-auto-columns: auto;
-      align-items: start;
-      overflow-x: visible;
-      max-width: var(--max-w);
-      margin-inline: auto;
-      gap: var(--space-lg);
-    }
+  .gal__item--tall { width: min(62vw, 20rem); }
+  .gal__item--wide { width: min(84vw, 30rem); margin-block-start: var(--space-2xl); }
+  .gal__item:nth-child(4) { margin-block-start: var(--space-lg); }
 
-    .gallery__item--wide { margin-block-start: var(--space-2xl); }
-    .gallery__item--tall:last-child { margin-block-start: var(--space-lg); }
+  .gal__cap { display: flex; gap: var(--space-xs); align-items: baseline; }
+
+  /* ── Pinned (desktop, motion allowed) ─────────────────────────────────── */
+  .gal.is-pinned { padding-block: 0; }
+
+  .gal.is-pinned .gal__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-block-start: var(--nav-h);
+  }
+
+  .gal.is-pinned .gal__strip {
+    overflow: visible;
+    width: max-content;
+    padding-inline-end: 12vw;
+    will-change: translate;
+  }
+
+  .gal.is-pinned .gal__item--tall { width: clamp(15rem, 22vw, 22rem); }
+  .gal.is-pinned .gal__item--wide { width: clamp(24rem, 36vw, 36rem); }
+
+  /* Keep the tallest item inside the pinned screen on short displays. */
+  @media (max-height: 820px) {
+    .gal.is-pinned .gal__item--tall { width: clamp(12rem, 30vh, 18rem); }
+    .gal.is-pinned .gal__item--wide { width: clamp(20rem, 46vh, 30rem); }
   }
 </style>

@@ -1,5 +1,6 @@
 ---
 import Figure from './Figure.astro';
+import Icon from './Icon.astro';
 
 /**
  * §8 — THE SHELF, SOON. A waitlist, not a store: one product, one email field,
@@ -7,23 +8,35 @@ import Figure from './Figure.astro';
  * slot warm for a real product trio later.
  *
  * All copy here is verbatim §11.
+ *
+ * The turning badge borrows the circular lockup from the identity board —
+ * tracked caps set on a ring around the mark — and turns once a minute.
  */
 ---
 
 <section class="shelf grain" aria-labelledby="shelf-title">
   <div class="shell shelf__grid">
-    <Figure
-      class="shelf__figure reveal"
-      shape="hangtag"
-      ratio="3 / 4"
-      src="/img/samples/shelf-oil.webp"
-      alt="An amber dropper bottle lying on linen beside a round wooden bowl."
-    />
+    <div class="shelf__media reveal">
+      <Figure
+        class="shelf__figure"
+        shape="hangtag"
+        ratio="3 / 4"
+        src="/img/samples/shelf-oil.webp"
+        alt="An amber dropper bottle lying on linen beside a round wooden bowl."
+      />
+      <div class="shelf__badge" aria-hidden="true">
+        <svg class="shelf__ring" viewBox="0 0 200 200">
+          <defs><path id="shelf-ring" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0" /></defs>
+          <text><textPath href="#shelf-ring" textLength="486">Facial oil · first on the shelf · almost ready ·</textPath></text>
+        </svg>
+        <Icon name="logomark" size={64} class="shelf__mark" />
+      </div>
+    </div>
 
     <div class="shelf__copy reveal">
-      <p class="t-eyebrow">The shelf, soon</p>
+      <p class="t-eyebrow"><span class="sec-num">07</span> &nbsp;The shelf, soon</p>
       <!-- §11 verbatim -->
-      <h2 class="t-h2" id="shelf-title">The shelf is almost ready</h2>
+      <h2 class="t-display shelf__title" id="shelf-title">The shelf is almost ready</h2>
       <!-- §11 verbatim -->
       <p class="t-body">Facial oil first. Tell us where to send it.</p>
 
@@ -90,8 +103,50 @@ import Figure from './Figure.astro';
 
 <style>
   .shelf {
-    padding-block: var(--space-2xl);
+    padding-block: var(--section-y);
     background-color: var(--lemon-chiffon);
+  }
+
+  .shelf__title { max-width: 12ch; }
+
+  .shelf__media { position: relative; width: min(100%, 24rem); }
+
+  .shelf__badge {
+    position: absolute;
+    right: -2.5rem;
+    top: 10%;
+    width: 9.5rem;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background-color: var(--shell);
+    border: 1px solid var(--line-hair);
+    color: var(--rose-deep);
+  }
+
+  .shelf__ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    fill: var(--rose-deep);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .shelf__ring { animation: ring-turn 60s linear infinite; }
+  }
+
+  @keyframes ring-turn { to { rotate: 360deg; } }
+
+  .shelf__badge :global(.shelf__mark) { color: var(--dusty-rose); }
+
+  @media (max-width: 767px) {
+    .shelf__badge { right: -0.5rem; width: 8rem; }
   }
 
   .shelf__grid {

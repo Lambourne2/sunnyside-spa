@@ -3,8 +3,12 @@ import BookCta from './BookCta.astro';
 import Figure from './Figure.astro';
 
 /**
- * §8 — 2–3 alternating rows, image side alternates. "The sunrise ritual" is
- * named in the §8 layout; the second is a placeholder name.
+ * Rituals — §8's alternating rows, now as cards that stack: each pins under
+ * the nav and the next slides up over it, the one beneath settling back a
+ * little. The image side still alternates (§8), and the cards stay at
+ * --r-card (§5: cards are 4–8px, never 16).
+ *
+ * "The sunrise ritual" is named in the §8 layout; the second is a placeholder.
  */
 const ROWS = [
   {
@@ -16,6 +20,7 @@ const ROWS = [
     duration: '[DURATION]',
     src: '/img/samples/ritual-oils.webp',
     alt: 'A small amber bottle lying on striped linen with dried grasses beside it.',
+    tone: 'chiffon',
   },
   {
     eyebrow: 'Also worth your time',
@@ -26,63 +31,88 @@ const ROWS = [
     duration: '[DURATION]',
     src: '/img/samples/ritual-water.webp',
     alt: 'Two hands tipping water from an unglazed clay jug into a small bowl.',
+    tone: 'tint',
   },
 ];
 ---
 
 <section class="rituals" aria-labelledby="rituals-title">
-  <h2 class="visually-hidden" id="rituals-title">Rituals</h2>
+  <div class="shell">
+    <header class="sec-head">
+      <p class="t-eyebrow reveal"><span class="sec-num">04</span> &nbsp;Rituals</p>
+      <h2 class="t-display sec-head__title" id="rituals-title" data-split>Longer, slower, worth it</h2>
+    </header>
 
-  {
-    ROWS.map((row, i) => (
-      <div class:list={['shell', 'ritual', i % 2 === 1 && 'ritual--flip']}>
-        <Figure
-          class="ritual__figure reveal"
-          shape="arch"
-          ratio="4 / 5"
-          src={row.src}
-          alt={row.alt}
-        />
-        <div class="ritual__copy reveal">
-          <p class="t-eyebrow">{row.eyebrow}</p>
-          <h3 class="t-h2 ritual__title">{row.title}</h3>
-          {/* DRAFT COPY */}
-          <p class="t-body">{row.body}</p>
-          <p class="t-meta">From {row.price} · {row.duration}</p>
-          <p>
-            <BookCta />
-          </p>
-        </div>
-      </div>
-    ))
-  }
+    <ol class="rituals__stack" role="list">
+      {ROWS.map((row, i) => (
+        <li class:list={['ritual', `ritual--${row.tone}`, 'grain', i % 2 === 1 && 'ritual--flip']} style={`--i:${i}`}>
+          <div class="ritual__media">
+            <Figure class="ritual__figure" shape="arch" ratio="4 / 5" src={row.src} alt={row.alt} />
+            <p class="ritual__tag glass" data-liquid="14">
+              <span class="t-meta t-meta--caps">From {row.price} · {row.duration}</span>
+            </p>
+          </div>
+          <div class="ritual__copy">
+            <p class="t-eyebrow"><span class="sec-num">{String(i + 1).padStart(2, '0')}</span> &nbsp;{row.eyebrow}</p>
+            <h3 class="t-h2 ritual__title">{row.title}</h3>
+            {/* DRAFT COPY */}
+            <p class="t-body">{row.body}</p>
+            <p><BookCta /></p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
 </section>
 
 <style>
-  .rituals { padding-block: var(--space-2xl); }
+  .rituals { padding-block: var(--section-y); }
+
+  .rituals__stack { display: grid; gap: var(--space-xl); }
 
   .ritual {
     display: grid;
     gap: var(--space-xl);
-    padding-block: var(--space-2xl);
+    align-items: center;
+    padding: clamp(var(--space-lg), 4vw, var(--space-2xl));
+    border-radius: var(--r-card);
+    border: 1px solid var(--line-hair);
   }
 
-  .ritual__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+  .ritual--chiffon { background-color: var(--lemon-chiffon); }
+  .ritual--tint    { background-color: var(--surface-tint); }
 
-  .ritual__title { margin-block-start: var(--space-2xs); }
+  .ritual__media { position: relative; }
+
+  .ritual__tag {
+    position: absolute;
+    right: var(--space-md);
+    bottom: var(--space-md);
+    margin: 0;
+    padding: 10px 18px;
+    border-radius: var(--r-tag);
+    background-color: var(--glass-tint-hi);
+    --meta-color: var(--ink);
+  }
+
+  .ritual__copy { display: grid; gap: var(--space-md); justify-items: start; }
 
   @media (min-width: 768px) {
     .ritual {
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
+      grid-template-columns: 0.85fr 1.15fr;
       gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
     }
+    .ritual--flip .ritual__media { order: 2; }
+    .ritual__media { max-width: 26rem; }
+  }
 
-    /* The image side alternates (§8). Order, not direction, so the DOM stays
-       in reading order for screen readers and keyboard users.
-       :global on the inner half because Figure.astro carries its own scope and
-       so never receives this component's scope attribute — the left-hand
-       selector stays scoped, so this does not leak. */
-    .ritual--flip :global(.ritual__figure) { order: 2; }
+  /* The stack: each card pins a little lower than the last, so the one
+     beneath shows a sliver of its top edge, like a pile of cards. */
+  @media (min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+    .rituals__stack { gap: 18vh; }
+    .ritual {
+      position: sticky;
+      top: calc(var(--nav-h) + var(--space-xl) + var(--i) * 1.5rem);
+    }
   }
 </style>

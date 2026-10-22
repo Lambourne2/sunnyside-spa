@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
-import HeroActions from '../components/HeroActions.astro';
 import Welcome from '../components/Welcome.astro';
 import Treatments from '../components/Treatments.astro';
+import Afternoon from '../components/Afternoon.astro';
 import Rituals from '../components/Rituals.astro';
 import Gallery from '../components/Gallery.astro';
 import Testimonials from '../components/Testimonials.astro';
@@ -14,30 +14,22 @@ import FirstVisit from '../components/FirstVisit.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import BookingBar from '../components/BookingBar.astro';
 
-// Section order is §8's, unchanged. Testimonials sit above the dark band on
-// purpose: they do the persuading before the closer asks.
+// §8's order, with the footage inserted after the treatments as the page's
+// one cinematic pause (§13 amendment). Testimonials still sit above the dark
+// band on purpose: they do the persuading before the closer asks.
 ---
 
-<Base title="Sunnyside Spa" description="A day spa in Utah. Book a treatment.">
-  {/* §6 — the poster is the LCP element and is preloaded. The video is not. */}
-  <link
-    slot="head"
-    rel="preload"
-    as="image"
-    href="/brand/hero/poster.webp"
-    type="image/webp"
-    fetchpriority="high"
-  />
-
+<Base
+  title="Sunnyside Spa — a day spa in Utah"
+  description="One room in the sun, booked one person at a time. Massage, skincare, body and wellness treatments in Utah."
+>
   <SiteHeader />
-  <Hero />
 
   <main id="main" tabindex="-1">
-    {/* First thing under the full-screen hero, and the first thing the skip
-        link lands on. */}
-    <HeroActions />
+    <Hero />
     <Welcome />
     <Treatments />
+    <Afternoon />
     <Rituals />
     <Gallery />
     <Testimonials />
@@ -49,4 +41,3 @@ import BookingBar from '../components/BookingBar.astro';
   <SiteFooter />
   <BookingBar />
 </Base>
-

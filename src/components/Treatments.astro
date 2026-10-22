@@ -1,134 +1,261 @@
 ---
 import Icon from './Icon.astro';
-import Figure from './Figure.astro';
 import { TREATMENTS } from '../data/treatments';
 
 /**
- * §8 — asymmetric, explicitly not a 5-up grid and not an even 5-column icon row
- * (§13 bans that). One wide feature card, four standard, arched tops.
+ * Treatments — "What kind of week was it?"
+ *
+ * The five services led by the week each one is for, not by its name, so
+ * someone who doesn't know a body wrap from a facial can still find theirs.
+ * It replaces the §8 card grid and keeps its rules: not an even five-up row
+ * (§13), every service is one link to its own page, prices and durations on
+ * every row.
+ *
+ * Desktop: an index list beside a sticky arch that wipes to the treatment
+ * you are pointing at, with a glass caption on the photograph. Phone: the
+ * same list, each row carrying its own small hang-tag photo (§5's small
+ * image shape). Without JS every row is still a plain link and the first
+ * photo shows.
  */
-const feature = TREATMENTS.find((t) => t.feature)!;
-const rest = TREATMENTS.filter((t) => !t.feature);
 ---
 
-<section class="treatments" aria-labelledby="treatments-title">
+<section class="tf" aria-labelledby="tf-title">
   <div class="shell">
-    <p class="t-eyebrow">
-      <Icon name="massage" size={16} class="treatments__mark" />
-      Treatments
-    </p>
-    <h2 class="t-h2" id="treatments-title">What we do</h2>
+    <header class="sec-head">
+      <p class="t-eyebrow reveal"><span class="sec-num">02</span><Icon name="massage" size={16} />Treatments</p>
+      <h2 class="t-display sec-head__title" id="tf-title" data-split>What kind of week was it?</h2>
+      <p class="t-body tf__lede reveal">
+        Pick the one that sounds like yours. Each is a single appointment, in one
+        room, with the same person.
+      </p>
+    </header>
 
-    <div class="treatments__grid">
-      <article class="card treatments__feature reveal">
-        <a class="treatments__link" href={`/treatments/${feature.slug}/`}>
-          <Figure
-            class="card__media"
-            shape="arch"
-            ratio="16 / 10"
-            src={feature.image}
-            alt={feature.alt}
-          />
-          <span class="card__body">
-            <Icon name={feature.icon} size={32} />
-            <span class="t-h3 card__name">{feature.name}</span>
-            <!-- §11 verbatim -->
-            <span class="t-body card__line">{feature.line}</span>
-            <span class="t-meta card__meta">
-              From {feature.price} · {feature.duration}
-            </span>
-          </span>
-        </a>
-      </article>
-
-      {
-        rest.map((t) => (
-          <article class="card treatments__item reveal">
-            <a class="treatments__link" href={`/treatments/${t.slug}/`}>
-              <Figure class="card__media" shape="arch" ratio="3 / 4" src={t.image} alt={t.alt} />
-              <span class="card__body">
-                <Icon name={t.icon} size={26} />
-                <span class="t-h3 card__name">{t.name}</span>
-                {/* DRAFT COPY */}
-                <span class="t-body card__line">{t.line}</span>
-                <span class="t-meta card__meta">
-                  From {t.price} · {t.duration}
-                </span>
+    <div class="tf__grid" data-tf>
+      <ol class="tf__list" role="list">
+        {TREATMENTS.map((t, i) => (
+          <li class="tf__item reveal">
+            <a
+              class:list={['tf__row', i === 0 && 'is-active']}
+              href={`/treatments/${t.slug}/`}
+              data-tf-row={t.slug}
+            >
+              <span class="sec-num tf__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="tf__need">{t.need}</span>
+              <span class="tf__sub">
+                <Icon name={t.icon} size={22} />
+                <span class="t-h3 tf__name">{t.name}</span>
+                <span class="t-meta tf__meta">From {t.price} · {t.duration}</span>
               </span>
+              <span class="tf__thumb hangtag" aria-hidden="true">
+                <img src={t.image} alt="" loading="lazy" decoding="async" />
+              </span>
+              <svg class="tf__go" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
             </a>
-          </article>
-        ))
-      }
+          </li>
+        ))}
+      </ol>
+
+      <div class="tf__stage" aria-hidden="true">
+        <div class="tf__frame arch">
+          {TREATMENTS.map((t, i) => (
+            <img
+              class:list={['tf__img', i === 0 && 'is-active']}
+              data-tf-img={t.slug}
+              src={t.image}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+        </div>
+        <div class="tf__caption glass" data-liquid="18">
+          {TREATMENTS.map((t, i) => (
+            <p class:list={['tf__cap', i === 0 && 'is-active']} data-tf-cap={t.slug}>
+              <span class="tf__cap-head">
+                <Icon name={t.icon} size={20} />
+                <span class="t-eyebrow">{t.name}</span>
+              </span>
+              <span class="t-body tf__cap-line">{t.line}</span>
+            </p>
+          ))}
+        </div>
+      </div>
     </div>
+
+    <p class="tf__all reveal">
+      <a class="btn btn--secondary" href="/treatments/">All treatments and add-ons</a>
+    </p>
   </div>
 </section>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tf]').forEach((root) => {
+    const rows = [...root.querySelectorAll<HTMLAnchorElement>('[data-tf-row]')];
+    const imgs = [...root.querySelectorAll<HTMLElement>('[data-tf-img]')];
+    const caps = [...root.querySelectorAll<HTMLElement>('[data-tf-cap]')];
+    const set = (slug: string) => {
+      rows.forEach((r) => r.classList.toggle('is-active', r.dataset.tfRow === slug));
+      imgs.forEach((r) => r.classList.toggle('is-active', r.dataset.tfImg === slug));
+      caps.forEach((r) => r.classList.toggle('is-active', r.dataset.tfCap === slug));
+      root.classList.add('is-browsing');
+    };
+    rows.forEach((row) => {
+      const go = () => set(row.dataset.tfRow!);
+      row.addEventListener('pointerenter', go);
+      row.addEventListener('focus', go);
+    });
+    root.addEventListener('pointerleave', () => root.classList.remove('is-browsing'));
+  });
+</script>
+
 <style>
-  .treatments { padding-block: var(--space-2xl); }
+  .tf { padding-block: var(--section-y); }
 
-  .treatments .t-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
+  .tf__lede { max-width: 44ch; color: var(--ink-soft); }
 
-  .treatments__mark { color: var(--dusty-rose); }
+  .tf__grid { display: grid; gap: var(--space-2xl); align-items: start; }
 
-  /* Two-up from the smallest size. One card per row put five full-width arches
-     in a column and made the page ~10,400px on a phone; this halves that
-     without touching the desktop composition. Still not the even 5-up row §13
-     rules out — the feature card spans, the other four sit beside each other. */
-  .treatments__grid {
+  .tf__list { counter-reset: tf; border-block-start: 1px solid var(--line-hair); }
+
+  .tf__item { border-block-end: 1px solid var(--line-hair); }
+
+  .tf__row {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-lg) var(--space-md);
-    margin-block-start: var(--space-xl);
-  }
-
-  .treatments__feature { grid-column: 1 / -1; }
-
-  .treatments__link {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    color: inherit;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'num need thumb'
+      'num sub  thumb';
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
+    align-items: center;
+    padding-block: var(--space-lg);
+    color: var(--ink);
     text-decoration: none;
   }
 
-  .card__body {
+  .tf__num  { grid-area: num; align-self: start; padding-block-start: 0.5em; }
+  .tf__need {
+    grid-area: need;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2.4vw, 2.1rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.15;
+  }
+
+  .tf__sub {
+    grid-area: sub;
     display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
   }
 
-  .card__name { color: var(--ink); }
-  .card__line { max-width: 44ch; }
+  .tf__name { color: var(--rose-deep); }
 
-  /* Image scale on hover — §9. Guarded so reduced motion gets nothing. */
+  .tf__thumb {
+    grid-area: thumb;
+    width: 4.25rem;
+    aspect-ratio: 2 / 3;
+  }
+
+  .tf__go {
+    display: none;
+    width: 28px;
+    height: 28px;
+    color: var(--rose-deep);
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .treatments__link :global(.fig) { overflow: hidden; }
-    .treatments__link :global(.fig img) {
-      transition: scale var(--dur-card) var(--ease-reveal);
+    .tf__need,
+    .tf__sub { transition: translate 600ms var(--ease-glide), opacity 400ms var(--ease-reveal); }
+    .tf__go  { transition: rotate 800ms var(--ease-glide), opacity 400ms var(--ease-reveal), scale 600ms var(--ease-glide); }
+  }
+
+  /* ── Desktop: list + sticky arch ─────────────────────────────────────── */
+  .tf__stage { display: none; }
+
+  @media (min-width: 900px) {
+    .tf__grid { grid-template-columns: 1.25fr 0.75fr; gap: clamp(var(--space-2xl), 6vw, var(--space-4xl)); }
+
+    .tf__row {
+      grid-template-columns: 3rem 1fr auto;
+      grid-template-areas:
+        'num need go'
+        'num sub  go';
+      padding-block: var(--space-xl);
     }
-    .treatments__link:hover :global(.fig img) { scale: 1.03; }
-  }
 
-  /* One wide feature spanning the row, then four beneath it. */
-  @media (min-width: 640px) {
-    .treatments__grid { gap: var(--space-xl); }
+    .tf__thumb { display: none; }
+    .tf__go { display: block; grid-area: go; opacity: 0; scale: 0.6; }
 
-    .treatments__feature .treatments__link {
-      flex-direction: row;
-      align-items: center;
-      gap: var(--space-xl);
+    /* Pointing at one row quiets the others. */
+    .tf__grid.is-browsing .tf__row:not(.is-active) .tf__need,
+    .tf__grid.is-browsing .tf__row:not(.is-active) .tf__sub { opacity: 0.38; }
+
+    .tf__row.is-active .tf__need,
+    .tf__row.is-active .tf__sub { translate: var(--space-md) 0; }
+    .tf__row.is-active .tf__go { opacity: 1; scale: 1; rotate: 90deg; }
+
+    .tf__stage {
+      display: block;
+      position: sticky;
+      top: calc(var(--nav-h) + var(--space-2xl));
     }
 
-    .treatments__feature :global(.fig) { flex: 1 1 55%; }
-    .treatments__feature .card__body { flex: 1 1 45%; }
+    .tf__frame {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+    }
+
+    .tf__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      clip-path: inset(100% 0 0 0);
+      scale: 1.08;
+    }
+
+    .tf__img.is-active { clip-path: inset(0 0 0 0); scale: 1; z-index: 1; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .tf__img { transition: clip-path 900ms var(--ease-glide), scale 1400ms var(--ease-glide); }
+    }
+
+    .tf__caption {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      margin: -5.5rem var(--space-lg) 0 calc(var(--space-2xl) * -1);
+      padding: var(--space-lg);
+      border-radius: 22px;
+      background-color: var(--glass-tint-hi);
+      min-height: 8.5rem;
+    }
+
+    .tf__cap {
+      grid-area: 1 / 1;
+      display: grid;
+      gap: var(--space-xs);
+      opacity: 0;
+      translate: 0 8px;
+      --eyebrow-color: var(--ink);
+    }
+
+    .tf__cap.is-active { opacity: 1; translate: 0 0; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .tf__cap { transition: opacity 500ms var(--ease-reveal), translate 700ms var(--ease-glide); }
+    }
+
+    .tf__cap-head { display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--dusty-rose); }
+    .tf__cap-line { font-size: 1rem; line-height: 1.6; }
   }
 
-  @media (min-width: 960px) {
-    .treatments__grid { grid-template-columns: repeat(4, 1fr); }
-    .treatments__feature { grid-column: 1 / -1; }
-  }
+  .tf__all { margin-block-start: var(--space-2xl); }
 </style>

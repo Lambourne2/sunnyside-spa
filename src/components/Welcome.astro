@@ -1,67 +1,154 @@
 ---
-import WaveDivider from './WaveDivider.astro';
 import Figure from './Figure.astro';
+import WaveDivider from './WaveDivider.astro';
+import { SITE } from '../config/site';
 
-// "come as you are, leave more you." is on the identity board and in the §8
-// layout, so it is real copy, not invented.
+/**
+ * Welcome — the handwritten quote, and the three facts that make Sunnyside
+ * what it is, set as numbers. "Come as you are, leave more you." is on the
+ * identity board and in the §8 layout, so it is real copy, not invented.
+ *
+ * The arch drifts against the copy as you scroll (data-progress → --p), and a
+ * small glass tag sits on the photograph — glass on photography is one of the
+ * places the §13 amendment allows it, because there is something to refract.
+ */
+const FACTS = [
+  // DRAFT COPY — true of the business as described in Our story.
+  { n: '01', label: 'Room', note: 'South-facing, so it gets the afternoon.' },
+  { n: '01', label: 'Therapist', note: 'The same pair of hands every visit.' },
+  { n: '00', label: 'Upsells', note: 'Nothing added without the price first.' },
+];
 ---
 
 <section class="welcome" aria-labelledby="welcome-quote">
-  <div class="shell"><WaveDivider size="full" /></div>
-
   <div class="shell welcome__grid">
-    <div class="welcome__copy reveal">
-      <p class="t-quote t-quote--tilt" id="welcome-quote">
+    <div class="welcome__copy">
+      <p class="t-eyebrow reveal"><span class="sec-num">01</span> &nbsp;Welcome</p>
+      <p class="t-quote welcome__quote reveal" id="welcome-quote">
         Come as you are, leave more you.
       </p>
       <!-- DRAFT COPY -->
-      <p class="t-body">
+      <p class="t-body welcome__body reveal">
         One room, one therapist, and the time set aside for it. You tell me what
         hurts and what you would rather I left alone, and I work from there.
       </p>
-      <!-- DRAFT COPY -->
-      <p class="t-body">
-        I am on [STREET] in [NEIGHBOURHOOD], open [DAYS]. Parking is [PARKING].
-      </p>
+      <a class="link reveal welcome__more" href="/our-story/">Read how it started</a>
     </div>
 
-    <Figure
-      class="welcome__figure reveal"
-      shape="arch"
-      ratio="4 / 5"
-      src="/img/samples/welcome-room.webp"
-      alt="A warm plaster room with arched alcoves and a treatment bed made up in white linen."
-    />
+    <div class="welcome__media" data-progress>
+      <Figure
+        class="welcome__figure"
+        shape="arch"
+        ratio="4 / 5"
+        src="/img/samples/welcome-room.webp"
+        alt="A warm plaster room with arched alcoves and a treatment bed made up in white linen."
+      />
+      <p class="welcome__tag glass" data-liquid="16">
+        <span class="t-eyebrow">The room</span>
+        <span class="t-meta">{SITE.neighbourhood}, UT</span>
+      </p>
+    </div>
   </div>
+
+  <div class="shell"><WaveDivider size="full" /></div>
+
+  <ul class="shell welcome__facts" role="list">
+    {FACTS.map((f) => (
+      <li class="welcome__fact reveal">
+        <span class="welcome__n" aria-hidden="true">{f.n}</span>
+        <span class="t-h3">
+          <span class="visually-hidden">{f.n === '00' ? 'No' : 'One'} </span>{f.label}
+        </span>
+        <span class="t-body welcome__note">{f.note}</span>
+      </li>
+    ))}
+  </ul>
 </section>
 
 <style>
-  .welcome { padding-block: var(--space-2xl); }
+  .welcome { padding-block: var(--section-y) var(--space-2xl); }
 
   .welcome__grid {
     display: grid;
-    gap: var(--space-xl);
-    margin-block-start: var(--space-2xl);
+    gap: var(--space-2xl);
+    align-items: center;
+    margin-block-end: var(--space-2xl);
   }
 
-  .welcome__copy { display: flex; flex-direction: column; gap: var(--space-md); }
+  .welcome__copy { display: grid; gap: var(--space-lg); justify-items: start; }
 
-  /* Retargets the inherited quote colour instead of out-specifying .t-quote. */
-  .welcome__copy { --quote-color: var(--rose-deep); }
+  .welcome__quote {
+    --quote-color: var(--rose-deep);
+    font-size: clamp(2.6rem, 7vw, 5.6rem);
+    line-height: 0.98;
+    max-width: 11ch;
+    rotate: -2deg;
+  }
 
-  /* Off-centre, per §8 — the copy column is wider and sits left, the arch
-     hangs right and slightly high. Not a symmetrical two-up. */
-  @media (min-width: 768px) {
+  .welcome__body { font-size: clamp(1.0625rem, 1.4vw, 1.25rem); max-width: 40ch; }
+
+  .welcome__media { position: relative; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .welcome__media :global(.welcome__figure) {
+      translate: 0 calc((var(--p, 0.5) - 0.5) * -60px);
+    }
+    .welcome__media :global(.welcome__figure img) {
+      scale: 1.12;
+      translate: 0 calc((var(--p, 0.5) - 0.5) * 40px);
+    }
+  }
+
+  .welcome__tag {
+    position: absolute;
+    left: -6%;
+    bottom: 12%;
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 14px 22px;
+    border-radius: var(--r-tag);
+    background-color: var(--glass-tint-hi);
+    --eyebrow-color: var(--ink);
+    --meta-color: var(--ink-soft);
+  }
+
+  .welcome__facts {
+    display: grid;
+    gap: var(--space-xl);
+    padding-block-start: var(--space-2xl);
+  }
+
+  .welcome__fact {
+    display: grid;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-md);
+    border-block-start: 1px solid var(--line-hair);
+  }
+
+  /* Numerals in Jost 300 at display scale — the same voice as the headings,
+     just counted. */
+  .welcome__n {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--dusty-rose);
+  }
+
+  .welcome__note { color: var(--ink-soft); max-width: 28ch; }
+
+  @media (min-width: 860px) {
     .welcome__grid {
-      grid-template-columns: 1.15fr 0.85fr;
-      align-items: start;
-      gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(var(--space-2xl), 8vw, var(--space-4xl));
     }
+    .welcome__facts { grid-template-columns: repeat(3, 1fr); }
+  }
 
-    .welcome__copy { padding-block-start: var(--space-xl); }
-    /* :global for the same reason as Rituals — Figure.astro has its own scope. */
-    .welcome__grid :global(.welcome__figure) {
-      margin-block-start: calc(var(--space-2xl) * -1);
-    }
+  @media (max-width: 859px) {
+    .welcome__tag { left: 4%; }
+    .welcome__media { width: min(100%, 28rem); justify-self: end; }
   }
 </style>

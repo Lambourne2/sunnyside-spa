@@ -21,6 +21,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
   eyebrow="Treatment"
   heading={t.name}
   lede={t.detail.lede}
+  mark={t.icon}
 >
   <section class="td">
     <div class="shell td__top">
@@ -40,7 +41,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
           </div>
         </dl>
 
-        <BookCta />
+        <BookCta treatment={t.slug} size="lg" magnetic />
 
         <p class="t-body td__note">
           Appointments only. Arrive fifteen minutes before your first visit.

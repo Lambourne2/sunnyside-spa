@@ -39,6 +39,7 @@
   --font-hand:    'Caveat', system-ui, cursive;
 
   /* ── Type scale (§4) ──────────────────────────────────────────────────── */
+  --fs-hero:    clamp(2.75rem, 9vw, 8.5rem);   /* 2026-10-22 — cover line only */
   --fs-display: clamp(2.5rem, 6vw, 4.5rem);
   --fs-h2:      clamp(1.5rem, 2.6vw, 2.25rem);
   --fs-h3:      1.125rem;
@@ -78,6 +79,23 @@
   --dur-wave:      12s;
   --dur-drift:     45s;
 
+  /* 2026-10-22 amendment (§13) — one expressive curve for large moves only:
+     the arch opening, the menu sheet, the hero intro. */
+  --ease-glide:   cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-glide:    1100ms;
+
+  /* ── Liquid glass (§13 amendment — floating chrome only) ──────────────── */
+  /* Tinted with shell, never white. The highlight is shell too, so the rim
+     reads as light on plaster rather than a cold specular. */
+  --glass-tint:      rgb(252 248 239 / 0.52);
+  --glass-tint-hi:   rgb(252 248 239 / 0.74);
+  --glass-border:    rgb(252 248 239 / 0.7);
+  --glass-edge:      color-mix(in srgb, var(--dusty-rose) 22%, transparent);
+  --glass-blur:      18px;
+  --glass-highlight: inset 0 1px 0 rgb(252 248 239 / 0.9),
+                     inset 0 -1px 0 rgb(42 33 28 / 0.06),
+                     inset 0 0 0 1px rgb(252 248 239 / 0.35);
+
   /* ── Grain (§5 — 3–4% on every flat color field) ──────────────────────── */
   --grain-opacity: 0.035;
   --grain-tile:    180px;
@@ -96,6 +114,9 @@
      this, so they can never drift apart. */
   --nav-h:     4rem;
 
-  --gutter:    clamp(1.25rem, 5vw, 3rem);
-  --max-w:     72rem;
+  --space-4xl: 9rem;
+  --section-y: clamp(var(--space-3xl), 12vw, var(--space-4xl));
+
+  --gutter:    clamp(1rem, 5vw, 3rem);
+  --max-w:     80rem;
 }

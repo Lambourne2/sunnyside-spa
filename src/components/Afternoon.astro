@@ -1,0 +1,224 @@
+---
+/**
+ * The afternoon — the supplied hero footage, moved mid-page by the §13
+ * amendment. Yellow wall, frond shadow, the drawn wordmark on the plaster.
+ *
+ * Desktop: the section is taller than the screen and its frame is pinned. As
+ * you scroll, the frame opens from a plaster arch (§5) to full bleed — the
+ * arch is a doorway and you walk through it. At 16:10 and wider the full-bleed
+ * crop keeps the whole wordmark and tagline in frame (checked to 21:9).
+ *
+ * Phone, and reduced motion everywhere: no pin and no full bleed — a portrait crop would cut the wordmark in
+ * half (§6). It is a wide arch instead, which keeps every letter.
+ *
+ * Loading keeps §6's rules: the video is fetched only as the section nears,
+ * never under reduced motion or Save-Data (the poster stands in), and it has a
+ * pause control because it loops for longer than five seconds (WCAG 2.2.2).
+ */
+const MP4 = '/brand/hero/hero.mp4';
+const WEBM = '/brand/hero/hero.webm';
+const POSTER = '/brand/hero/poster.webp';
+---
+
+<section class="aft" data-aft data-progress="pin" aria-labelledby="aft-title">
+  <div class="aft__pin">
+    <div class="aft__frame">
+      <video
+        class="aft__video"
+        data-aft-video
+        data-mp4={MP4}
+        data-webm={WEBM}
+        poster={POSTER}
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-label="Afternoon light on a warm yellow plaster wall, the shadow of a palm frond drifting across the hand-lettered Sunnyside Spa wordmark."
+      ></video>
+    </div>
+
+    <div class="aft__copy shell">
+      <p class="t-eyebrow"><span class="sec-num">03</span> &nbsp;The afternoon</p>
+      <h2 class="t-display aft__title" id="aft-title">The light moves</h2>
+      <p class="t-quote aft__hand">so you don't have to</p>
+    </div>
+
+    <button class="aft__toggle glass" type="button" data-aft-toggle aria-pressed="false" hidden>
+      <span class="aft__icon" aria-hidden="true"></span>
+      <span class="t-eyebrow" data-aft-label>Pause</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-aft]');
+  const video = root?.querySelector<HTMLVideoElement>('[data-aft-video]');
+  const toggle = root?.querySelector<HTMLButtonElement>('[data-aft-toggle]');
+  const label = root?.querySelector<HTMLElement>('[data-aft-label]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+
+  if (root && video && toggle && label && !reduce && !saveData) {
+    let loaded = false;
+    let userPaused = false;
+
+    const load = () => {
+      if (loaded) return;
+      loaded = true;
+      for (const [src, type] of [[video.dataset.webm!, 'video/webm'], [video.dataset.mp4!, 'video/mp4']]) {
+        const s = document.createElement('source');
+        s.src = src;
+        s.type = type;
+        video.append(s);
+      }
+      video.load();
+      toggle.hidden = false;
+    };
+
+    const play = () => {
+      if (userPaused) return;
+      video.play().catch(() => {});
+    };
+
+    new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          load();
+          play();
+        } else {
+          video.pause();
+        }
+      },
+      { rootMargin: '50% 0px' }
+    ).observe(root);
+
+    toggle.addEventListener('click', () => {
+      userPaused = !video.paused ? true : false;
+      if (userPaused) video.pause();
+      else video.play().catch(() => {});
+      toggle.setAttribute('aria-pressed', String(userPaused));
+      label.textContent = userPaused ? 'Play' : 'Pause';
+    });
+  }
+</script>
+
+<style>
+  .aft { position: relative; }
+
+  .aft__pin {
+    position: relative;
+    display: grid;
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+  }
+
+  .aft__frame {
+    order: 2;
+    width: calc(100% - 2 * var(--gutter));
+    margin-inline: auto;
+    aspect-ratio: 16 / 11;
+    overflow: hidden;
+    border-radius: var(--r-arch);
+    background-color: var(--lemon-chiffon);
+  }
+
+  .aft__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .aft__copy { display: grid; gap: var(--space-xs); }
+
+  .aft__hand {
+    --quote-color: var(--rose-deep);
+    rotate: -2deg;
+    margin-inline-start: 0.4em;
+  }
+
+  .aft__toggle {
+    order: 3;
+    justify-self: start;
+    margin-inline-start: var(--gutter);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--r-tag);
+    color: var(--ink);
+    cursor: pointer;
+    --eyebrow-color: var(--ink);
+  }
+
+  .aft__toggle[hidden] { display: none; }
+
+  /* Two bars, or a triangle once paused. Monoline-adjacent: one weight. */
+  .aft__icon {
+    width: 10px;
+    height: 12px;
+    border-inline: 2px solid currentColor;
+  }
+
+  .aft__toggle[aria-pressed='true'] .aft__icon {
+    width: 0;
+    height: 0;
+    border-inline: 0;
+    border-block: 6px solid transparent;
+    border-inline-start: 10px solid currentColor;
+  }
+
+  /* ── Desktop: pinned, the arch opens to full bleed ─────────────────────── */
+  @media (min-width: 900px) and (min-aspect-ratio: 4/3) and (prefers-reduced-motion: no-preference) {
+    .aft { height: 260vh; }
+
+    .aft__pin {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 0;
+      overflow: hidden;
+      display: block;
+    }
+
+    /* --e is --p eased and held: the first 70% of the scroll opens the arch,
+       the rest holds it open long enough to watch. */
+    .aft__frame {
+      --e: min(1, calc(var(--p, 0) / 0.7));
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      margin: 0;
+      aspect-ratio: auto;
+      border-radius: 0;
+      clip-path: inset(
+        calc((1 - var(--e)) * 14vh)
+        calc((1 - var(--e)) * 31vw)
+        calc((1 - var(--e)) * 8vh)
+        calc((1 - var(--e)) * 31vw)
+        round calc((1 - var(--e)) * 19vw) calc((1 - var(--e)) * 19vw) 4px 4px
+      );
+    }
+
+    .aft__video { scale: calc(1.18 - var(--e) * 0.18); }
+
+    .aft__copy {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      translate: 0 -50%;
+      pointer-events: none;
+      opacity: calc(1 - var(--p, 0) * 3);
+    }
+
+    .aft__title { max-width: 6ch; }
+
+    .aft__toggle {
+      position: absolute;
+      left: var(--gutter);
+      bottom: var(--space-xl);
+      margin: 0;
+    }
+  }
+</style>

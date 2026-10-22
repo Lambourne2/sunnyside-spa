@@ -332,6 +332,37 @@ Responsive to 360px. Visible keyboard focus on every interactive element. Reduce
 
 ## 13. Hard no's
 
+> **Amended 2026-10-22 — the redesign.** Peyton asked for a full redesign with
+> "liquid glass" and three.js. Two bans below are lifted, on request, and only
+> within these limits so §10's reasons for them still hold:
+>
+> - **WebGL is allowed in exactly one form: the sun wall.** A plaster wall with a
+>   procedural leaf shadow (§7's signature, now drawn in a shader rather than
+>   waiting on a PNG that never arrived), plus the logomark or a service icon
+>   rendered as monoline glass tubes in front of it. One canvas per page, hero or
+>   page header only. It never distorts content and never responds to scroll
+>   velocity — it responds to scroll *position* (the sun sets as you read, which is
+>   §10's "scroll advances the sun" made literal). Loaded after first paint; the
+>   DOM headline is the LCP. Reduced motion renders one still frame. No WebGL →
+>   CSS wall and the flat logomark.
+> - **Liquid glass is allowed for floating chrome only**: the nav pill, the mobile
+>   booking dock, the mobile menu sheet, and small labels sitting on photography.
+>   Never a content card on the page ground — glass on flat shell has nothing to
+>   refract and reads as gray. Glass is tinted with `--shell`, never white.
+> - **New tokens, all derived:** `--glass-*` (tint, border, highlight) in
+>   tokens.css, and one expressive easing `--ease-glide`
+>   `cubic-bezier(0.16, 1, 0.3, 1)` for large moves (arch expanding, menu sheet).
+>   Small UI keeps `--ease-reveal`. One new type step, `--fs-hero`
+>   `clamp(2.75rem, 9vw, 8.5rem)`, Jost 300 tracked caps, for the cover line only
+>   — still four words, still under §4's six-word cap.
+> - **The hero video moves.** The hero is now the sun wall with a real DOM
+>   headline, which also fixes §6's portrait problem — no baked text to crop. The
+>   footage becomes the mid-page "afternoon" moment: an arch that opens to full
+>   bleed as you scroll into it.
+>
+> Everything else in this section stands: no white, no serif in DOM type, no
+> blobs, no purple, no gradient text or buttons, no coastal scenery.
+
 No pure white. No glassmorphism or frosted panels. No WebGL or shader backgrounds, no liquid or viscous scroll distortion, no morphing blob masks — see §10 for why. No serif display face in DOM type — see the 2026-08-05 amendment in §4 for the one grandfathered exception, which covers baked-in lettering in supplied imagery only and never the type system. No gradient text or gradient buttons. No drop shadows on every card. No even 5-column icon row. No centered-everything layout. No dark mode. No stock spa imagery — white robes, folded towel stacks, hot stones, orchids on bamboo, cucumber slices. No borrowed coastal scenery — surf, palm groves, bougainvillea, beach towns — the brand is warm and sunlit, not oceanfront. No purple, lavender, or sage. No terracotta accent. No corporate "Book Your Appointment Today!" energy anywhere in the copy. No placeholder Laguna Beach address surviving into production, including on reprinted collateral.
 
 ---

@@ -35,9 +35,11 @@ const ITEMS = [
 ---
 
 <section class="visit" aria-labelledby="visit-title">
-  <div class="shell">
-    <p class="t-eyebrow">Your first visit</p>
-    <h2 class="t-h2" id="visit-title">What to expect</h2>
+  <div class="shell visit__grid">
+    <header class="sec-head visit__head">
+      <p class="t-eyebrow reveal"><span class="sec-num">08</span> &nbsp;Your first visit</p>
+      <h2 class="t-display sec-head__title" id="visit-title" data-split>What to expect</h2>
+    </header>
 
     <div class="accordion visit__list">
       {
@@ -59,9 +61,32 @@ const ITEMS = [
 </section>
 
 <style>
-  .visit { padding-block: var(--space-2xl); }
+  .visit { padding-block: var(--section-y); }
 
-  .visit__list { margin-block-start: var(--space-xl); }
+  .visit__grid { display: grid; gap: var(--space-lg); align-items: start; }
+
+  @media (min-width: 900px) {
+    .visit__grid { grid-template-columns: 0.8fr 1.2fr; gap: clamp(var(--space-2xl), 6vw, var(--space-4xl)); }
+    .visit__head { position: sticky; top: calc(var(--nav-h) + var(--space-2xl)); }
+  }
+
+  .visit__list { border-block-start: 1px solid var(--line-hair); }
+
+  .visit__trigger { padding-block: var(--space-lg); }
+
+  /* Open and close smoothly where the browser can animate to auto height.
+     Elsewhere the panel simply appears — native <details> either way. */
+  @media (prefers-reduced-motion: no-preference) {
+    .visit__item { interpolate-size: allow-keywords; }
+    .visit__item::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition: block-size 600ms var(--ease-glide), content-visibility 600ms allow-discrete;
+    }
+    .visit__item[open]::details-content { block-size: auto; }
+  }
+
+  .visit__item .accordion__panel { padding-block-end: var(--space-lg); }
 
   /* Hairline rose rules, no containers (§9). */
   .visit__item { border-block-end: 1px solid var(--line-hair); }

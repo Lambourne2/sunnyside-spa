@@ -1,176 +1,303 @@
 ---
+import BookCta from './BookCta.astro';
+import Icon from './Icon.astro';
+import { SITE } from '../config/site';
+
 /**
- * Hero — §6, §7, §8, §12.
+ * Hero — the sun wall (§13 amendment, 2026-10-22).
  *
- * The wordmark and tagline live in the footage, so nothing is overlaid on it at
- * all — the CTAs sit in HeroActions, in a bar directly beneath. The page
- * announces itself through a visually hidden <h1>.
+ * A plaster wall with a palm-frond shadow moving across it, and the logomark
+ * standing in front of it as monoline glass. The pointer moves the sun; scroll
+ * sets it — the glass sun sinks below its own waves as you leave the hero.
+ * Tap the mark and the rays spin.
  *
- * Loading rules, all from §6:
- *   - poster is the LCP element, preloaded as an image by the page
- *   - the video is never the LCP: preload="none", no src until after load
- *   - video only above 768px, and only when saveData isn't set
- *   - under prefers-reduced-motion the video is never loaded at all
- *   - CLS: the media box reserves 16/9 up front, so nothing moves on swap
+ * The cover line carries the brand's one tension (§1) in a single breath:
+ * tracked caps, then the friend's handwriting, then caps again. Unlike the old
+ * video hero, this is real DOM type, so it reflows to a phone, reads to a
+ * screen reader, and is the LCP — the canvas loads after it.
  *
- * GAP: §7 wants a leaf-shadow PNG drifting over the poster-still fallback so
- * mobile is lit by the same sun. That asset wasn't in the handoff, so the
- * mobile hero is currently static. See docs/asset-audit/README.md.
+ * Without WebGL, or before it arrives, the hero is a CSS wall with the flat
+ * monoline mark. Under reduced motion the wall is drawn once and holds still.
  *
- * CTA placement was checked against the footage rather than assumed: across the
- * loop the button's edge holds 3.85:1 against the wall at its darkest, and ink
- * never drops below 9.58:1.
- *
- * ── On the loop (§6 wants a seamless 10–15s cycle) ────────────────────────
- * The supplied 3.93s clip does not cycle: it opens on fast motion and ends
- * nearly static, so no cut point matches. §6's suggested remedy — crossfade the
- * last 0.5s into the first — was tried and measured, and it only got the wrap
- * from 3.7x to 2.6x a mean frame step, still a visible hitch at the 99th
- * percentile of normal motion.
- *
- * The shipped loop is a ping-pong instead: source frames 88–235 forward, then
- * 234–89 in reverse. Both junctions are adjacent frame steps, so the cycle is
- * seamless by construction, and the range was chosen so both land where the
- * shadow is nearly still. Measured losslessly the wrap is 0.35x a mean step —
- * smaller than 97% of ordinary frames. 294 frames at 24fps = 12.25s, mid-spec.
- *
- * Encoded with a single keyframe: a 48-frame GOP put I-frame pops at frames 47,
- * 95 and 239, which read as periodic flickers in a shot this soft.
+ * The intro is CSS keyframes, not the scroll-reveal script, and the words are
+ * split here rather than at runtime: the cover line is the LCP, so it must
+ * never wait on JavaScript to become visible.
  */
-const MP4 = '/brand/hero/hero.mp4';
-const WEBM = '/brand/hero/hero.webm';
-const POSTER = '/brand/hero/poster.webp';
 ---
 
-<section class="hero">
-  <h1 class="visually-hidden">Sunnyside Spa — sunshine for your soul</h1>
+<section class="hero" data-hero data-sunwall-host data-progress="leave" aria-labelledby="hero-title">
+  <canvas
+    class="hero__canvas"
+    data-sunwall
+    data-mark="logomark"
+    data-shadow="0.9"
+    data-sunset
+    data-intro
+    aria-hidden="true"
+  ></canvas>
 
-  <div class="hero__media" data-hero-media>
-    <img
-      class="hero__poster"
-      src={POSTER}
-      width="1920"
-      height="1080"
-      fetchpriority="high"
-      decoding="async"
-      alt="Afternoon light on a warm yellow plaster wall, the shadow of a palm frond drifting across the hand-lettered wordmark."
-    />
-    <video
-      class="hero__video"
-      data-hero-video
-      data-mp4={MP4}
-      data-webm={WEBM}
-      muted
-      loop
-      playsinline
-      preload="none"
-      aria-hidden="true"
-      tabindex="-1"></video>
+  <div class="hero__inner shell">
+    <div class="hero__copy">
+      <p class="t-eyebrow hero__eyebrow intro" style="--d: 0ms">
+        <span>Day spa</span>
+        <span class="hero__dot" aria-hidden="true"></span>
+        <span>{SITE.neighbourhood}, Utah</span>
+      </p>
+
+      <h1 class="hero__title" id="hero-title">
+        <span class="visually-hidden">Sunnyside Spa — </span>
+        <span class="t-hero hero__line"><span class="split-word"><span style="--d: 120ms">Sunshine</span></span></span>
+        <span class="hero__hand">for your</span>
+        <span class="t-hero hero__line hero__line--soul"><span class="split-word"><span style="--d: 380ms">soul</span></span></span>
+      </h1>
+
+      <p class="t-body hero__lede intro" style="--d: 620ms">
+        One room in the sun, booked one person at a time. Massage, skincare and
+        quiet afternoons in {SITE.neighbourhood}.
+      </p>
+
+      <div class="hero__actions intro" style="--d: 760ms">
+        <BookCta size="lg" magnetic />
+        <a class="btn btn--secondary btn--lg hero__secondary" href="/treatments/" data-magnetic>See treatments</a>
+      </div>
+    </div>
+
+    <div class="hero__slot" data-mark-slot>
+      {/* Shown until the glass mark is drawn, and kept if it never is. */}
+      <Icon name="logomark" size={680} class="hero__flatmark" />
+      <span class="visually-hidden">Tap the sun to spin its rays.</span>
+    </div>
+  </div>
+
+  <div class="hero__meta shell" aria-hidden="true">
+    <span class="t-eyebrow">Appointments only</span>
+    <span class="hero__scroll t-eyebrow"><span class="hero__scroll-line"></span>Scroll</span>
+    <span class="t-eyebrow hero__meta-end">Sunshine for your soul</span>
   </div>
 </section>
-
-<script is:inline>
-  (() => {
-    const v = document.querySelector('[data-hero-video]');
-    if (!v) return;
-
-    const start = () => {
-      // §6 — never load the video at all under reduced motion.
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      // §6 — desktop only.
-      if (!window.matchMedia('(min-width: 768px)').matches) return;
-      // §6 — respect Save-Data. Undefined means unsupported, which is permissive.
-      if (navigator.connection && navigator.connection.saveData) return;
-
-      for (const [src, type] of [
-        [v.dataset.webm, 'video/webm'],
-        [v.dataset.mp4, 'video/mp4'],
-      ]) {
-        const s = document.createElement('source');
-        s.src = src;
-        s.type = type;
-        v.appendChild(s);
-      }
-
-      v.addEventListener('playing', () => v.classList.add('is-playing'), { once: true });
-      v.load();
-      // Autoplay can still be refused; the poster simply stays put.
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {});
-    };
-
-    // After load, so the video never competes with the poster for LCP.
-    if (document.readyState === 'complete') requestAnimationFrame(start);
-    else window.addEventListener('load', () => requestAnimationFrame(start), { once: true });
-  })();
-</script>
 
 <style>
   .hero {
     position: relative;
+    isolation: isolate;
+    min-height: max(100svh, 38rem);
     display: grid;
-  }
-
-  /* Mobile: natural 16/9. A phone-height hero would mean cropping a landscape
-     frame to portrait, which cuts the wordmark in half — §6 rules it out. */
-  .hero__media {
-    position: relative;
-    width: 100%;
-    height: 56.25vw;
-    min-height: 200px;
+    grid-template-rows: 1fr auto;
     overflow: hidden;
-    /* Warm-tinted placeholder, never gray (§12). */
-    background-color: var(--lemon-chiffon);
+    /* The CSS wall — what you see before the canvas lands or without WebGL.
+       Same chiffon-toward-gold ground the shader paints. */
+    background:
+      radial-gradient(90% 70% at 88% 6%, var(--shell), transparent 60%),
+      linear-gradient(160deg, color-mix(in srgb, var(--lemon-chiffon) 78%, var(--royal-gold)), var(--lemon-chiffon));
   }
 
-  .hero__poster,
-  .hero__video {
+  .hero__canvas {
     position: absolute;
-    object-fit: cover;
-  }
-
-  .hero__poster {
     inset: 0;
+    z-index: -1;
     width: 100%;
     height: 100%;
+    opacity: 0;
   }
 
-  /* Inset by 1px so the video's painted area is strictly smaller than the
-     poster's. Measured, the two were within 473px² of each other and the video
-     — arriving later — was replacing the poster as the LCP element, which §6
-     forbids outright. LCP only promotes a LARGER candidate, so a hair of inset
-     keeps the poster as the LCP no matter how late the video lands. The 1px
-     ring of poster showing through is frame 0 of the same footage on a soft
-     plaster gradient, and is not perceptible. */
-  .hero__video {
-    inset: 1px;
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
-  }
-
-  /* The video sits over the poster and only becomes visible once it is actually
-     playing, so a stalled or refused load degrades to the still with no flash. */
-  .hero__video { opacity: 0; }
-  .hero__video.is-playing { opacity: 1; }
+  .hero__canvas:global(.is-ready) { opacity: 1; }
 
   @media (prefers-reduced-motion: no-preference) {
-    .hero__video { transition: opacity 600ms var(--ease-reveal); }
+    .hero__canvas { transition: opacity 900ms var(--ease-reveal); }
   }
 
-  /* Desktop: the full viewport, running under the fixed nav so the footage is
-     edge-to-edge from the very top. Resolved from the viewport rather than from
-     the image, so it is correct on the first layout pass and CLS stays 0.
+  .hero__inner {
+    position: relative;
+    display: grid;
+    align-items: center;
+    padding-block: calc(var(--nav-h) + var(--space-2xl)) var(--space-lg);
+    gap: var(--space-lg);
+  }
 
-     Capped at 78vw because object-fit: cover on a 16/9 frame starts cropping
-     into the wordmark past that — verified at 1280x1400, where the final E of
-     SUNNYSIDE was being cut off. */
-  @media (min-width: 768px) {
-    /* 4px under the viewport, and that 4px is load-bearing. Chrome excludes an
-       image that covers the whole viewport from LCP — it assumes a background —
-       so at exactly 100svh the poster stopped being a candidate and the video,
-       inset by 1px and therefore fractionally smaller than the viewport, became
-       the LCP instead. §6 forbids that outright. Sitting just under the
-       threshold keeps the poster the largest eligible element. */
-    .hero__media { height: min(calc(100svh - 4px), 78vw); }
+  .hero__copy {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: var(--space-lg);
+    justify-items: start;
+  }
+
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    --eyebrow-color: var(--ink);
+  }
+
+  .hero__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--rose-deep);
+  }
+
+  .hero__title {
+    display: grid;
+    margin: 0;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .hero__line { display: block; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__line .split-word > span {
+      animation: word-rise var(--dur-glide) var(--d, 0ms) var(--ease-glide) both;
+    }
+    .intro { animation: intro-rise 900ms var(--d, 0ms) var(--ease-glide) both; }
+  }
+
+  @keyframes word-rise  { from { translate: 0 105%; } }
+  @keyframes intro-rise { from { opacity: 0; translate: 0 18px; } }
+  .hero__line--soul { padding-inline-start: 0.9em; }
+
+  /* The friend, between the caps. Rose-deep because it is large display
+     type over a light wall — §3's rule for rose-coloured text. */
+  .hero__hand {
+    display: block;
+    margin-block: -0.18em -0.12em;
+    padding-inline-start: 0.4em;
+    font-family: var(--font-hand);
+    font-weight: 600;
+    font-size: calc(var(--fs-hero) * 0.62);
+    line-height: 1;
+    color: var(--rose-deep);
+    rotate: -4deg;
+    transform-origin: left center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__hand { animation: hand-in 1400ms 520ms var(--ease-glide) both; }
+  }
+
+  @keyframes hand-in {
+    from { opacity: 0; clip-path: inset(0 100% 0 0); }
+    to   { opacity: 1; clip-path: inset(0 -10% 0 0); }
+  }
+
+  .hero__lede { max-width: 34ch; color: var(--ink); }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  /* On the wall the secondary needs a little body to read as a button. */
+  .hero__secondary {
+    background-color: rgb(252 248 239 / 0.45);
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+  }
+
+  .hero__slot {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 68 / 56;
+    width: min(100%, 44rem);
+    justify-self: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hero__slot :global(.hero__flatmark) {
+    width: 100%;
+    height: 100%;
+    color: var(--rose-deep);
+    transition: opacity 600ms var(--ease-reveal);
+  }
+
+  .hero__canvas:global(.is-ready) ~ .hero__inner .hero__slot :global(.hero__flatmark) { opacity: 0; }
+
+  .hero__meta {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-md) var(--space-lg);
+    --eyebrow-color: var(--ink);
+  }
+
+  .hero__scroll { display: inline-flex; align-items: center; gap: var(--space-sm); }
+
+  .hero__scroll-line {
+    position: relative;
+    width: 1px;
+    height: 34px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--ink) 20%, transparent);
+  }
+
+  .hero__scroll-line::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 40%;
+    background: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__scroll-line::after { animation: scroll-cue 2.4s var(--ease-glide) infinite; }
+
+    /* Leaving the hero: copy drifts up and fades a little ahead of the page. */
+    .hero__copy,
+    .hero__meta {
+      translate: 0 calc(var(--p, 0) * -14vh);
+      opacity: calc(1 - var(--p, 0) * 1.3);
+    }
+  }
+
+  @keyframes scroll-cue {
+    0%   { translate: 0 -100%; }
+    100% { translate: 0 260%; }
+  }
+
+  /* ── Phone: mark on top, words below, everything inside one screen ────── */
+  @media (max-width: 899px) {
+    .hero__inner {
+      align-content: end;
+      padding-block-start: calc(var(--nav-h) + var(--space-lg));
+    }
+    .hero__slot {
+      order: -1;
+      width: min(78vw, 26rem);
+      justify-self: end;
+      margin-inline-end: -4vw;
+    }
+    .hero__meta-end { display: none; }
+  }
+
+  /* On phones the dock floats over the bottom of the hero and already says
+     "Appointments only", so the meta row steps aside and the copy clears it. */
+  @media (max-width: 639px) {
+    .hero__meta { display: none; }
+    .hero__inner { padding-block-end: calc(5.5rem + env(safe-area-inset-bottom)); }
+  }
+
+  @media (max-width: 479px) {
+    .hero__actions { display: grid; width: 100%; }
+    .hero__lede { font-size: 1rem; }
+  }
+
+  /* ── Desktop: words left, glass sun right ─────────────────────────────── */
+  @media (min-width: 900px) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--space-xl);
+    }
+    .hero__slot { width: 100%; margin-inline-end: -3vw; }
+  }
+
+  /* Wide but short screens: keep the cover line inside the fold. */
+  @media (min-width: 900px) and (max-height: 760px) {
+    .hero { --fs-hero: clamp(2.75rem, 7vw, 6rem); }
   }
 </style>

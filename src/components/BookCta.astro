@@ -16,20 +16,34 @@ interface Props {
   label?: string;
   /** `secondary` where a filled pill would be the second on screen; `on-dark` on the deep-sea band. */
   variant?: 'primary' | 'secondary' | 'on-dark';
+  size?: 'md' | 'lg';
+  /** Drifts toward the pointer (fine pointers, motion allowed only). */
+  magnetic?: boolean;
+  /** Preselects this treatment on /booking/ while Square isn't connected. */
+  treatment?: string;
   class?: string;
 }
-const { label = 'Book a visit', variant = 'primary', class: className = '' } = Astro.props;
+const {
+  label = 'Book a visit',
+  variant = 'primary',
+  size = 'md',
+  magnetic = false,
+  treatment,
+  class: className = '',
+} = Astro.props;
 
 const live = BOOKING.configured && !BOOKING.url.startsWith('[');
-const href = live ? BOOKING.url : '/booking/';
+const href = live ? BOOKING.url : treatment ? `/booking/?t=${treatment}` : '/booking/';
 ---
 
 <a
-  class:list={['btn', `btn--${variant}`, className]}
+  class:list={['btn', `btn--${variant}`, size === 'lg' && 'btn--lg', className]}
+  data-magnetic={magnetic ? '' : undefined}
   href={href}
   target={live ? '_blank' : undefined}
   rel={live ? 'noopener' : undefined}
 >
   {label}
+  <svg class="btn__rays" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-rays" /></svg>
   {live && <span class="visually-hidden">(opens Square booking in a new tab)</span>}
 </a>
