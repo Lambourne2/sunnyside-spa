@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import WaveDivider from './WaveDivider.astro';
-import { BOOKING, SITE, HOURS } from '../config/site';
+import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
 
 /**
  * §8 — deep-sea footer: gold wordmark, hours, address, instagram row. It
@@ -60,9 +60,9 @@ const bookHref = live ? BOOKING.url : '/booking/';
         <section class="foot__col" aria-labelledby="foot-find">
           <h2 class="t-eyebrow" id="foot-find">Find us</h2>
           <address class="t-body foot__lines">
-            {SITE.street}<br />
+            {!isPlaceholder(SITE.street) && <>{SITE.street}<br /></>}
             {SITE.city}, {SITE.state} {SITE.zip}<br />
-            <a class="link foot__link" href={`tel:${SITE.phone}`}>{SITE.phone}</a>
+            <a class="link foot__link" href={SITE.phoneHref}>{SITE.phone}</a>
           </address>
         </section>
 
@@ -81,7 +81,7 @@ const bookHref = live ? BOOKING.url : '/booking/';
       <p class="t-meta foot__fine">© {new Date().getFullYear()} Sunnyside Spa · {SITE.neighbourhood}, Utah</p>
       <ul class="foot__social" role="list">
         <li><a class="link foot__link" href={SITE.instagram}>Instagram</a></li>
-        <li><a class="link foot__link" href={`mailto:${SITE.email}`}>Email</a></li>
+        {!isPlaceholder(SITE.email) && <li><a class="link foot__link" href={`mailto:${SITE.email}`}>Email</a></li>}
       </ul>
       <a class="foot__top-btn" href="#main">
         <Icon name="logomark" size={44} />

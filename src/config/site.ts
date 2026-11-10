@@ -11,20 +11,22 @@
 export const SITE = {
   name: 'Sunnyside Spa',
   tagline: 'Sunshine for your soul',
-  neighbourhood: '[NEIGHBOURHOOD]',
-  city: '[CITY]',
+  /** Where the site says "in ___" and "___, Utah". The form gave the city
+   *  rather than a neighbourhood, so the city stands in. */
+  neighbourhood: 'West Jordan',
+  city: 'West Jordan',
   state: 'UT',
-  zip: '[ZIP]',
+  zip: '84081',
   street: '[STREET ADDRESS]',
-  phone: '[PHONE]',
+  phone: '(801) 712-5455',
+  /** For tel: links — the display format above won't dial everywhere. */
+  phoneHref: 'tel:+18017125455',
   email: '[EMAIL]',
-  instagram: '[INSTAGRAM URL]',
+  instagram: 'https://www.instagram.com/sunnysidespaslc',
 } as const;
 
 export const HOURS: { days: string; hours: string }[] = [
-  { days: '[DAYS]', hours: '[HOURS]' },
-  { days: '[DAYS]', hours: '[HOURS]' },
-  { days: '[CLOSED DAY]', hours: 'Closed' },
+  { days: 'Every day', hours: '10am – 6pm' },
 ];
 
 /**
@@ -57,9 +59,9 @@ export const HOURS: { days: string; hours: string }[] = [
 export const BOOKING = {
   provider: 'square' as const,
   /** From Square: Appointments → Online Booking → your booking site URL. */
-  url: '[SQUARE_BOOKING_URL]',
+  url: 'https://book.squareup.com/appointments/h6lt5jeabf59i8/location/LVF62WRVX2XY2/services',
   /** Set true once `url` is real, to swap the placeholder panel for the CTA. */
-  configured: false,
+  configured: true,
 } as const;
 
 export const isPlaceholder = (v: string) => v.startsWith('[') && v.endsWith(']');

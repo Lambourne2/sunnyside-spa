@@ -3,7 +3,7 @@ import Page from '../layouts/Page.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import BookCta from '../components/BookCta.astro';
 import Icon from '../components/Icon.astro';
-import { BOOKING, SITE, HOURS } from '../config/site';
+import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
 import { TREATMENTS } from '../data/treatments';
 
 /**
@@ -37,7 +37,7 @@ const STEPS = [
 
 <Page
   title="Book a visit — Sunnyside Spa"
-  description="Book a treatment at Sunnyside Spa in [NEIGHBOURHOOD], Utah."
+  description="Book a treatment at Sunnyside Spa in West Jordan, Utah."
   eyebrow="Booking"
   heading="Book a visit"
   lede="Appointments only, one at a time, so the room is yours for the whole of it."
@@ -143,8 +143,8 @@ const STEPS = [
           just gone, say what you were after and I will tell you what is close.
         </p>
         <p class="bk__contact">
-          <a class="link" href={`tel:${SITE.phone}`}>{SITE.phone}</a><br />
-          <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a class="link" href={SITE.phoneHref}>{SITE.phone}</a>
+          {!isPlaceholder(SITE.email) && <><br /><a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></>}
         </p>
         <h3 class="t-eyebrow bk__hours-title">Hours</h3>
         <dl class="bk__hours">
