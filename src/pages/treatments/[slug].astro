@@ -4,9 +4,10 @@ import Icon from '../../components/Icon.astro';
 import Figure from '../../components/Figure.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
 import BookCta from '../../components/BookCta.astro';
-import { TREATMENTS } from '../../data/treatments';
+import { TREATMENTS, formatMinutes } from '../../data/treatments';
 
-/** Treatment detail — §8: arched hero, what to expect, duration/price, add-ons, book. */
+/** Category detail — §8: arched hero, what to expect, duration/price, the
+ *  services in this category with their prices, book. */
 export function getStaticPaths() {
   return TREATMENTS.map((t) => ({ params: { slug: t.slug }, props: { t } }));
 }
@@ -39,6 +40,10 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
             <dt class="t-eyebrow">Takes</dt>
             <dd class="t-h3">{t.duration}</dd>
           </div>
+          <div>
+            <dt class="t-eyebrow">Services</dt>
+            <dd class="t-h3">{t.services.length}</dd>
+          </div>
         </dl>
 
         <BookCta treatment={t.slug} size="lg" magnetic />
@@ -65,16 +70,23 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
       </div>
 
       <div class="reveal">
-        <h2 class="t-h2">Add-ons</h2>
+        <h2 class="t-h2">Prices</h2>
+        {/* Verbatim from the Square menu — same names you will see when booking. */}
         <ul class="td__addons" role="list">
-          {t.detail.addOns.map((a) => (
+          {t.services.map((s) => (
             <li class="td__addon">
-              <span class="t-body">{a.name}</span>
-              <span class="t-meta">{a.price}</span>
+              <span class="td__svc">
+                <span class="t-body td__svc-name">{s.name}</span>
+                <span class="t-body td__svc-desc">{s.description}</span>
+              </span>
+              <span class="td__svc-price">
+                <span class="td__amount">${s.price}</span>
+                <span class="t-meta">{formatMinutes(s.minutes)}</span>
+              </span>
             </li>
           ))}
         </ul>
-        <p class="t-body td__note">Ask when you arrive. Nothing is added without telling you the price first.</p>
+        <p class="t-body td__note">Every price is fixed. Nothing is added without telling you first.</p>
       </div>
     </div>
 
@@ -111,7 +123,8 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
 
   .td__meta {
     display: flex;
-    gap: var(--space-2xl);
+    flex-wrap: wrap;
+    gap: var(--space-lg) var(--space-2xl);
     margin: 0;
   }
 
@@ -154,7 +167,19 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
 
   .td__addons {
     margin-block-start: var(--space-lg);
-    max-width: 30rem;
+    max-width: 36rem;
+  }
+
+  .td__svc { display: grid; gap: var(--space-2xs); min-width: 0; }
+  .td__svc-name { font-weight: 500; }
+  .td__svc-desc { color: var(--ink-soft); font-size: 0.9375rem; line-height: 1.6; }
+  .td__svc-price { display: grid; justify-items: end; gap: 2px; white-space: nowrap; }
+
+  .td__amount {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
   }
 
   .td__addon {
@@ -191,6 +216,6 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
 
   @media (min-width: 768px) {
     .td__top { grid-template-columns: 0.9fr 1.1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
-    .td__cols { grid-template-columns: 1.2fr 0.8fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
+    .td__cols { grid-template-columns: 0.9fr 1.1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
   }
 </style>

@@ -121,6 +121,14 @@ Rules: handwriting never appears in navigation, buttons, forms, or any repeated 
 - **Dividers are waves.** Never a straight `<hr>`. Use the logomark's two-wave curve as an inline SVG rule, dusty rose at 60% opacity.
 - **The five icons** — sun-over-water, botanical sprig, lotus, wave-and-circle, full sun — map to Massage, Skincare, Body, Wellness, You Time. These are the service taxonomy. Draw them as one SVG sprite in the shared monoline style.
 
+> **Amended 2026-11-10 — the real menu.** Sunnyside's actual services (from the Square
+> menu) are facials, brows, lashes and waxing; there is no massage, body, wellness or
+> you-time offering. The taxonomy is now four categories: Facials (botanical sprig),
+> Brows (arched brow over an eye), Lashes (closed eye, lifted lashes) and Waxing
+> (spatula with a drip). The three new icons follow the same monoline rules. The
+> original five stay in the sprite as unused marks. Services, prices and lengths live
+> in `src/data/treatments.ts` and match Square's names exactly.
+
 ---
 
 ## 6. Assets on hand

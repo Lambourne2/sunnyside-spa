@@ -4,7 +4,7 @@ import WaveDivider from '../components/WaveDivider.astro';
 import BookCta from '../components/BookCta.astro';
 import Icon from '../components/Icon.astro';
 import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
-import { TREATMENTS } from '../data/treatments';
+import { TREATMENTS, formatMinutes } from '../data/treatments';
 
 /**
  * Booking — a short, honest flow in front of the Square handoff.
@@ -66,7 +66,7 @@ const STEPS = [
                 <span class="t-h3">{t.name}</span>
                 <span class="t-body bk__opt-need">{t.need}</span>
               </span>
-              <span class="t-meta bk__opt-meta">{t.price}<br />{t.duration}</span>
+              <span class="t-meta bk__opt-meta">From {t.price}<br />{t.services.length} services</span>
               <svg class="bk__tick" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
             </label>
           ))}
@@ -85,12 +85,17 @@ const STEPS = [
                   <p class="t-body bk__sum-line">{t.line}</p>
                 </div>
               </div>
-              <dl class="bk__facts">
-                <div><dt class="t-eyebrow">From</dt><dd class="t-h3">{t.price}</dd></div>
-                <div><dt class="t-eyebrow">Takes</dt><dd class="t-h3">{t.duration}</dd></div>
-                <div><dt class="t-eyebrow">Arrive early</dt><dd class="t-h3">15 min</dd></div>
-              </dl>
-              <a class="link bk__more" href={`/treatments/${t.slug}/`}>What happens in a {t.name.toLowerCase()} appointment</a>
+              {/* The same names and prices as the Square menu, so the choice
+                  carries over by eye even though it can't by link. */}
+              <ul class="bk__svcs" role="list">
+                {t.services.map((s) => (
+                  <li class="bk__svc">
+                    <span class="bk__svc-name">{s.name}</span>
+                    <span class="t-meta bk__svc-meta">{formatMinutes(s.minutes)} · <strong>${s.price}</strong></span>
+                  </li>
+                ))}
+              </ul>
+              <a class="link bk__more" href={`/treatments/${t.slug}/`}>What to expect: {t.name.toLowerCase()}</a>
             </div>
           ))}
 
@@ -107,7 +112,7 @@ const STEPS = [
             )}
             <p class="t-meta bk__go-note">
               {live
-                ? 'Opens Square in a new tab. Pick the same treatment there.'
+                ? 'Opens Square in a new tab, where you pick the service and a time.'
                 : 'Online booking is not connected yet — see the note below.'}
             </p>
           </div>
@@ -309,6 +314,21 @@ const STEPS = [
   .bk__sum-top { display: grid; grid-template-columns: 5rem 1fr; gap: var(--space-md); align-items: center; }
   .bk__sum-img { aspect-ratio: 2 / 3; }
   .bk__sum-line { font-size: 0.9375rem; line-height: 1.6; margin-block-start: var(--space-2xs); }
+
+  .bk__svcs { display: grid; border-block-start: 1px solid var(--line-hair); }
+
+  .bk__svc {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding-block: var(--space-xs);
+    border-block-end: 1px solid var(--line-hair);
+  }
+
+  .bk__svc-name { font-size: 0.9375rem; line-height: 1.4; }
+  .bk__svc-meta { white-space: nowrap; --meta-color: var(--ink-soft); }
+  .bk__svc-meta strong { font-weight: 400; color: var(--ink); }
 
   .bk__facts {
     display: grid;

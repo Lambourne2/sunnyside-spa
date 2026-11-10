@@ -7,7 +7,6 @@ import Treatments from '../components/Treatments.astro';
 import Afternoon from '../components/Afternoon.astro';
 import Rituals from '../components/Rituals.astro';
 import Gallery from '../components/Gallery.astro';
-import Testimonials from '../components/Testimonials.astro';
 import Shelf from '../components/Shelf.astro';
 import ClosingBand from '../components/ClosingBand.astro';
 import FirstVisit from '../components/FirstVisit.astro';
@@ -15,13 +14,13 @@ import SiteFooter from '../components/SiteFooter.astro';
 import BookingBar from '../components/BookingBar.astro';
 
 // §8's order, with the footage inserted after the treatments as the page's
-// one cinematic pause (§13 amendment). Testimonials still sit above the dark
-// band on purpose: they do the persuading before the closer asks.
+// one cinematic pause (§13 amendment). When testimonials return they go back
+// above the dark band: they do the persuading before the closer asks.
 ---
 
 <Base
   title="Sunnyside Spa — a day spa in Utah"
-  description="One room in the sun, booked one person at a time. Massage, skincare, body and wellness treatments in Utah."
+  description="One room in the sun, booked one person at a time. Facials, brows, lashes and waxing in West Jordan, Utah."
 >
   <SiteHeader />
 
@@ -32,7 +31,9 @@ import BookingBar from '../components/BookingBar.astro';
     <Afternoon />
     <Rituals />
     <Gallery />
-    <Testimonials />
+    {/* Kind words (Testimonials.astro) is off until there are real client
+        quotes: the drafts are invented, and on a live site they would read
+        as genuine reviews. Add them in the component and put it back here. */}
     <Shelf />
     <ClosingBand />
     <FirstVisit />

@@ -2,99 +2,84 @@
 import Page from '../../layouts/Page.astro';
 import Icon from '../../components/Icon.astro';
 import Figure from '../../components/Figure.astro';
-import { TREATMENTS } from '../../data/treatments';
+import BookCta from '../../components/BookCta.astro';
+import { TREATMENTS, formatMinutes } from '../../data/treatments';
 
 /**
- * Treatments index — §8 "filter by the five icons".
+ * The menu — every service Sunnyside books, with its price and length, in
+ * the four categories. This is the page people check prices on, so it is a
+ * real list rather than a teaser: names match Square's exactly, so what you
+ * read here is what you will find when you book.
  *
- * The filter is progressive: without JS every treatment is shown and the
- * controls are plain buttons that do nothing visible. With JS they toggle a
- * data attribute on the list.
+ * The chips jump to a category rather than filter: with fourteen services
+ * the whole menu fits, and hiding most of it would only hide prices.
  */
 ---
 
 <Page
-  title="Treatments — Sunnyside Spa"
-  description="Massage, skincare, body, wellness and you time. Book a treatment in West Jordan, Utah."
+  title="Treatments and prices — Sunnyside Spa"
+  description="Facials, brows, lashes and waxing in West Jordan, Utah, with every price and length listed."
   eyebrow="Treatments"
-  heading="What we do"
-  lede="Five things, done properly, in one room. Pick the one that sounds like the week you have had."
-  mark="massage"
+  heading="The menu"
+  lede="Facials, brows, lashes and waxing. Every price is fixed, and every one is below."
+  mark="skincare"
 >
-  <section class="tx">
+  <section class="mn">
     <div class="shell">
-      <div class="tx__filter" role="group" aria-label="Filter treatments">
-        <button class="tx__chip is-active" type="button" data-filter="all" aria-pressed="true">
-          <span class="t-eyebrow">All</span>
-        </button>
-        {
-          TREATMENTS.map((t) => (
-            <button class="tx__chip" type="button" data-filter={t.slug} aria-pressed="false">
-              <Icon name={t.icon} size={20} />
-              <span class="t-eyebrow">{t.name}</span>
-            </button>
-          ))
-        }
-      </div>
+      <nav class="mn__jump" aria-label="Jump to a category">
+        {TREATMENTS.map((t) => (
+          <a class="mn__chip" href={`#${t.slug}`}>
+            <Icon name={t.icon} size={20} />
+            <span class="t-eyebrow">{t.name}</span>
+          </a>
+        ))}
+      </nav>
 
-      <ul class="tx__list" role="list" data-tx-list>
-        {
-          TREATMENTS.map((t) => (
-            <li class="tx__item reveal" data-slug={t.slug}>
-              <a class="tx__link" href={`/treatments/${t.slug}/`}>
-                <Figure class="tx__media" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} />
-                <span class="tx__body">
-                  <Icon name={t.icon} size={28} />
-                  <span class="t-h3">{t.name}</span>
-                  {/* DRAFT COPY except massage, which is §11 verbatim */}
-                  <span class="t-body tx__line">{t.line}</span>
-                  <span class="t-meta">From {t.price} · {t.duration}</span>
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      {TREATMENTS.map((t, i) => (
+        <section class:list={['mn__cat', i % 2 === 1 && 'mn__cat--flip']} id={t.slug} aria-labelledby={`${t.slug}-title`}>
+          <div class="mn__side reveal">
+            <Figure class="mn__fig" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} />
+          </div>
 
-      <p class="tx__empty t-body" data-tx-empty hidden>
-        Nothing under that one yet.
-      </p>
+          <div class="mn__body">
+            <header class="mn__head reveal">
+              <p class="t-eyebrow mn__eyebrow"><Icon name={t.icon} size={18} /> From {t.price} · {t.duration}</p>
+              <h2 class="t-display mn__title" id={`${t.slug}-title`}>{t.name}</h2>
+              {/* DRAFT COPY */}
+              <p class="t-body mn__line">{t.line}</p>
+            </header>
+
+            <ul class="mn__list" role="list">
+              {t.services.map((s) => (
+                <li class="mn__item reveal">
+                  <div class="mn__row">
+                    <h3 class="t-h3 mn__name">{s.name}</h3>
+                    <span class="mn__dots" aria-hidden="true"></span>
+                    <p class="mn__price">
+                      <span class="t-meta">{formatMinutes(s.minutes)}</span>
+                      <span class="mn__amount">${s.price}</span>
+                    </p>
+                  </div>
+                  <p class="t-body mn__desc">{s.description}</p>
+                </li>
+              ))}
+            </ul>
+
+            <div class="mn__actions reveal">
+              <BookCta treatment={t.slug} />
+              <a class="link" href={`/treatments/${t.slug}/`}>What to expect</a>
+            </div>
+          </div>
+        </section>
+      ))}
     </div>
   </section>
 </Page>
 
-<script is:inline>
-  (() => {
-    const list = document.querySelector('[data-tx-list]');
-    if (!list) return;
-    const chips = [...document.querySelectorAll('[data-filter]')];
-    const items = [...list.querySelectorAll('[data-slug]')];
-    const empty = document.querySelector('[data-tx-empty]');
-
-    chips.forEach((chip) =>
-      chip.addEventListener('click', () => {
-        const want = chip.dataset.filter;
-        chips.forEach((c) => {
-          const on = c === chip;
-          c.classList.toggle('is-active', on);
-          c.setAttribute('aria-pressed', String(on));
-        });
-        let shown = 0;
-        items.forEach((li) => {
-          const match = want === 'all' || li.dataset.slug === want;
-          li.hidden = !match;
-          if (match) shown++;
-        });
-        empty.hidden = shown > 0;
-      })
-    );
-  })();
-</script>
-
 <style>
-  .tx { padding-block: var(--space-2xl); }
+  .mn { padding-block: var(--section-y); }
 
-  .tx__filter {
+  .mn__jump {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
@@ -102,54 +87,100 @@ import { TREATMENTS } from '../../data/treatments';
   }
 
   /* Hang tag pills (§5) — the same shape as buttons and badges. */
-  .tx__chip {
+  .mn__chip {
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    padding: 8px 18px;
+    padding: 10px 18px;
     border: 1px solid var(--dusty-rose);
     border-radius: var(--r-tag);
-    background: transparent;
+    background-color: var(--shell);
     color: var(--rose-deep);
-    cursor: pointer;
-    transition: background-color var(--dur-nav) var(--ease-reveal),
-                color var(--dur-nav) var(--ease-reveal);
-  }
-
-  /* currentColor in the `color` property resolves to the inherited value, so
-     the label follows the chip through its active state. */
-  .tx__chip { --eyebrow-color: currentColor; }
-
-  .tx__chip:hover { background-color: var(--lemon-chiffon); }
-
-  .tx__chip.is-active {
-    background-color: var(--rose-deep);
-    border-color: var(--rose-deep);
-    color: var(--shell);          /* 5.97:1 */
-  }
-
-  .tx__list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: var(--space-xl);
-  }
-
-  .tx__link {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    color: inherit;
     text-decoration: none;
+    --eyebrow-color: currentColor;
+    transition: background-color var(--dur-nav) var(--ease-reveal);
   }
 
-  .tx__body { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .mn__chip:hover { background-color: var(--lemon-chiffon); }
 
-  .tx__line { max-width: 40ch; }
+  .mn__cat {
+    display: grid;
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+    border-block-start: 1px solid var(--line-hair);
+    scroll-margin-top: calc(var(--nav-h) + 5rem);
+  }
 
-  .tx__empty { margin-block-start: var(--space-xl); color: var(--ink-soft); }
+  .mn__side { max-width: 22rem; }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .tx__link :global(.fig img) { transition: scale var(--dur-card) var(--ease-reveal); }
-    .tx__link:hover :global(.fig img) { scale: 1.03; }
+  .mn__body { display: grid; gap: var(--space-lg); align-content: start; min-width: 0; }
+
+  .mn__head { display: grid; gap: var(--space-sm); }
+  .mn__eyebrow { display: inline-flex; align-items: center; gap: var(--space-xs); --eyebrow-color: var(--rose-deep); }
+  .mn__title { margin: 0; }
+  .mn__line { max-width: 48ch; }
+
+  .mn__list { display: grid; border-block-start: 1px solid var(--line-hair); }
+
+  .mn__item {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block: var(--space-md);
+    border-block-end: 1px solid var(--line-hair);
+  }
+
+  /* Name, a dotted leader, then length and price — the shape of a printed
+     menu, so the eye can run straight across to the number. */
+  .mn__row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .mn__name { margin: 0; font-size: 1rem; color: var(--ink); }
+
+  .mn__dots {
+    align-self: end;
+    height: 1px;
+    margin-block-end: 0.35em;
+    background-image: radial-gradient(circle, var(--dusty-rose) 1px, transparent 1.2px);
+    background-size: 6px 2px;
+    background-repeat: repeat-x;
+    opacity: 0.7;
+  }
+
+  .mn__price { display: inline-flex; align-items: baseline; gap: var(--space-sm); margin: 0; white-space: nowrap; }
+
+  .mn__amount {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mn__desc { color: var(--ink-soft); font-size: 0.9375rem; line-height: 1.6; max-width: 58ch; }
+
+  .mn__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-lg); }
+
+  /* Long names wrap above their price on narrow screens. */
+  @media (max-width: 479px) {
+    .mn__row { grid-template-columns: 1fr auto; }
+    .mn__dots { display: none; }
+  }
+
+  @media (min-width: 860px) {
+    .mn__cat {
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: clamp(var(--space-2xl), 6vw, var(--space-4xl));
+      align-items: start;
+    }
+    .mn__side { position: sticky; top: calc(var(--nav-h) + 6rem); }
+    /* Order moves the photo into the first track, so the flipped rows swap
+       the track widths too — the list always gets the wide one. */
+    .mn__cat--flip { grid-template-columns: 1.3fr 0.7fr; }
+    .mn__cat--flip .mn__side { order: 2; justify-self: end; }
   }
 </style>

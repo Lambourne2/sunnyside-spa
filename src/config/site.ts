@@ -21,7 +21,7 @@ export const SITE = {
   phone: '(801) 712-5455',
   /** For tel: links — the display format above won't dial everywhere. */
   phoneHref: 'tel:+18017125455',
-  email: '[EMAIL]',
+  email: 'sunnysidespaslc@gmail.com',
   instagram: 'https://www.instagram.com/sunnysidespaslc',
 } as const;
 

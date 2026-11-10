@@ -51,7 +51,8 @@ export const LOGOMARK: Mark = {
   ],
 };
 
-/** The five service icons — §5 taxonomy. Drawn 2026-08-05 (see IconSprite). */
+/** Service icons — the §5 five (drawn 2026-08-05) plus brows, lashes and
+ *  waxing (2026-11-10) for the real menu. See IconSprite. */
 export const ICONS: Record<string, Mark> = {
   massage: {
     box: [24, 24],
@@ -110,6 +111,39 @@ export const ICONS: Record<string, Mark> = {
       { role: 'ray', d: 'M7 17l-1.9 1.9' },
       { role: 'ray', d: 'M18.9 18.9 17 17' },
       { role: 'ray', d: 'M7 7 5.1 5.1' },
+    ],
+  },
+  brows: {
+    box: [24, 24],
+    stroke: 1.5,
+    paths: [
+      { d: 'M3.6 9.2C7.4 5.4 13.6 4.9 20.4 7.8' },
+      { d: 'M5 15.6Q12 10.4 19 15.6Q12 20.8 5 15.6Z' },
+      { role: 'sun', d: 'M12 13.6a2 2 0 1 0 .001 0Z' },
+    ],
+  },
+  lashes: {
+    box: [24, 24],
+    stroke: 1.5,
+    paths: [
+      { d: 'M4 11.5Q12 18 20 11.5' },
+      { d: 'M5.6 12.7 4.3 14.8' },
+      { d: 'M8 14 7.1 16.4' },
+      { d: 'M12 14.7V17.3' },
+      { d: 'M16 14 16.9 16.4' },
+      { d: 'M18.4 12.7 19.7 14.8' },
+      { role: 'ray', d: 'M12 4.2v2.6' },
+      { role: 'ray', d: 'M8.2 5.6l1 1.6' },
+      { role: 'ray', d: 'M15.8 5.6l-1 1.6' },
+    ],
+  },
+  waxing: {
+    box: [24, 24],
+    stroke: 1.5,
+    paths: [
+      { d: 'M11.1 11.3 9.6 9.8a2.3 2.3 0 0 1 0-3.2l3.3-3.3a2.3 2.3 0 0 1 3.2 0l1.6 1.6a2.3 2.3 0 0 1 0 3.2l-3.3 3.3a2.3 2.3 0 0 1-3.2 0Z' },
+      { d: 'M11.1 11.3 4.4 18' },
+      { d: 'M17.6 14.2c0 1.4-1.1 2.3-1.1 3.3a1.1 1.1 0 0 0 2.2 0c0-1-1.1-1.9-1.1-3.3' },
     ],
   },
 };

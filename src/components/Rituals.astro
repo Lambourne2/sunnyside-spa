@@ -3,32 +3,36 @@ import BookCta from './BookCta.astro';
 import Figure from './Figure.astro';
 
 /**
- * Rituals — §8's alternating rows, now as cards that stack: each pins under
- * the nav and the next slides up over it, the one beneath settling back a
- * little. The image side still alternates (§8), and the cards stay at
- * --r-card (§5: cards are 4–8px, never 16).
+ * Signatures — §8's alternating rows, as cards that stack: each pins under
+ * the nav and the next slides up over it. The image side still alternates
+ * (§8), and the cards stay at --r-card (§5: cards are 4–8px, never 16).
  *
- * "The sunrise ritual" is named in the §8 layout; the second is a placeholder.
+ * §8 named this slot for "the sunrise ritual", a massage the menu doesn't
+ * have. It now carries the two longest services on the real menu. Name,
+ * price, length and description are read from the menu data, so they cannot
+ * drift from what Square books.
  */
+import { TREATMENTS, formatMinutes } from '../data/treatments';
+
+const find = (cat: string, name: string) => {
+  const t = TREATMENTS.find((x) => x.slug === cat)!;
+  const s = t.services.find((x) => x.name === name)!;
+  return { t, s };
+};
+
 const ROWS = [
   {
-    eyebrow: 'Signature',
-    title: 'The sunrise ritual',
-    // DRAFT COPY
-    body: 'Ninety minutes that start with your feet and end with your scalp. Warm oil, slow pressure, and a room that smells like the desert after rain. Book it early — the first appointment of the day is the quiet one.',
-    price: '[PRICE]',
-    duration: '[DURATION]',
+    eyebrow: 'Our most relaxing option',
+    ...find('facials', '80 minute customized facial'),
+    title: 'The 80 minute facial',
     src: '/img/samples/ritual-oils.webp',
     alt: 'A small amber bottle lying on striped linen with dried grasses beside it.',
     tone: 'chiffon',
   },
   {
-    eyebrow: 'Also worth your time',
-    title: '[RITUAL NAME]',
-    // DRAFT COPY
-    body: 'One line about what happens, then one about how you will feel walking out. Replace this once the ritual is named and priced.',
-    price: '[PRICE]',
-    duration: '[DURATION]',
+    eyebrow: 'The full brow makeover',
+    ...find('brows', 'Brow lamination wax and tint'),
+    title: 'Brow lamination',
     src: '/img/samples/ritual-water.webp',
     alt: 'Two hands tipping water from an unglazed clay jug into a small bowl.',
     tone: 'tint',
@@ -39,8 +43,8 @@ const ROWS = [
 <section class="rituals" aria-labelledby="rituals-title">
   <div class="shell">
     <header class="sec-head">
-      <p class="t-eyebrow reveal"><span class="sec-num">04</span> &nbsp;Rituals</p>
-      <h2 class="t-display sec-head__title" id="rituals-title" data-split>Longer, slower, worth it</h2>
+      <p class="t-eyebrow reveal"><span class="sec-num">04</span> &nbsp;Signatures</p>
+      <h2 class="t-display sec-head__title" id="rituals-title" data-split>Worth the longer booking</h2>
     </header>
 
     <ol class="rituals__stack" role="list">
@@ -49,15 +53,15 @@ const ROWS = [
           <div class="ritual__media">
             <Figure class="ritual__figure" shape="arch" ratio="4 / 5" src={row.src} alt={row.alt} />
             <p class="ritual__tag glass" data-liquid="14">
-              <span class="t-meta t-meta--caps">From {row.price} · {row.duration}</span>
+              <span class="t-meta t-meta--caps">${row.s.price} · {formatMinutes(row.s.minutes)}</span>
             </p>
           </div>
           <div class="ritual__copy">
             <p class="t-eyebrow"><span class="sec-num">{String(i + 1).padStart(2, '0')}</span> &nbsp;{row.eyebrow}</p>
             <h3 class="t-h2 ritual__title">{row.title}</h3>
-            {/* DRAFT COPY */}
-            <p class="t-body">{row.body}</p>
-            <p><BookCta /></p>
+            {/* Her own description, from the menu. */}
+            <p class="t-body">{row.s.description}</p>
+            <p class="ritual__actions"><BookCta treatment={row.t.slug} /> <a class="link" href={`/treatments/${row.t.slug}/`}>All {row.t.name.toLowerCase()}</a></p>
           </div>
         </li>
       ))}
@@ -96,6 +100,7 @@ const ROWS = [
   }
 
   .ritual__copy { display: grid; gap: var(--space-md); justify-items: start; }
+  .ritual__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-lg); }
 
   @media (min-width: 768px) {
     .ritual {

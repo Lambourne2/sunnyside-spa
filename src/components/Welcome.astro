@@ -2,6 +2,7 @@
 import Figure from './Figure.astro';
 import WaveDivider from './WaveDivider.astro';
 import { SITE } from '../config/site';
+import { TREATMENTS } from '../data/treatments';
 
 /**
  * Welcome — the handwritten quote, and the three facts that make Sunnyside
@@ -12,11 +13,13 @@ import { SITE } from '../config/site';
  * small glass tag sits on the photograph — glass on photography is one of the
  * places the §13 amendment allows it, because there is something to refract.
  */
+const serviceCount = TREATMENTS.reduce((n, t) => n + t.services.length, 0);
 const FACTS = [
   // DRAFT COPY — true of the business as described in Our story.
   { n: '01', label: 'Room', note: 'South-facing, so it gets the afternoon.' },
-  { n: '01', label: 'Therapist', note: 'The same pair of hands every visit.' },
-  { n: '00', label: 'Upsells', note: 'Nothing added without the price first.' },
+  // Counted from the menu, so it stays true when the menu changes.
+  { n: String(serviceCount).padStart(2, '0'), label: 'Services', note: 'Facials, brows, lashes and waxing, every price fixed.' },
+  { n: '00', label: 'Upsells', note: 'Nothing added without telling you first.' },
 ];
 ---
 
@@ -29,8 +32,9 @@ const FACTS = [
       </p>
       <!-- DRAFT COPY -->
       <p class="t-body welcome__body reveal">
-        One room, one therapist, and the time set aside for it. You tell me what
-        hurts and what you would rather I left alone, and I work from there.
+        One room, one person, and the time set aside for it. You tell me what you
+        are after — calmer skin, tidier brows, no more shaving — and I work from
+        there.
       </p>
       <a class="link reveal welcome__more" href="/our-story/">Read how it started</a>
     </div>
@@ -57,7 +61,7 @@ const FACTS = [
       <li class="welcome__fact reveal">
         <span class="welcome__n" aria-hidden="true">{f.n}</span>
         <span class="t-h3">
-          <span class="visually-hidden">{f.n === '00' ? 'No' : 'One'} </span>{f.label}
+          <span class="visually-hidden">{f.n === '00' ? 'No' : Number(f.n)} </span>{f.label}
         </span>
         <span class="t-body welcome__note">{f.note}</span>
       </li>
