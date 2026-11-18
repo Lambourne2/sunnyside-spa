@@ -1,5 +1,4 @@
 ---
-import Figure from './Figure.astro';
 import WaveDivider from './WaveDivider.astro';
 import { SITE } from '../config/site';
 import { TREATMENTS } from '../data/treatments';
@@ -13,6 +12,22 @@ import { TREATMENTS } from '../data/treatments';
  * small glass tag sits on the photograph — glass on photography is one of the
  * places the §13 amendment allows it, because there is something to refract.
  */
+/**
+ * The welcome photo has a lash lamp arcing over the bed, and the frame's top is
+ * cut to that lamp's curve rather than §5's plain semicircle — on request, so
+ * the lamp reads as a light with a band of wall around it instead of being
+ * cropped by the frame.
+ *
+ * The lamp is a near-perfect circle in the original (centre 868,1098; housing
+ * r ≈ 894 of 1717px wide). welcome-portrait.webp is cropped 4:5, symmetric about
+ * that centre, and this arc is the same circle grown by 110px, so the wall gap
+ * is even all the way round. In the 1000×1250 crop: centre (500, 591.7),
+ * r 591.3, meeting the sides at y 276.1. Re-crop and recompute together, from
+ * sunnyside-spa-assets/media-assets/welcome-portrait-original.jpg.
+ */
+const LAMP_ARCH =
+  'M0 1240 V276.1 A591.3 591.3 0 0 1 1000 276.1 V1240 Q1000 1250 990 1250 H10 Q0 1250 0 1240 Z';
+
 const serviceCount = TREATMENTS.reduce((n, t) => n + t.services.length, 0);
 const FACTS = [
   // DRAFT COPY — true of the business as described in Our story.
@@ -40,13 +55,25 @@ const FACTS = [
     </div>
 
     <div class="welcome__media" data-progress>
-      <Figure
-        class="welcome__figure"
-        shape="arch"
-        ratio="4 / 5"
-        src="/img/samples/welcome-room.webp"
-        alt="A warm plaster room with arched alcoves and a treatment bed made up in white linen."
-      />
+      <figure class="welcome__figure">
+        <img
+          class="welcome__photo"
+          src="/img/welcome-portrait.webp"
+          alt="Smiling in a black leather jacket, arms folded on a treatment bed under the curved arm of a lash lamp, with tweezers, a wax spatula and a hand mirror laid out on a dark towel."
+          width="1000"
+          height="1250"
+          loading="lazy"
+          decoding="async"
+        />
+        <svg class="welcome__frame" viewBox="0 0 1000 1250" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <clipPath id="welcome-lamp-arch" clipPathUnits="objectBoundingBox">
+              <path transform="scale(0.001 0.0008)" d={LAMP_ARCH} />
+            </clipPath>
+          </defs>
+          <path d={LAMP_ARCH} vector-effect="non-scaling-stroke" />
+        </svg>
+      </figure>
       <p class="welcome__tag glass" data-liquid="16">
         <span class="t-eyebrow">The room</span>
         <span class="t-meta">{SITE.neighbourhood}, UT</span>
@@ -93,13 +120,40 @@ const FACTS = [
 
   .welcome__media { position: relative; }
 
+  /* Frame cut to the lamp's arc (see LAMP_ARCH). The photo sits exactly at
+     cover-fit — no zoom, no inner parallax — or the lamp slides off the curve.
+     The whole frame still drifts. The hairline is drawn in SVG because a CSS
+     border can't follow a clip-path; same §9 hairline, no shadow. */
+  .welcome__figure {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+  }
+
+  .welcome__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: url(#welcome-lamp-arch);
+    background-color: var(--surface-tint);
+  }
+
+  .welcome__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    fill: none;
+    stroke: var(--line-hair);
+    stroke-width: 1;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .welcome__media :global(.welcome__figure) {
+    .welcome__figure {
       translate: 0 calc((var(--p, 0.5) - 0.5) * -60px);
-    }
-    .welcome__media :global(.welcome__figure img) {
-      scale: 1.12;
-      translate: 0 calc((var(--p, 0.5) - 0.5) * 40px);
     }
   }
 
