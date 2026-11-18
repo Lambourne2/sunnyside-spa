@@ -38,7 +38,7 @@ import { TREATMENTS, formatMinutes } from '../../data/treatments';
       {TREATMENTS.map((t, i) => (
         <section class:list={['mn__cat', i % 2 === 1 && 'mn__cat--flip']} id={t.slug} aria-labelledby={`${t.slug}-title`}>
           <div class="mn__side reveal">
-            <Figure class="mn__fig" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} />
+            <Figure class="mn__fig" shape="arch" ratio="4 / 5" src={t.menuImage ?? t.image} alt={t.menuAlt ?? t.alt} />
           </div>
 
           <div class="mn__body">

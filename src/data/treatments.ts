@@ -36,6 +36,10 @@ export interface Treatment {
   /** SAMPLE photography — see public/img/samples/SOURCES.json. To be replaced. */
   image: string;
   alt: string;
+  /** Real photography for the arch beside this category on /treatments/ only.
+   *  Falls back to `image`/`alt`. */
+  menuImage?: string;
+  menuAlt?: string;
   services: Service[];
   detail: {
     lede: string;
@@ -89,6 +93,8 @@ const CATEGORIES: Draft[] = [
     line: 'Shaped to suit your face, tinted if you want them fuller, or laminated so they stay brushed up for weeks.',
     image: '/img/samples/founder.webp',
     alt: 'A woman standing in a bare, sunlit room, hard shadow from a blind falling in stripes across her and the wall behind.',
+    menuImage: '/img/brows-portrait.webp',
+    menuAlt: 'Brushing a brow into shape with a spoolie, checking it in a hand mirror held out at arm’s length, under the curve of a lash lamp.',
     services: [
       { name: 'Brow wax quick clean up', description: 'Love your current shape? We remove strays and refine the edges for a polished, well-groomed look.', minutes: 15, price: 20 },
       { name: 'Brow tint', description: 'A custom-matched tint that darkens and defines brows, filling in sparse or light areas. Less brow makeup needed.', minutes: 20, price: 20 },
