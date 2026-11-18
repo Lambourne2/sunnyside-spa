@@ -31,7 +31,7 @@ const ROWS = [
   },
   {
     eyebrow: 'The full brow makeover',
-    ...find('brows', 'Brow lamination wax and tint'),
+    ...find('brows', 'Brow lamination, wax, and tint'),
     title: 'Brow lamination',
     src: '/img/samples/ritual-water.webp',
     alt: 'Two hands tipping water from an unglazed clay jug into a small bowl.',
@@ -61,7 +61,7 @@ const ROWS = [
             <h3 class="t-h2 ritual__title">{row.title}</h3>
             {/* Her own description, from the menu. */}
             <p class="t-body">{row.s.description}</p>
-            <p class="ritual__actions"><BookCta treatment={row.t.slug} /> <a class="link" href={`/treatments/${row.t.slug}/`}>All {row.t.name.toLowerCase()}</a></p>
+            <p class="ritual__actions"><BookCta treatment={row.t.slug} squareId={row.s.squareId} /> <a class="link" href={`/treatments/${row.t.slug}/`}>All {row.t.name.toLowerCase()}</a></p>
           </div>
         </li>
       ))}

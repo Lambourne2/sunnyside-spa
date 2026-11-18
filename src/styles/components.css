@@ -336,3 +336,34 @@
   -webkit-backdrop-filter: blur(4px) var(--lg-filter,) saturate(1.8) brightness(1.05);
           backdrop-filter: blur(4px) var(--lg-filter,) saturate(1.8) brightness(1.05);
 }
+
+/* ── Service rows that book straight into Square ────────────────────────────
+   The service name is the link; its ::after stretches over the whole row so a
+   tap anywhere on it books that service. The underline is the §9 text-link
+   hairline, so the name reads as tappable without adding a button per row. */
+.svc-row { position: relative; }
+
+.svc-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line-hair);
+}
+
+.svc-link::after { content: ''; position: absolute; inset: 0; }
+
+.svc-row:hover .svc-link,
+.svc-link:focus-visible { text-decoration-color: var(--dusty-rose); }
+
+/* Ring the row, not just the name, so keyboard users see what they'll book. */
+.svc-link:focus-visible { outline: none; }
+.svc-link:focus-visible::after {
+  outline: 2px solid var(--deep-sea);
+  outline-offset: 2px;
+  border-radius: var(--r-card);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .svc-link { transition: text-decoration-color var(--dur-nav) var(--ease-reveal); }
+}

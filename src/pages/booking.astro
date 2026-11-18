@@ -4,7 +4,7 @@ import WaveDivider from '../components/WaveDivider.astro';
 import BookCta from '../components/BookCta.astro';
 import Icon from '../components/Icon.astro';
 import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
-import { TREATMENTS, formatMinutes } from '../data/treatments';
+import { TREATMENTS, formatMinutes, serviceBooking } from '../data/treatments';
 
 /**
  * Booking — a short, honest flow in front of the Square handoff.
@@ -85,15 +85,18 @@ const STEPS = [
                   <p class="t-body bk__sum-line">{t.line}</p>
                 </div>
               </div>
-              {/* The same names and prices as the Square menu, so the choice
-                  carries over by eye even though it can't by link. */}
+              {/* The same names and prices as the Square menu; each one books
+                  straight into that service on Square. */}
               <ul class="bk__svcs" role="list">
-                {t.services.map((s) => (
-                  <li class="bk__svc">
-                    <span class="bk__svc-name">{s.name}</span>
+                {t.services.map((s) => {
+                  const b = serviceBooking(s, t.slug);
+                  return (
+                  <li class="bk__svc svc-row">
+                    <a class="bk__svc-name svc-link" href={b.href} target={b.external ? '_blank' : undefined} rel={b.external ? 'noopener' : undefined}>{s.name}{b.external && <span class="visually-hidden"> (book on Square, opens in a new tab)</span>}</a>
                     <span class="t-meta bk__svc-meta">{formatMinutes(s.minutes)} · <strong>${s.price}</strong></span>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
               <a class="link bk__more" href={`/treatments/${t.slug}/`}>What to expect: {t.name.toLowerCase()}</a>
             </div>

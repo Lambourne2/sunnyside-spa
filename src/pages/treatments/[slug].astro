@@ -4,7 +4,7 @@ import Icon from '../../components/Icon.astro';
 import Figure from '../../components/Figure.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
 import BookCta from '../../components/BookCta.astro';
-import { TREATMENTS, formatMinutes } from '../../data/treatments';
+import { TREATMENTS, formatMinutes, serviceBooking } from '../../data/treatments';
 
 /** Category detail — §8: arched hero, what to expect, duration/price, the
  *  services in this category with their prices, book. */
@@ -73,10 +73,12 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
         <h2 class="t-h2">Prices</h2>
         {/* Verbatim from the Square menu — same names you will see when booking. */}
         <ul class="td__addons" role="list">
-          {t.services.map((s) => (
-            <li class="td__addon">
+          {t.services.map((s) => {
+            const b = serviceBooking(s, t.slug);
+            return (
+            <li class="td__addon svc-row">
               <span class="td__svc">
-                <span class="t-body td__svc-name">{s.name}</span>
+                <a class="t-body td__svc-name svc-link" href={b.href} target={b.external ? '_blank' : undefined} rel={b.external ? 'noopener' : undefined}>{s.name}{b.external && <span class="visually-hidden"> (book on Square, opens in a new tab)</span>}</a>
                 <span class="t-body td__svc-desc">{s.description}</span>
               </span>
               <span class="td__svc-price">
@@ -84,7 +86,8 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
                 <span class="t-meta">{formatMinutes(s.minutes)}</span>
               </span>
             </li>
-          ))}
+            );
+          })}
         </ul>
         <p class="t-body td__note">Every price is fixed. Nothing is added without telling you first.</p>
       </div>

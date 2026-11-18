@@ -21,6 +21,8 @@ interface Props {
   magnetic?: boolean;
   /** Preselects this treatment on /booking/ while Square isn't connected. */
   treatment?: string;
+  /** A specific service's Square id: books straight into that service. */
+  squareId?: string;
   class?: string;
 }
 const {
@@ -29,11 +31,14 @@ const {
   size = 'md',
   magnetic = false,
   treatment,
+  squareId,
   class: className = '',
 } = Astro.props;
 
 const live = BOOKING.configured && !BOOKING.url.startsWith('[');
-const href = live ? BOOKING.url : treatment ? `/booking/?t=${treatment}` : '/booking/';
+const href = live
+  ? squareId ? `${BOOKING.url}/${squareId}` : BOOKING.url
+  : treatment ? `/booking/?t=${treatment}` : '/booking/';
 ---
 
 <a

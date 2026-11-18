@@ -3,7 +3,7 @@ import Page from '../../layouts/Page.astro';
 import Icon from '../../components/Icon.astro';
 import Figure from '../../components/Figure.astro';
 import BookCta from '../../components/BookCta.astro';
-import { TREATMENTS, formatMinutes } from '../../data/treatments';
+import { TREATMENTS, formatMinutes, serviceBooking } from '../../data/treatments';
 
 /**
  * The menu — every service Sunnyside books, with its price and length, in
@@ -50,10 +50,14 @@ import { TREATMENTS, formatMinutes } from '../../data/treatments';
             </header>
 
             <ul class="mn__list" role="list">
-              {t.services.map((s) => (
-                <li class="mn__item reveal">
+              {t.services.map((s) => {
+                const b = serviceBooking(s, t.slug);
+                return (
+                <li class="mn__item svc-row reveal">
                   <div class="mn__row">
-                    <h3 class="t-h3 mn__name">{s.name}</h3>
+                    <h3 class="t-h3 mn__name">
+                      <a class="svc-link" href={b.href} target={b.external ? '_blank' : undefined} rel={b.external ? 'noopener' : undefined}>{s.name}{b.external && <span class="visually-hidden"> (book on Square, opens in a new tab)</span>}</a>
+                    </h3>
                     <span class="mn__dots" aria-hidden="true"></span>
                     <p class="mn__price">
                       <span class="t-meta">{formatMinutes(s.minutes)}</span>
@@ -62,7 +66,8 @@ import { TREATMENTS, formatMinutes } from '../../data/treatments';
                   </div>
                   <p class="t-body mn__desc">{s.description}</p>
                 </li>
-              ))}
+                );
+              })}
             </ul>
 
             <div class="mn__actions reveal">
