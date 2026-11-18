@@ -9,26 +9,23 @@ import { SITE } from '../config/site';
 /**
  * Our story — §8: "founder photo, Caveat-heavy".
  *
- * Written in first person because Sunnyside is one person. That is also what
- * makes it work: §1 asks for "a friend who happens to have excellent taste, not
- * a clinic", and a solo practitioner saying "I" gets there in a way a corporate
- * "we" never does.
+ * Written in first person because Sunnyside is one person, working from a
+ * home studio in West Jordan. The copy is edited from the owner's own account
+ * (2026-11-18): the go-to friend for brows and makeup, Skinworks in Salt Lake
+ * City with honors, a home studio on purpose, and a belief in energy and the
+ * nervous-system reset. Keep it in §11's voice — plain verbs, no ban-list words.
  *
- * Every string below is DRAFT — the real story has to come from Peyton. The
- * shape is right: what they did before, why they opened, what the room is like,
- * and one thing that is true and slightly awkward, because that is what makes a
- * founder page believable. The portrait is a sample; the alt text describes the
- * stand-in photo, not the founder.
+ * The portrait is the owner, photographed in a high-desert field (2026-11-18).
  */
-const PORTRAIT = '/img/samples/founder.webp';
+const PORTRAIT = '/img/story-portrait.webp';
 ---
 
 <Page
   title="Our story — Sunnyside Spa"
-  description="Sunnyside Spa is one room and one person in West Jordan, Utah: facials, brows, lashes and waxing."
+  description="Sunnyside Spa is a home studio in West Jordan, Utah — facials, brows, lashes and waxing, one person at a time."
   eyebrow="Our story"
-  heading="One room, one pair of hands"
-  lede="Sunnyside is not a chain and it is not a clinic. It is one treatment room, and me in it."
+  heading="Just you and me"
+  lede="Sunnyside is a quiet room in my home in West Jordan. No front desk, no clinic lights, no one in the next chair."
   mark="logomark"
 >
   <section class="st">
@@ -38,55 +35,80 @@ const PORTRAIT = '/img/samples/founder.webp';
         shape="arch"
         ratio="4 / 5"
         src={PORTRAIT}
-        alt="A woman standing in a bare, sunlit room, hard shadow from a blind falling in stripes across her and the wall behind."
+        alt="Standing in a field of dry golden grass under a soft overcast sky, snow on the mountains behind, glancing over one shoulder with a small smile, in a cream floral slip dress."
         loading="eager"
       />
 
       <div class="st__copy reveal">
-        {/* DRAFT COPY */}
         <p class="t-quote t-quote--tilt st__pull">I wanted somewhere that felt like a friend's house.</p>
 
-        {/* DRAFT COPY */}
         <p class="t-body">
-          I am [NAME]. I trained at [SCHOOL] and spent [YEARS] years working in
-          other people's rooms — a resort, a chiropractor's office, a place with
-          a water feature in reception that nobody ever looked at.
+          Before a wedding, a big night or a first date, I was the one friends
+          and family called to wax their brows or do their makeup. Training properly felt
+          like the natural next step, so I studied esthetics at Skinworks in
+          Salt Lake City and graduated with honors.
         </p>
 
-        {/* DRAFT COPY */}
         <p class="t-body">
-          All of them were fine. None of them were quiet. You would come in
-          carrying whatever your week had been, and somebody would hand you a
-          laminated menu and ask if you wanted to add hot stones.
+          Beauty techniques have fascinated me for as long as I can remember,
+          and I genuinely love this work.
         </p>
 
-        {/* DRAFT COPY */}
         <p class="t-body">
-          So Sunnyside is one room in West Jordan, booked one person at a
-          time. No upsell at the end. No music you have to pretend to like. If you tell me you only want the strays gone, only the strays go.
+          I work from home on purpose. A treatment lands differently when it
+          doesn't feel clinical: no waiting room, no rush, nobody on the other
+          side of a curtain. Just you, me, and an hour that belongs to you.
         </p>
       </div>
+    </div>
+
+    {/* Safety is the big point (owner's request, 2026-11-18): a chiffon panel
+        between the story and the beliefs, not a line buried in a paragraph. */}
+    <div class="shell">
+      <section class="st__safe grain reveal" aria-labelledby="st-safe">
+        <div class="st__safe-head">
+          <p class="t-eyebrow">Safety first</p>
+          <h2 class="t-display st__safe-title" id="st-safe">You're in safe hands</h2>
+        </div>
+        <div class="st__safe-body">
+          <p class="t-body">
+            I am meticulous about the details, and about your safety most of
+            all. I went to great lengths to have Sunnyside approved by the
+            State of Utah, and the health department has inspected the studio.
+            I know this work deeply, and I'm always happy to explain what I'm
+            doing and why, so you can stop wondering and simply rest.
+          </p>
+          <ul class="st__proof" role="list">
+            <li class="t-h3">Approved by the State of Utah</li>
+            <li class="t-h3">Inspected by the health department</li>
+            <li class="t-h3">Skinworks graduate, with honors</li>
+          </ul>
+        </div>
+      </section>
     </div>
 
     <div class="shell"><WaveDivider size="full" /></div>
 
     <div class="shell st__cols">
       <div class="reveal">
-        <h2 class="t-h2">What I actually do</h2>
-        {/* DRAFT COPY */}
+        <h2 class="t-h2">More than skin deep</h2>
         <p class="t-body">
-          [CERTIFICATIONS AND MODALITIES]. I keep licences current with [BOARD]
-          and I will tell you plainly when something is outside what I do.
+          Whatever you book, a facial, a lash lift or a quick brow tidy, it is
+          never only about the mirror. I care about the energy you walk in with,
+          and the energy you leave with. A quiet room
+          and unhurried hands give your nervous system the chance to reset, and
+          when your body settles, your mind follows and your skin shows it.
+          There is real science behind that, and you deserve to feel it.
         </p>
       </div>
 
       <div class="reveal">
-        <h2 class="t-h2">The room</h2>
-        {/* DRAFT COPY */}
+        <h2 class="t-h2">Your time here</h2>
         <p class="t-body">
-          South-facing, so it gets the afternoon. Plaster walls, one plant that
-          has survived longer than expected, and a table that is heated in
-          winter because Utah in February is not a joke.
+          We start by talking about what you want. I tell you plainly what I
+          would suggest, and nothing gets added without asking you first. Then
+          you lie back, breathe out, and let the next hour be the quiet part
+          of your week.
         </p>
       </div>
     </div>
@@ -95,7 +117,6 @@ const PORTRAIT = '/img/samples/founder.webp';
 
     <div class="shell st__close reveal">
       <p class="st__mark" aria-hidden="true"><Icon name="you-time" size={36} /></p>
-      {/* DRAFT COPY */}
       <p class="t-quote st__pull">Come as you are, leave more you.</p>
       <p class="t-body st__note">
         Sunnyside Spa · {SITE.city}, UT
@@ -118,6 +139,28 @@ const PORTRAIT = '/img/samples/founder.webp';
 
   /* Caveat-heavy (§8), but still only a few moments per page (§4). */
   .st__pull { --quote-color: var(--rose-deep); }
+
+  .st__safe {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block: var(--space-2xl) var(--space-xl);
+    padding: clamp(var(--space-xl), 6vw, var(--space-3xl));
+    border-radius: var(--r-card);
+    background-color: var(--surface-soft);
+  }
+
+  .st__safe-head { display: grid; gap: var(--space-sm); align-content: start; }
+  .st__safe-head .t-eyebrow { --eyebrow-color: var(--rose-deep); }
+  .st__safe-title { margin: 0; }
+  .st__safe-body { display: grid; gap: var(--space-lg); }
+
+  .st__proof { display: grid; border-block-start: 1px solid var(--line-hair); }
+  .st__proof li {
+    margin: 0;
+    padding-block: var(--space-sm);
+    border-block-end: 1px solid var(--line-hair);
+    color: var(--ink);
+  }
 
   .st__cols {
     display: grid;
@@ -145,6 +188,7 @@ const PORTRAIT = '/img/samples/founder.webp';
       gap: clamp(var(--space-xl), 6vw, var(--space-3xl));
     }
     .st__copy { padding-block-start: var(--space-lg); }
+    .st__safe { grid-template-columns: 0.9fr 1.1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
     .st__cols { grid-template-columns: 1fr 1fr; gap: clamp(var(--space-xl), 6vw, var(--space-3xl)); }
   }
 </style>
