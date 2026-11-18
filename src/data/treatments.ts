@@ -71,6 +71,8 @@ const CATEGORIES: Draft[] = [
     feature: true,
     image: '/img/samples/skincare.webp',
     alt: 'A woman with her eyes closed, turned to the sun, the shadow of a plant falling across her face.',
+    menuImage: '/img/facial-portrait.webp',
+    menuAlt: 'Seen from above, a client lies back with eyes closed and hair wrapped, while two hands work a creamy mask across the face and shoulders.',
     services: [
       { name: '60 minute customized facial', description: 'Tailored to your skin on the day. Includes consultation, cleanse, exfoliation, extractions as needed, mask and massage. Includes hand and arm massage', minutes: 60, price: 80 },
       { name: '80 minute customized facial', description: 'Everything in our 60 minute facial, with extra time for targeted treatment and a longer massage. Our most relaxing option. Includes hand and arm massage and/or more targeted treatment or foot and scalp massage', minutes: 80, price: 100 },
@@ -120,6 +122,8 @@ const CATEGORIES: Draft[] = [
     line: 'Your own lashes, lifted from the root, with a tint if you want the mascara look without the mascara.',
     image: '/img/samples/you-time.webp',
     alt: 'Someone resting in rumpled linen, one hand open on the bed.',
+    menuImage: '/img/lashes-portrait.webp',
+    menuAlt: 'A client lying back on a dark towel, smiling up at the camera, lashes lifted and curled above green eyes.',
     services: [
       { name: 'Lash lift', description: 'A natural curl from the root, no extensions or curler needed. Wide-awake lashes that last 6-8 weeks.', minutes: 60, price: 65 },
       { name: 'Lash lift and tint', description: 'Our lash lift plus a dark tint for a lifted, mascara-like look from root to tip. Low maintenance, big impact.', minutes: 75, price: 80 },
