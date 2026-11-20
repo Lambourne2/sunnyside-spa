@@ -13,7 +13,6 @@ const ARRIVAL = [
   { title: 'Arrive at your appointment time', body: 'A couple of minutes early is perfectly fine with me.' },
   { title: 'The door', body: 'Come to the front door. If I am finishing with someone, give me a minute and I will be right with you.' },
   { title: 'What to bring', body: 'Nothing. For lashes, come without eye makeup if you can. For waxing, let the hair grow for about two weeks first.' },
-  { title: 'Afterwards', body: 'There is water and a chair, and no rush. Nobody is waiting for the room.' },
 ];
 ---
 
@@ -33,7 +32,7 @@ const ARRIVAL = [
           <address class="t-body vs__address">
             {SITE.city}, {SITE.state} {SITE.zip}
           </address>
-          <p class="t-body vs__note">By appointment only.</p>
+          <p class="t-body vs__note">By appointment only. Your booking confirmation includes the full address.</p>
           {!isPlaceholder(SITE.email) && <p class="vs__links"><a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
         </div>
 
