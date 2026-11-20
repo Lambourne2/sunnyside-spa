@@ -41,7 +41,7 @@ const ARRIVAL: Step[] = [
           <address class="t-body vs__address">
             {SITE.city}, {SITE.state} {SITE.zip}
           </address>
-          <p class="t-body vs__note">By appointment only. Your booking confirmation includes the full address.</p>
+          <p class="t-body vs__note">By appointment only. The full address is emailed to you as soon as you book.</p>
           {!isPlaceholder(SITE.email) && <p class="vs__links"><a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
         </div>
 
