@@ -3,7 +3,7 @@ import Page from '../layouts/Page.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import BookCta from '../components/BookCta.astro';
 import Icon from '../components/Icon.astro';
-import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
+import { BOOKING, SITE, isPlaceholder } from '../config/site';
 import { TREATMENTS, formatMinutes, serviceBooking } from '../data/treatments';
 
 /**
@@ -31,7 +31,7 @@ const STEPS = [
   // DRAFT COPY
   { title: 'Pick a time', body: 'Booking runs on Square and opens in a new tab. It takes about a minute.' },
   { title: 'Get the confirmation', body: 'By email, straight away, and a reminder the day before.' },
-  { title: 'Arrive fifteen minutes early', body: 'On a first visit, so there is time to change and talk before we start.' },
+  { title: 'Arrive at your appointment time', body: 'A couple of minutes early is perfectly fine with me.' },
 ];
 ---
 
@@ -147,22 +147,12 @@ const STEPS = [
         <h2 class="t-h3" id="bk-aside-title">Rather not book online?</h2>
         {/* DRAFT COPY */}
         <p class="t-body">
-          Call or text and I will find you something. If a time you wanted has
-          just gone, say what you were after and I will tell you what is close.
+          Send me an email and I will find you something. If a time you wanted
+          has just gone, say what you were after and I will tell you what is close.
         </p>
         <p class="bk__contact">
-          <a class="link" href={SITE.phoneHref}>{SITE.phone}</a>
-          {!isPlaceholder(SITE.email) && <><br /><a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></>}
+          {!isPlaceholder(SITE.email) && <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>}
         </p>
-        <h3 class="t-eyebrow bk__hours-title">Hours</h3>
-        <dl class="bk__hours">
-          {HOURS.map((h) => (
-            <div class="bk__hours-row">
-              <dt class="t-meta">{h.days}</dt>
-              <dd class="t-meta">{h.hours}</dd>
-            </div>
-          ))}
-        </dl>
       </section>
 
       {!live && (
@@ -185,7 +175,7 @@ const STEPS = [
     </div>
 
     <div class="shell bk__foot reveal">
-      <p class="t-quote">Two hours that are only yours</p>
+      <p class="t-quote">An hour that is only yours</p>
     </div>
   </section>
 </Page>

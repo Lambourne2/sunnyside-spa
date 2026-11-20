@@ -17,17 +17,12 @@ export const SITE = {
   city: 'West Jordan',
   state: 'UT',
   zip: '84081',
-  street: '[STREET ADDRESS]',
-  phone: '(801) 712-5455',
-  /** For tel: links — the display format above won't dial everywhere. */
-  phoneHref: 'tel:+18017125455',
+  /* No street address, phone number or opening hours on the site, by
+     request (2026-11-19): it is a home studio, booked by appointment only.
+     City, state and ZIP are the only location shown. */
   email: 'sunnysidespaslc@gmail.com',
   instagram: 'https://www.instagram.com/sunnysidespaslc',
 } as const;
-
-export const HOURS: { days: string; hours: string }[] = [
-  { days: 'Every day', hours: '10am – 6pm' },
-];
 
 /**
  * ── Booking: Square Appointments ─────────────────────────────────────────

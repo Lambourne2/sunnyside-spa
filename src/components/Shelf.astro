@@ -3,11 +3,10 @@ import Figure from './Figure.astro';
 import Icon from './Icon.astro';
 
 /**
- * §8 — THE SHELF, SOON. A waitlist, not a store: one product, one email field,
- * no cart and no prices. Building the list before the line exists keeps the
- * slot warm for a real product trio later.
- *
- * All copy here is verbatim §11.
+ * Email list. Was §8's "shelf, soon" waitlist; on request (2026-11-19) it is
+ * now a plain sign-up for news and openings, with the Rest. Recharge. Radiate.
+ * card in place of the product shot. When a product launches it can become
+ * the shelf again.
  *
  * The turning badge borrows the circular lockup from the identity board —
  * tracked caps set on a ring around the mark — and turns once a minute.
@@ -21,24 +20,25 @@ import Icon from './Icon.astro';
         class="shelf__figure"
         shape="hangtag"
         ratio="3 / 4"
-        src="/img/samples/shelf-oil.webp"
-        alt="An amber dropper bottle lying on linen beside a round wooden bowl."
+        src="/img/rest-recharge-radiate.webp"
+        alt="Rest. Recharge. Radiate. hand-lettered in white over sunlit water, with the Sunnyside sun-and-waves mark below."
       />
       <div class="shelf__badge" aria-hidden="true">
         <svg class="shelf__ring" viewBox="0 0 200 200">
           <defs><path id="shelf-ring" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0" /></defs>
-          <text><textPath href="#shelf-ring" textLength="486">Facial oil · first on the shelf · almost ready ·</textPath></text>
+          <text><textPath href="#shelf-ring" textLength="486">Sunshine for your soul · stay in the loop ·</textPath></text>
         </svg>
         <Icon name="logomark" size={64} class="shelf__mark" />
       </div>
     </div>
 
     <div class="shelf__copy reveal">
-      <p class="t-eyebrow"><span class="sec-num">06</span> &nbsp;The shelf, soon</p>
-      <!-- §11 verbatim -->
-      <h2 class="t-display shelf__title" id="shelf-title">The shelf is almost ready</h2>
-      <!-- §11 verbatim -->
-      <p class="t-body">Facial oil first. Tell me where to send it.</p>
+      <p class="t-eyebrow"><span class="sec-num">05</span> &nbsp;Stay in touch</p>
+      <h2 class="t-display shelf__title" id="shelf-title">Stay in the loop</h2>
+      <p class="t-body">
+        Join my email list for new services, openings and the occasional little
+        extra. No spam, just a bit of sunshine in your inbox.
+      </p>
 
       <form class="shelf__form" data-waitlist novalidate>
         <div class="field">

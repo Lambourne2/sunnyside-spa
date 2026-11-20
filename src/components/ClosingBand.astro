@@ -18,10 +18,11 @@ const sun = LOGOMARK.paths.filter((p) => p.role !== 'wave');
 const waves = LOGOMARK.paths.filter((p) => p.role === 'wave');
 ---
 
-<section class="closer band-dark grain" data-progress aria-labelledby="closer-title">
+<section class="closer band-dark grain" aria-labelledby="closer-title">
   <div class="shell closer__inner">
     <svg
       class="closer__mark"
+      data-closer-mark
       viewBox={`0 0 ${LOGOMARK.box[0]} ${LOGOMARK.box[1]}`}
       aria-hidden="true"
       focusable="false"
@@ -34,22 +35,39 @@ const waves = LOGOMARK.paths.filter((p) => p.role === 'wave');
       <g class="closer__sun" clip-path="url(#closer-sea)">
         <g class="closer__sun-inner">
           {sun.map((p, i) => (
-            <path d={p.d} pathLength="1" style={`--d:${i}`} />
+            <path d={p.d} style={`--d:${i}`} />
           ))}
         </g>
       </g>
       {waves.map((p, i) => (
-        <path class="closer__wave" d={p.d} pathLength="1" style={`--d:${i + sun.length}`} />
+        <path class="closer__wave" d={p.d} style={`--d:${i + sun.length}`} />
       ))}
     </svg>
 
     <p class="t-eyebrow">No membership needed</p>
     <!-- §11 verbatim -->
-    <h2 class="t-quote closer__quote" id="closer-title">Two hours that are only yours</h2>
+    <h2 class="t-quote closer__quote" id="closer-title">An hour that is only yours</h2>
     <!-- §11 verbatim -->
     <BookCta variant="on-dark" size="lg" magnetic />
   </div>
 </section>
+
+<script>
+  const mark = document.querySelector<SVGSVGElement>('[data-closer-mark]');
+  if (mark && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    mark.querySelectorAll<SVGPathElement>('path').forEach((p) => {
+      p.style.setProperty('--len', `${Math.ceil(p.getTotalLength()) + 1}px`);
+    });
+    mark.classList.add('is-armed');
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        mark.classList.add('is-drawn');
+        io.disconnect();
+      }
+    }, { threshold: 0.35 });
+    io.observe(mark);
+  }
+</script>
 
 <style>
   .closer {
@@ -81,18 +99,18 @@ const waves = LOGOMARK.paths.filter((p) => p.role === 'wave');
     stroke-linejoin: round;
   }
 
-  /* Drawn on as the band arrives: --p runs 0→1 across the band's whole trip
-     through the viewport, so the first third draws it and the last third
-     sets the sun. */
+  /* Drawn on once as the band arrives (§10's draw-on: sun first, then waves,
+     40ms apart), then left still. It used to be scrubbed by scroll position,
+     redrawing on every scroll frame, which flickered on phones (2026-11-19).
+     Dash lengths are measured in px by the script below rather than relying
+     on pathLength, which Safari handles unevenly. */
   @media (prefers-reduced-motion: no-preference) {
-    .closer__mark path {
-      stroke-dasharray: 1;
-      stroke-dashoffset: clamp(0, calc(1 - (var(--p, 0) * 3.2 - var(--d) * 0.06)), 1);
+    .closer__mark.is-armed path {
+      stroke-dasharray: var(--len);
+      stroke-dashoffset: var(--len);
+      transition: stroke-dashoffset 900ms var(--ease-reveal) calc(var(--d) * 40ms);
     }
-
-    .closer__sun-inner {
-      translate: 0 calc(max(0, var(--p, 0) - 0.55) * 46px);
-    }
+    .closer__mark.is-drawn path { stroke-dashoffset: 0; }
   }
 
   @media (min-width: 900px) {

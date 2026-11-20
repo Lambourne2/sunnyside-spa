@@ -24,10 +24,6 @@ import { TREATMENTS } from '../data/treatments';
     <header class="sec-head">
       <p class="t-eyebrow reveal"><span class="sec-num">02</span><Icon name="skincare" size={16} />Treatments</p>
       <h2 class="t-display sec-head__title" id="tf-title" data-split>What kind of week was it?</h2>
-      <p class="t-body tf__lede reveal">
-        Pick the one that sounds like yours. Each is a single appointment, in one
-        room, with the same person.
-      </p>
     </header>
 
     <div class="tf__grid" data-tf>
@@ -47,7 +43,7 @@ import { TREATMENTS } from '../data/treatments';
                 <span class="t-meta tf__meta">From {t.price} · {t.duration}</span>
               </span>
               <span class="tf__thumb hangtag" aria-hidden="true">
-                <img src={t.image} alt="" loading="lazy" decoding="async" />
+                <img src={t.menuImage ?? t.image} alt="" loading="lazy" decoding="async" />
               </span>
               <svg class="tf__go" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rays" /></svg>
             </a>
@@ -61,7 +57,7 @@ import { TREATMENTS } from '../data/treatments';
             <img
               class:list={['tf__img', i === 0 && 'is-active']}
               data-tf-img={t.slug}
-              src={t.image}
+              src={t.menuImage ?? t.image}
               alt=""
               loading="lazy"
               decoding="async"
@@ -135,14 +131,16 @@ import { TREATMENTS } from '../data/treatments';
   }
 
   .tf__num  { grid-area: num; align-self: start; padding-block-start: 0.5em; }
+  /* The need lines became full questions (2026-11-19). §4 caps tracked caps
+     at about six words, so they are set in sentence case, still Jost 300. */
   .tf__need {
     grid-area: need;
     font-family: var(--font-display);
     font-weight: 300;
-    font-size: clamp(1.25rem, 2.4vw, 2.1rem);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    line-height: 1.15;
+    font-size: clamp(1.25rem, 2.2vw, 1.9rem);
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    max-width: 24ch;
   }
 
   .tf__sub {
