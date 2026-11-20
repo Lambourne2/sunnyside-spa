@@ -127,7 +127,7 @@ const CATEGORIES: Draft[] = [
     detail: {
       lede: 'A quick tidy between appointments, or the Full Brow Refresh. Either way I shape to your face, not to a trend.',
       expect: [
-        'For a brow wax, I map your brows first to find the shape that suits your face. A quick cleanup or men’s brow wax keeps the shape you already have, so there is no mapping.',
+        'For a brow wax, I map your brows first to find the shape that suits your face. For men’s brows, I map when it helps, depending on how full they are and the look you want. A quick cleanup keeps the shape you already have, so there is no mapping.',
         'Wax first, a few strays at a time, then tint if you booked it. The tint sits for a few minutes.',
         'For the Full Brow Refresh, the hairs are lifted and set first, then waxed and tinted.',
         'You see them before you go, and I adjust anything you are not sure about.',
