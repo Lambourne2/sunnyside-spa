@@ -188,6 +188,7 @@ const CATEGORIES: Draft[] = [
         'I check in about any medications and recent treatments first, so I know the wax is right for your skin.',
         'The wax goes on warm and comes off quickly, a small section at a time.',
         'You leave smooth, with a few easy things to do for the next couple of days.',
+        'Please read the pre and aftercare below before your appointment, so your skin is ready and stays happy afterwards.',
       ],
       care: [
         {
