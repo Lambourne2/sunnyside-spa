@@ -2,6 +2,14 @@
 import Figure from './Figure.astro';
 import Icon from './Icon.astro';
 
+// From the Mailchimp embed code (Audience → Signup forms → Embedded forms).
+const MC_U = '11c127d11bb74a66b507beaa7';
+const MC_ID = '3353cbe34f';
+const MC_F = '0036b3e6f0';
+const MC_POST = `https://app.us18.list-manage.com/subscribe/post?u=${MC_U}&id=${MC_ID}&f_id=${MC_F}`;
+const MC_JSON = `https://app.us18.list-manage.com/subscribe/post-json?u=${MC_U}&id=${MC_ID}&f_id=${MC_F}`;
+const MC_TRAP = `b_${MC_U}_${MC_ID}`;
+
 /**
  * Email list. Was §8's "shelf, soon" waitlist; on request (2026-11-19) it is
  * now a plain sign-up for news and openings, with the Rest. Recharge. Radiate.
@@ -40,53 +48,73 @@ import Icon from './Icon.astro';
         extra. No spam, just a bit of sunshine in your inbox.
       </p>
 
-      <form class="shelf__form" data-waitlist novalidate>
+      {/* Posts to the Mailchimp audience from the embed code (2026-11-19).
+          With JS it submits in the background and answers inline; without
+          JS it falls back to Mailchimp's own page in a new tab. */}
+      <form
+        class="shelf__form"
+        data-waitlist
+        action={MC_POST}
+        method="post"
+        target="_blank"
+        novalidate
+      >
+        <div class="field">
+          <label class="field__label" for="shelf-fname">First name <span class="shelf__opt">(optional)</span></label>
+          <input class="field__input" id="shelf-fname" name="FNAME" type="text" autocomplete="given-name" />
+        </div>
+
         <div class="field">
           <label class="field__label" for="shelf-email">Email</label>
           <input
             class="field__input"
             id="shelf-email"
-            name="email"
+            name="EMAIL"
             type="email"
             autocomplete="email"
             required
             aria-describedby="shelf-email-error"
           />
-          <!-- §11 verbatim error string, revealed by the validation script -->
           <p class="field__error" id="shelf-email-error" data-error hidden>
             That email is missing an @.
           </p>
         </div>
 
-        <!-- §11 verbatim -->
+        {/* Mailchimp's bot trap: real people never see or fill this. */}
+        <div class="shelf__trap" aria-hidden="true">
+          <input type="text" name={MC_TRAP} tabindex="-1" value="" autocomplete="off" />
+        </div>
+
         <button class="btn btn--primary" type="submit">Join the list</button>
 
-        <!-- §11 verbatim confirmation -->
-        <p class="t-body shelf__done" data-done hidden role="status">You're on the list.</p>
+        <p class="t-body shelf__done" data-done hidden role="status"></p>
       </form>
     </div>
   </div>
 </section>
 
-<script is:inline>
+<script is:inline define:vars={{ MC_JSON }}>
   (() => {
     const form = document.querySelector('[data-waitlist]');
     if (!form) return;
-    const input = form.querySelector('input[type="email"]');
+    const input = form.querySelector('input[name="EMAIL"]');
+    const fname = form.querySelector('input[name="FNAME"]');
+    const trap = form.querySelector('.shelf__trap input');
     const error = form.querySelector('[data-error]');
     const done = form.querySelector('[data-done]');
+    const button = form.querySelector('button[type="submit"]');
 
     const clear = () => {
       error.hidden = true;
       input.removeAttribute('aria-invalid');
     };
+    const say = (text) => { done.textContent = text; done.hidden = false; };
 
     input.addEventListener('input', clear);
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const value = input.value.trim();
-      // §11 names one specific failure, so only that case gets that message.
       if (!value.includes('@')) {
         error.hidden = false;
         input.setAttribute('aria-invalid', 'true');
@@ -94,9 +122,45 @@ import Icon from './Icon.astro';
         return;
       }
       clear();
-      // No endpoint wired yet — this is list-building UI, not a live signup.
-      form.querySelector('button[type="submit"]').disabled = true;
-      done.hidden = false;
+      button.disabled = true;
+      done.hidden = true;
+
+      // Mailchimp's JSONP endpoint: no CORS, so it answers via a callback.
+      const cb = 'mcCb' + Date.now();
+      const params = new URLSearchParams({ EMAIL: value, FNAME: fname.value.trim(), c: cb });
+      params.set(trap.name, trap.value);
+      const script = document.createElement('script');
+      const cleanup = () => { delete window[cb]; script.remove(); };
+      const timer = setTimeout(() => {
+        cleanup();
+        button.disabled = false;
+        say('That did not go through. Please try again in a moment.');
+      }, 10000);
+
+      window[cb] = (res) => {
+        clearTimeout(timer);
+        cleanup();
+        const msg = String((res && res.msg) || '').toLowerCase();
+        if (res && res.result === 'success') {
+          form.querySelectorAll('input').forEach((i) => { i.disabled = true; });
+          say(msg.includes('confirm')
+            ? 'Almost there. Check your inbox to confirm.'
+            : "You're on the list.");
+        } else if (msg.includes('already subscribed')) {
+          say("You're already on the list.");
+        } else {
+          button.disabled = false;
+          say('That did not go through. Check your email and try again.');
+        }
+      };
+      script.src = MC_JSON + '&' + params.toString();
+      script.onerror = () => {
+        clearTimeout(timer);
+        cleanup();
+        button.disabled = false;
+        say('That did not go through. Please try again in a moment.');
+      };
+      document.body.appendChild(script);
     });
   })();
 </script>
@@ -169,6 +233,10 @@ import Icon from './Icon.astro';
   .shelf__form .field { width: 100%; }
 
   .shelf__done { color: var(--rose-deep); }
+
+  .shelf__opt { text-transform: none; letter-spacing: 0.04em; color: var(--ink-soft); }
+
+  .shelf__trap { position: absolute; left: -5000px; }
 
   @media (min-width: 768px) {
     .shelf__grid {
