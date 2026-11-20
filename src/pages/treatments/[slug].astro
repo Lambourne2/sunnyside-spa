@@ -96,7 +96,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
     {t.detail.care && (
       <>
         <div class="shell"><WaveDivider /></div>
-        <div class="shell td__care">
+        <div class="shell td__care" id="care">
           <h2 class="t-h2">{t.detail.careTitle ?? 'Before and after'}</h2>
           <div class="td__care-grid">
             {t.detail.care.map((g) => (
@@ -213,7 +213,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
     border-block-end: 1px solid var(--line-hair);
   }
 
-  .td__care { padding-block: var(--space-2xl); }
+  .td__care { padding-block: var(--space-2xl); scroll-margin-top: calc(var(--nav-h) + var(--space-lg)); }
 
   .td__care-grid {
     display: grid;

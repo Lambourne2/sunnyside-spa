@@ -8,11 +8,20 @@ import { SITE, isPlaceholder } from '../config/site';
 
 /** Visit — §8: where, parking, what to expect on arrival. No street address,
  *  phone or hours by request (2026-11-19), so no map either. */
-const ARRIVAL = [
+type Step = { title: string; body: string; links?: { href: string; label: string }[] };
+const ARRIVAL: Step[] = [
   // DRAFT COPY
   { title: 'Arrive at your appointment time', body: 'A couple of minutes early is perfectly fine with me.' },
   { title: 'The door', body: 'Come to the front door. If I am finishing with someone, give me a minute and I will be right with you.' },
-  { title: 'What to bring', body: 'Nothing. For lashes, come without eye makeup if you can. For waxing, shower beforehand and let the hair grow to about ½ inch.' },
+  {
+    title: 'How to prepare',
+    body: 'Come without makeup if you can. Each treatment has a little pre and aftercare, so take a quick look before your visit:',
+    links: [
+      { href: '/treatments/waxing/#care', label: 'Waxing' },
+      { href: '/treatments/lashes/#care', label: 'Lash lift' },
+      { href: '/treatments/brows/#care', label: 'Brow lamination' },
+    ],
+  },
 ];
 ---
 
@@ -57,6 +66,11 @@ const ARRIVAL = [
               <h3 class="t-h3">{a.title}</h3>
               {/* DRAFT COPY */}
               <p class="t-body">{a.body}</p>
+              {a.links && (
+                <p class="vs__step-links">
+                  {a.links.map((l) => <a class="link" href={l.href}>{l.label}</a>)}
+                </p>
+              )}
             </li>
           ))
         }
@@ -67,9 +81,9 @@ const ARRIVAL = [
       <div class="vs__gallery reveal">
         <Figure
           shape="arch"
-          ratio="4 / 3"
-          src="/img/samples/room-wide.webp"
-          alt="A plaster wall and a shallow arch, cut across by the hard shadow of a window frame."
+          ratio="4 / 5"
+          src="/img/visit-tools.webp"
+          alt="A hand raised against a pale sky holding the tools of the trade: lash tweezers, a fan brush and a wooden wax stick."
         />
       </div>
     </div>
@@ -132,12 +146,14 @@ const ARRIVAL = [
 
   .vs__step { display: flex; flex-direction: column; gap: var(--space-xs); }
 
+  .vs__step-links { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg); }
+
   /* Held to a feature width — full bleed turned the arch into a dome that
-     swallowed the page. */
+     swallowed the page. Narrower again now the photo is portrait. */
   /* Nested inside .shell rather than sharing the element, so this sets its own
      width instead of out-specifying the utility. Left-aligned like the rest of
      the page — §13 rules out a centred-everything layout. */
-  .vs__gallery { padding-block-end: var(--space-2xl); max-width: 46rem; }
+  .vs__gallery { padding-block-end: var(--space-2xl); max-width: 26rem; }
 
   @media (min-width: 768px) {
     .vs__steps { grid-template-columns: repeat(2, 1fr); }
