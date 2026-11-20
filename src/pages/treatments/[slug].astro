@@ -93,6 +93,25 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
       </div>
     </div>
 
+    {t.detail.care && (
+      <>
+        <div class="shell"><WaveDivider /></div>
+        <div class="shell td__care">
+          <h2 class="t-h2">Before and after</h2>
+          <div class="td__care-grid">
+            {t.detail.care.map((g) => (
+              <section class="reveal">
+                <h3 class="t-h3">{g.title}</h3>
+                <ul class="td__care-list" role="list">
+                  {g.items.map((item) => <li class="t-body">{item}</li>)}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </div>
+      </>
+    )}
+
     <div class="shell"><WaveDivider /></div>
 
     <div class="shell td__more">
@@ -192,6 +211,42 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
     gap: var(--space-md);
     padding-block: var(--space-sm);
     border-block-end: 1px solid var(--line-hair);
+  }
+
+  .td__care { padding-block: var(--space-2xl); }
+
+  .td__care-grid {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block-start: var(--space-lg);
+  }
+
+  .td__care-list {
+    display: grid;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-sm);
+    max-width: var(--measure);
+  }
+
+  /* A short hairline dash in place of a bullet — no dots, no boxes. */
+  .td__care-list li {
+    position: relative;
+    padding-inline-start: 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .td__care-list li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.8em;
+    width: 0.6rem;
+    border-block-start: 1px solid var(--rose-deep);
+  }
+
+  @media (min-width: 900px) {
+    .td__care-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-xl) var(--space-3xl); }
   }
 
   .td__more { padding-block-end: var(--space-2xl); }

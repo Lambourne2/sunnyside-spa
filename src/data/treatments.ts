@@ -59,6 +59,9 @@ export interface Treatment {
     lede: string;
     /** "What to expect" — three or four plain steps, §11 voice. DRAFT. */
     expect: string[];
+    /** Optional before/after care, shown in groups under "Before and after".
+     *  Waxing's is written in her own words, in the order it happens. */
+    care?: { title: string; items: string[] }[];
   };
   /** Derived below: lowest price and shortest/longest service. */
   price: string;
@@ -182,10 +185,46 @@ const CATEGORIES: Draft[] = [
     detail: {
       lede: 'Quick appointments, warm wax, and smooth skin that lasts for weeks instead of days.',
       expect: [
-        'Let the hair grow for about two weeks first, so the wax has something to hold.',
-        'Skip exfoliating and tanning on the day.',
+        'I check in about any medications and recent treatments first, so I know the wax is right for your skin.',
         'The wax goes on warm and comes off quickly, a small section at a time.',
-        'Afterwards, give it a day before hot baths, the gym or the pool.',
+        'You leave smooth, with a few easy things to do for the next couple of days.',
+      ],
+      care: [
+        {
+          title: 'In the weeks before',
+          items: [
+            'If you have taken Accutane in the last six months, let’s wait a little longer. Your skin needs that time before it can be waxed.',
+            'If you use Retin-A, Differin or another retinoid, I recommend pausing it about two weeks before your wax.',
+            'If you have recently finished antibiotics, it is best to wait about two weeks.',
+            'If you have a sunburn, give your skin about a week to heal first.',
+            'For face waxing, please leave at least 5 days after a facial.',
+            'If you are prone to infections or ingrown hairs, it is a good idea to check with your doctor first.',
+          ],
+        },
+        {
+          title: 'On the day',
+          items: [
+            'A fresh shower beforehand is perfect. It is best to skip shaving and exfoliating that day.',
+            'About ½ inch of growth gives the wax the best grip.',
+            'If you have a pedicure planned, try to keep it a couple of days apart from a leg wax.',
+          ],
+        },
+        {
+          title: 'The first two days',
+          items: [
+            'Give your skin a little break from hot tubs, saunas and pools.',
+            'Freshly waxed skin is extra sensitive to the sun, so SPF 30 or higher helps it heal evenly, even on days you are mostly inside.',
+            'A gentle, fragrance-free moisturizer will keep it calm and comfortable.',
+          ],
+        },
+        {
+          title: 'After that',
+          items: [
+            'Gentle exfoliating two or three times a week helps keep ingrown hairs away.',
+            'I recommend waiting a week before any peels or microdermabrasion.',
+            'For the smoothest results, leave at least a week between waxes on the same area, or two if your skin is sensitive.',
+          ],
+        },
       ],
     },
   },
