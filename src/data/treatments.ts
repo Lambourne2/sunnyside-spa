@@ -50,7 +50,7 @@ export interface Treatment {
   /** SAMPLE photography — see public/img/samples/SOURCES.json. To be replaced. */
   image: string;
   alt: string;
-  /** Real photography for the arch beside this category on /treatments/ only.
+  /** Real photography for this category on /treatments/ and its own page.
    *  Falls back to `image`/`alt`. */
   menuImage?: string;
   menuAlt?: string;
@@ -89,7 +89,7 @@ const CATEGORIES: Draft[] = [
     menuAlt: 'Seen from above, a client lies back with eyes closed and hair wrapped, while two hands work a creamy mask across the face and shoulders.',
     services: [
       { name: '60 minute customized facial', squareId: 'F3SSFFGVVUFZZVQSV53ZBFAX', description: 'Tailored to your skin on the day. Includes consultation, cleanse, exfoliation, extractions as needed, mask and massage. Includes hand and arm massage', minutes: 60, price: 80 },
-      { name: '80 minute customized facial', squareId: 'N42ZX6ELYWLGHQXU7KSYNEBJ', description: 'Everything in our 60 minute facial, with extra time for targeted treatment and a longer massage. Our most relaxing option. Includes hand and arm massage and/or more targeted treatment or foot and scalp massage', minutes: 80, price: 100 },
+      { name: '80 minute customized facial', squareId: 'N42ZX6ELYWLGHQXU7KSYNEBJ', description: 'Everything in my 60 minute facial, with extra time for targeted treatment and a longer massage. My most relaxing option. Includes hand and arm massage and/or more targeted treatment or foot and scalp massage', minutes: 80, price: 100 },
     ],
     detail: {
       lede: 'I look at your skin on the day, ask what you already use, and build the facial around what it needs.',
@@ -112,11 +112,11 @@ const CATEGORIES: Draft[] = [
     menuImage: '/img/brows-portrait.webp',
     menuAlt: 'Brushing a brow into shape with a spoolie, checking it in a hand mirror held out at arm’s length, under the curve of a lash lamp.',
     services: [
-      { name: 'Brow wax quick clean up', squareId: 'X4UHCUWQYWUJZGF3RMKREDUI', description: 'Love your current shape? We remove strays and refine the edges for a polished, well-groomed look.', minutes: 15, price: 20 },
+      { name: 'Brow wax quick clean up', squareId: 'X4UHCUWQYWUJZGF3RMKREDUI', description: 'Love your current shape? I remove strays and refine the edges for a polished, well-groomed look.', minutes: 15, price: 20 },
       { name: 'Brow tint', squareId: '4QE2OXASRTQCMHCLIQCVPKGV', description: 'A custom-matched tint that darkens and defines brows, filling in sparse or light areas. Less brow makeup needed.', minutes: 20, price: 20 },
       { name: 'Male brow wax', squareId: '3ZN2ZHV4C7VE57B3Z7K7KHDA', description: 'Cleans up between and around the brows while keeping a natural, masculine shape. Groomed, never overdone.', minutes: 20, price: 20 },
-      { name: 'Brow wax and tint', squareId: 'T6LDGWVM55WRPBSQX3TKSXCJ', description: 'Shaping and color in one visit. We wax to suit your face, then tint for fuller, more defined brows.', minutes: 45, price: 45 },
-      { name: 'Brow lamination, wax, and tint', squareId: 'RQB7MZ2L67XS2TBRYUEOTWCM', description: 'Our full brow makeover. Hairs are lifted and set for a fluffy, brushed-up look, then waxed and tinted. Lasts 6-8 weeks.', minutes: 60, price: 80 },
+      { name: 'Brow wax and tint', squareId: 'T6LDGWVM55WRPBSQX3TKSXCJ', description: 'Shaping and color in one visit. I wax to suit your face, then tint for fuller, more defined brows.', minutes: 45, price: 45 },
+      { name: 'Brow lamination, wax, and tint', squareId: 'RQB7MZ2L67XS2TBRYUEOTWCM', description: 'My full brow makeover. Hairs are lifted and set for a fluffy, brushed-up look, then waxed and tinted. Lasts 6-8 weeks.', minutes: 60, price: 80 },
     ],
     detail: {
       lede: 'A quick tidy between appointments, or the full lamination. Either way I shape to your face, not to a trend.',
@@ -140,7 +140,7 @@ const CATEGORIES: Draft[] = [
     menuAlt: 'A client lying back on a dark towel, smiling up at the camera, lashes lifted and curled above green eyes.',
     services: [
       { name: 'Lash lift', squareId: 'THEPOZ3GQNNWJFRZUNRFRZO3', description: 'A natural curl from the root, no extensions or curler needed. Wide-awake lashes that last 6-8 weeks.', minutes: 60, price: 65 },
-      { name: 'Lash lift and tint', squareId: 'WXMSES62MVS5ZYI7OBHHGF6S', description: 'Our lash lift plus a dark tint for a lifted, mascara-like look from root to tip. Low maintenance, big impact.', minutes: 75, price: 80 },
+      { name: 'Lash lift and tint', squareId: 'WXMSES62MVS5ZYI7OBHHGF6S', description: 'My lash lift plus a dark tint for a lifted, mascara-like look from root to tip. Low maintenance, big impact.', minutes: 75, price: 80 },
     ],
     detail: {
       lede: 'No extensions and no curler. Your own lashes, lifted from the root, for six to eight weeks.',
@@ -160,6 +160,8 @@ const CATEGORIES: Draft[] = [
     line: 'Underarms, arms, legs and the happy trail. Quick, smooth, and longer-lasting than a razor.',
     image: '/img/samples/body.webp',
     alt: 'A bare shoulder in low gold light, cut by a hard bar of window shadow.',
+    menuImage: '/img/waxing-portrait.webp',
+    menuAlt: 'A gloved hand lifting a wooden spatula from a wax warmer, a ribbon of warm wax dripping back into the pot, beside the curve of a ring light.',
     services: [
       { name: 'Happy trail wax', squareId: 'DNFMX4ELMF5EVCN3LXV6P6QK', description: 'A quick tidy of the line below the belly button for a clean, groomed look. Easy add-on to any wax.', minutes: 10, price: 15 },
       { name: 'Underarm waxing', squareId: 'KFNFAQX3HZK3Q6L4QW7J7YVU', description: 'Quick, smooth results that outlast shaving. No stubble, no razor bumps.', minutes: 15, price: 20 },

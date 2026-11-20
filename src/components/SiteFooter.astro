@@ -19,7 +19,7 @@ import { BOOKING, SITE, HOURS, isPlaceholder } from '../config/site';
  */
 const NAV = [
   { href: '/treatments/', label: 'Treatments' },
-  { href: '/our-story/', label: 'Our story' },
+  { href: '/my-story/', label: 'My story' },
   { href: '/visit/', label: 'Visit' },
   { href: '/booking/', label: 'Book' },
 ];
@@ -58,7 +58,7 @@ const bookHref = live ? BOOKING.url : '/booking/';
         </section>
 
         <section class="foot__col" aria-labelledby="foot-find">
-          <h2 class="t-eyebrow" id="foot-find">Find us</h2>
+          <h2 class="t-eyebrow" id="foot-find">Find me</h2>
           <address class="t-body foot__lines">
             {!isPlaceholder(SITE.street) && <>{SITE.street}<br /></>}
             {SITE.city}, {SITE.state} {SITE.zip}<br />

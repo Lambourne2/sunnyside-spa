@@ -26,7 +26,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
 >
   <section class="td">
     <div class="shell td__top">
-      <Figure class="td__hero reveal" shape="arch" ratio="4 / 5" src={t.image} alt={t.alt} loading="eager" />
+      <Figure class="td__hero reveal" shape="arch" ratio="4 / 5" src={t.menuImage ?? t.image} alt={t.menuAlt ?? t.alt} loading="eager" />
 
       <div class="td__facts reveal">
         <Icon name={t.icon} size={40} />

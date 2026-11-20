@@ -11,5 +11,7 @@ export default defineConfig({
     '/treatments/body': '/treatments/waxing/',
     '/treatments/wellness': '/treatments/',
     '/treatments/you-time': '/treatments/',
+    // Renamed 2026-11-19: Sunnyside is one person, so it's her story.
+    '/our-story': '/my-story/',
   },
 });
