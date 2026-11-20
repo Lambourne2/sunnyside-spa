@@ -97,7 +97,7 @@ const others = TREATMENTS.filter((x) => x.slug !== t.slug);
       <>
         <div class="shell"><WaveDivider /></div>
         <div class="shell td__care">
-          <h2 class="t-h2">Before and after</h2>
+          <h2 class="t-h2">{t.detail.careTitle ?? 'Before and after'}</h2>
           <div class="td__care-grid">
             {t.detail.care.map((g) => (
               <section class="reveal">

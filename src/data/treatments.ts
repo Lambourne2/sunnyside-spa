@@ -60,8 +60,10 @@ export interface Treatment {
     /** "What to expect" — three or four plain steps, §11 voice. DRAFT. */
     expect: string[];
     /** Optional before/after care, shown in groups under "Before and after".
-     *  Waxing's is written in her own words, in the order it happens. */
+     *  Written in her own words, in the order it happens. */
     care?: { title: string; items: string[] }[];
+    /** Heading over `care`. Defaults to "Before and after". */
+    careTitle?: string;
   };
   /** Derived below: lowest price and shortest/longest service. */
   price: string;
@@ -131,6 +133,42 @@ const CATEGORIES: Draft[] = [
         'Wax first, a few strays at a time, then tint if you booked it. The tint sits for a few minutes.',
         'For the Full Brow Refresh, the hairs are lifted and set first, then waxed and tinted.',
         'You see them before you go, and I adjust anything you are not sure about.',
+        'Please read the pre and aftercare below before your appointment, especially for the Full Brow Refresh.',
+      ],
+      careTitle: 'Before and after brow lamination',
+      care: [
+        {
+          title: 'In the weeks before',
+          items: [
+            'If you have taken Accutane in the past year, let’s wait a little longer before laminating.',
+            'If you use Retin-A, tretinoin, Differin or another retinoid, I recommend pausing it 7 to 10 days before.',
+            'If you have taken antibiotics, antidepressants or anything else that makes your skin sun-sensitive in the last two weeks, it is best to wait.',
+            'If you have had permanent makeup on your brows, please give it 6 weeks first.',
+            'If you are pregnant, breastfeeding or starting a new medication, let me know before you book. These can change how your skin reacts, and it may be best to wait.',
+          ],
+        },
+        {
+          title: 'Let’s wait if',
+          items: [
+            'The skin on or around your brows has cuts, swelling, irritation, eczema or psoriasis.',
+            'You have a stye or any kind of eye infection.',
+          ],
+        },
+        {
+          title: 'On the day',
+          items: [
+            'Come without brow makeup if you can.',
+            'It is best to skip shaving or exfoliating around your brows that day.',
+            'Just a brow wax or tint? The pre and aftercare on my waxing page is all you need.',
+          ],
+        },
+        {
+          title: 'The first day',
+          items: [
+            'Keep your brows dry and away from steam for 24 hours while they set.',
+            'Try not to sleep face down that first night, so they keep their shape.',
+          ],
+        },
       ],
     },
   },
@@ -155,7 +193,42 @@ const CATEGORIES: Draft[] = [
         'Come without eye makeup if you can. If not, I take it off for you.',
         'You lie back with your eyes closed the whole time. Most people doze off.',
         'The lift sets in stages, then the tint goes on if you booked it.',
-        'Keep them dry for the rest of the day so the curl holds.',
+        'Keep them dry for the first 24 hours so the curl holds.',
+        'Please read the pre and aftercare below before your appointment, so your lift turns out its best.',
+      ],
+      careTitle: 'Before and after lash lift',
+      care: [
+        {
+          title: 'In the weeks before',
+          items: [
+            'If you have had Lasik or permanent makeup around your eyes, please give it 6 weeks first.',
+            'If you use Retin-A, tretinoin, Differin or another retinoid, I recommend pausing it 7 to 10 days before.',
+            'If you have taken antibiotics, antidepressants or anything else that makes your skin sun-sensitive in the last two weeks, it is best to wait.',
+            'If you are pregnant, breastfeeding or starting a new medication, let me know before you book. These can change how your lashes and skin react, and it may be best to wait.',
+          ],
+        },
+        {
+          title: 'Let’s wait if',
+          items: [
+            'You have pink eye, a stye or any kind of eye infection.',
+            'The skin around your eyes has cuts, swelling, irritation, eczema or psoriasis.',
+            'Lying still with your eyes closed for an hour feels hard for you. Let me know and we can talk it through.',
+          ],
+        },
+        {
+          title: 'On the day',
+          items: [
+            'Please come without eye makeup. Mascara takes time to remove and can get in the way of a good lift.',
+            'If you wear contacts, glasses are easiest, or bring your case so you can take them out.',
+          ],
+        },
+        {
+          title: 'The first day',
+          items: [
+            'Keep your lashes dry and away from steam for 24 hours.',
+            'Try to sleep on your back that first night, so your lashes keep their curl.',
+          ],
+        },
       ],
     },
   },
